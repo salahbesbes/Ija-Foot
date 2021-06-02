@@ -1,11 +1,10 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
 import useSignUp from '../Hooks/useSignUp';
 import {actionCreators} from '../stateManager/actions/auth-A';
-import {AppStateContext} from '../stateProvider';
 import {styles} from '../styles/default';
 
-const SignUp = () => {
+const SignUp = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {loading, user, error, dispatch, signUp} = useSignUp();
@@ -40,10 +39,9 @@ const SignUp = () => {
           />
           <Button
             title="Sign Up"
-            onPress={() => {
-              signUp({email, password});
-              setEmail('');
-              setPassword('');
+            onPress={async () => {
+              await signUp({email, password});
+              navigation.navigate('Home');
             }}
           />
         </View>

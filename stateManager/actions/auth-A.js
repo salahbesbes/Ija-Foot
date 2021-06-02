@@ -7,7 +7,7 @@ export const LOGOUT = 'LOGOUT';
 export const actionCreators = {
   loading: () => ({type: LOADING}),
   reset: () => ({type: RESET}),
-  lotOut: () => ({type: LOGOUT}),
+  logOut: () => ({type: LOGOUT}),
   failure: errorMessage => ({type: FAILURE, payload: errorMessage}),
   loadUser: user => ({
     type: SUCCESS,

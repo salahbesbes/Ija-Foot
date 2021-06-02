@@ -20,7 +20,7 @@ export const useGoogleService = () => {
   const [state, dispatch] = authContext;
 
   const signUpWithGoogle = useCallback(async () => {
-    await GoogleSignUp_In(dispatch);
+    return await GoogleSignUp_In(dispatch);
   }, [dispatch]);
   // since we need sinIn to call it on Click events we returning it with the reducer state modified
   return {signUpWithGoogle, ...state};
@@ -40,14 +40,20 @@ const GoogleSignUp_In = async dispatch => {
     let res = await auth().signInWithCredential(googleCredential);
     let user = res.user.toJSON();
     console.log('sign In/up With Google');
-    dispatch(actionCreators.loadUser(user));
     let defaultProfile = {
-      name: user.displayName || 'No Name',
+      fullName: user.displayName || 'No Name',
       email: user.email,
       avatar: 'defaultAvatar',
-      phoneNumber: '11111111',
+      phoneNumber: '11111112',
+      // password: user.password,
+      age: '28',
+      nickName: 'no nick name',
     };
     await db().collection('users').doc(user.uid).set(defaultProfile);
+    let doc = await db().collection('users').doc(user.uid).get();
+    let loggedUser = doc.data();
+    dispatch(actionCreators.loadUser({...loggedUser, uid: user.uid}));
+    return user;
   } catch (error) {
     console.log('google sign in err => ', error);
     dispatch(actionCreators.failure(error.message));

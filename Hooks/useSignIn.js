@@ -1,4 +1,5 @@
 import auth from '@react-native-firebase/auth';
+import db from '@react-native-firebase/firestore';
 
 import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
@@ -13,7 +14,7 @@ const useSignIn = () => {
   // login
   const signIn = useCallback(
     async userData => {
-      await signInUser(dispatch, userData);
+      return await signInUser(dispatch, userData);
     },
     [dispatch],
   );
@@ -37,8 +38,10 @@ const signInUser = async (dispatch, {email, password}) => {
     let res = await auth().signInWithEmailAndPassword(email, password);
     let user = res.user.toJSON();
 
-    console.log('User  signed in!');
-    dispatch(actionCreators.loadUser(user));
+    console.log('User signed in!');
+    let doc = await db().collection('users').doc(user.uid).get();
+    let loggedUser = doc.data();
+    dispatch(actionCreators.loadUser({...loggedUser, uid: user.uid}));
     return user;
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {

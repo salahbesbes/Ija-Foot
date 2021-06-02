@@ -19,8 +19,9 @@ export function authReducer(state, {type, payload}) {
       };
     case RESET:
       return {...state, loading: false, error: false};
-    // case LOGOUT:
-    //   return {loading: false, error: false, user: undefined};
+    case LOGOUT:
+      console.log('log reducer');
+      return {...state, loading: false, error: false, user: undefined};
     case FAILURE:
       //todo: update this later
       return {...state, loading: false, error: payload, user: undefined};

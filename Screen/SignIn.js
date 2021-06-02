@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
+import GoogleButton from '../components/GoogleButton';
+import SignOutButton from '../components/SignOutButton';
 import useSignIn from '../Hooks/useSignIn';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {styles} from '../styles/default';
@@ -8,20 +10,7 @@ const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {loading, user, error, dispatch, signIn} = useSignIn();
-  return loading ? (
-    <>
-      <Text style={{backgroundColor: 'yellow', marginTop: 30}}>
-        Loading .................
-      </Text>
-      <Button
-        title="reset state"
-        color="orange"
-        onPress={() => {
-          dispatch(actionCreators.failure());
-        }}
-      />
-    </>
-  ) : (
+  return (
     <SafeAreaView>
       {!user ? (
         <View>
@@ -35,39 +24,46 @@ const SignIn = ({navigation}) => {
             style={styles.input}
             onChangeText={setPassword}
             value={password}
-            placeholder="password "
+            placeholder="password"
           />
           <Button
             title="Login"
-            onPress={() => {
-              signIn({email, password});
-              setEmail('');
-              setPassword('');
+            onPress={async () => {
+              await signIn({email, password});
+              navigation.navigate('Home');
             }}
           />
+          <GoogleButton nav={navigation} />
           <Button
             title="Go Sign Up"
             color="grey"
-            onPress={() => {
+            onPress={async () => {
               dispatch(actionCreators.reset());
               navigation.push('SignUp');
             }}
           />
+          {loading ? (
+            <>
+              <Text style={{backgroundColor: 'yellow', marginTop: 30}}>
+                Loading .................
+              </Text>
+              <Button
+                title="reset state"
+                color="orange"
+                onPress={() => {
+                  dispatch(actionCreators.failure());
+                }}
+              />
+            </>
+          ) : null}
         </View>
       ) : (
         <>
           <Button
             title="delete user from state"
-            onPress={() => dispatch(actionCreators.failure())}
+            onPress={() => dispatch(actionCreators.logOut())}
           />
-          <Button
-            title="lotOut"
-            color="grey"
-            onPress={() => {
-              dispatch(actionCreators.lotOut());
-              navigation.push('SignUp');
-            }}
-          />
+          <SignOutButton nav={navigation} />
         </>
       )}
       {error && (

@@ -6,7 +6,7 @@ const PlayersFeed = () => {
     <SafeAreaView>
       <Text> this is Players Feed </Text>
     </SafeAreaView>
-  );Match
+  );
 };
 
 export default PlayersFeed;

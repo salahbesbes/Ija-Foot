@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import MainNavigator from './MainNavigator';
 import SignIn from '../screen/SignIn';
 import SignUp from '../screen/SignUp';
-import { AppStateContext } from '../stateProvider';
+import {AppStateContext} from '../stateProvider';
 
 const Stack = createStackNavigator();
 
@@ -14,16 +14,14 @@ const RootNavigator = () => {
   const {user} = state;
   return (
     <NavigationContainer>
-        {
-          user? (
-            <MainNavigator />
-          ):(
-            <Stack.Navigator>
-              <Stack.Screen name="SignIn" component={SignIn} />
-              <Stack.Screen name="SignUp" component={SignUp} />
-            </Stack.Navigator>
-          )
-        }
+      {user ? (
+        <MainNavigator />
+      ) : (
+        <Stack.Navigator>
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 };

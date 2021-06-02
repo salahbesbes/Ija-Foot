@@ -1,14 +1,12 @@
 import React from 'react';
-import RootNavigator from "./navigation/RootNavigator";
+import RootNavigator from './navigation/RootNavigator';
 import AppStateProvider from './stateProvider';
-
 
 const App = () => {
   return (
     <AppStateProvider>
-      <RootNavigator/>
+      <RootNavigator />
     </AppStateProvider>
-      
   );
 };
 

@@ -38,7 +38,7 @@ const signInUser = async (dispatch, {email, password}) => {
     let res = await auth().signInWithEmailAndPassword(email, password);
     let user = res.user.toJSON();
 
-    console.log('User signed in!');
+    console.log('User signed in!' + user.toString());
     let doc = await db().collection('users').doc(user.uid).get();
     let loggedUser = doc.data();
     dispatch(actionCreators.loadUser({...loggedUser, uid: user.uid}));

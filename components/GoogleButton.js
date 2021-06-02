@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button} from 'react-native';
-import {useGoogleService} from '../Hooks/useGoogle';
+import {useGoogleService} from '../hooks/useGoogle';
 
 export default function GoogleButton({nav}) {
   const {signUpWithGoogle, user, loading} = useGoogleService();
@@ -12,7 +12,7 @@ export default function GoogleButton({nav}) {
         onPress={async () => {
           //todo: check for the return val if undefined dont push
           await signUpWithGoogle();
-          nav.push('Profile');
+          /* nav.push('Profile'); */
         }}
       />
     </>

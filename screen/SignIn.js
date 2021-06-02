@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
 import GoogleButton from '../components/GoogleButton';
 import SignOutButton from '../components/SignOutButton';
-import useSignIn from '../Hooks/useSignIn';
+import useSignIn from '../hooks/useSignIn';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {styles} from '../styles/default';
 
@@ -30,7 +30,7 @@ const SignIn = ({navigation}) => {
             title="Login"
             onPress={async () => {
               await signIn({email, password});
-              navigation.navigate('Home');
+              /* navigation.navigate('Home'); */
             }}
           />
           <GoogleButton nav={navigation} />
@@ -39,7 +39,7 @@ const SignIn = ({navigation}) => {
             color="grey"
             onPress={async () => {
               dispatch(actionCreators.reset());
-              navigation.push('SignUp');
+              /* navigation.push('SignUp'); */
             }}
           />
           {loading ? (

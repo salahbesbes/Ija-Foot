@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
-import useSignUp from '../Hooks/useSignUp';
+import useSignUp from '../hooks/useSignUp';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {styles} from '../styles/default';
 
@@ -41,7 +41,7 @@ const SignUp = ({navigation}) => {
             title="Sign Up"
             onPress={async () => {
               await signUp({email, password});
-              navigation.navigate('Home');
+              /* navigation.navigate('Home'); */
             }}
           />
         </View>

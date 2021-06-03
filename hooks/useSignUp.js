@@ -39,10 +39,13 @@ const signUpUser = async (dispatch, {email, password}) => {
     let res = await auth().createUserWithEmailAndPassword(email, password);
     let user = res.user.toJSON();
 
+    let defaultProfile = {
+      email: user.email,
+    };
+    // when we create new account we are creting a new doc in users collection
+    await db().collection('users').doc(user.uid).set(defaultProfile);
+    dispatch(actionCreators.reset());
     console.log('User  created !');
-    let doc = await db().collection('users').doc(user.uid).get();
-    let loggedUser = doc.data();
-    dispatch(actionCreators.loadUser({...loggedUser, uid: user.uid}));
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
       console.log('That email address is already in use!');
@@ -53,7 +56,7 @@ const signUpUser = async (dispatch, {email, password}) => {
     }
     console.log('SIGN UP err => ', error);
 
-    dispatch(actionCreators.failure(error.message.split('/')[1]));
+    dispatch(actionCreators.failure(error.message));
     return;
   }
 };

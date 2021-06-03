@@ -12,7 +12,6 @@ export default function GoogleButton({nav}) {
         onPress={async () => {
           //todo: check for the return val if undefined dont push
           await signUpWithGoogle();
-          /* nav.push('Profile'); */
         }}
       />
     </>

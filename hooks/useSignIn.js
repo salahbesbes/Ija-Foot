@@ -37,12 +37,8 @@ const signInUser = async (dispatch, {email, password}) => {
   try {
     let res = await auth().signInWithEmailAndPassword(email, password);
     let user = res.user.toJSON();
-
-    console.log('User signed in!' + user.toString());
-    let doc = await db().collection('users').doc(user.uid).get();
-    let loggedUser = doc.data();
-    dispatch(actionCreators.loadUser({...loggedUser, uid: user.uid}));
-    return user;
+    console.log('User signed in!', user?.email || 'user is not json');
+    dispatch(actionCreators.reset());
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
       console.log('That email address is already in use!');

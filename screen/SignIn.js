@@ -30,16 +30,14 @@ const SignIn = ({navigation}) => {
             title="Login"
             onPress={async () => {
               await signIn({email, password});
-              /* navigation.navigate('Home'); */
             }}
           />
           <GoogleButton nav={navigation} />
           <Button
             title="Go Sign Up"
             color="grey"
-            onPress={async () => {
-              dispatch(actionCreators.reset());
-              /* navigation.push('SignUp'); */
+            onPress={() => {
+              navigation.navigate('SignUp');
             }}
           />
           {loading ? (

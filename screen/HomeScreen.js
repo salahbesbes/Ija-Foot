@@ -5,6 +5,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
 import SignOutButton from '../components/SignOutButton';
+import GoogleButton from '../components/GoogleButton';
 
 const FeedTab = createMaterialTopTabNavigator();
 
@@ -18,6 +19,13 @@ const HomeScreen = ({navigation}) => {
           backgroundColor: 'magenta',
         }}>
         <SignOutButton />
+        <Button
+          title="go to Profile"
+          onPress={() => {
+            navigation.navigate('Profile');
+          }}
+        />
+        <GoogleButton nav={navigation} />
       </View>
       <FeedTab.Navigator>
         <FeedTab.Screen name="PlayersFeed" component={PlayersFeed} />

@@ -39,21 +39,23 @@ const GoogleSignUp_In = async dispatch => {
     // Sign-in the user with the credential
     let res = await auth().signInWithCredential(googleCredential);
     let user = res.user.toJSON();
+    let alreadyExist = await db().collection('players').doc(user.uid).get()
+      ._exists;
+
+    if (!alreadyExist) {
+      console.log();
+      let defaultProfile = {
+        fullName: user.displayName || 'No Name',
+        email: user.email,
+        avatar: user.photoUrl || 'defalt avatar',
+      };
+
+      // either new account or logging in we are setting those values
+      await db().collection('players').doc(user.uid).set(defaultProfile);
+    }
+
+    dispatch(actionCreators.reset());
     console.log('sign In/up With Google');
-    let defaultProfile = {
-      fullName: user.displayName || 'No Name',
-      email: user.email,
-      avatar: 'defaultAvatar',
-      phoneNumber: '11111112',
-      // password: user.password,
-      age: '28',
-      nickName: 'no nick name',
-    };
-    await db().collection('users').doc(user.uid).set(defaultProfile);
-    let doc = await db().collection('users').doc(user.uid).get();
-    let loggedUser = doc.data();
-    dispatch(actionCreators.loadUser({...loggedUser, uid: user.uid}));
-    return user;
   } catch (error) {
     console.log('google sign in err => ', error);
     dispatch(actionCreators.failure(error.message));

@@ -11,7 +11,6 @@ export default function SignOutButton({nav}) {
         title="sign Out"
         onPress={async () => {
           await signOut();
-          /* nav.navigate('SignIn'); */
         }}
       />
     </>

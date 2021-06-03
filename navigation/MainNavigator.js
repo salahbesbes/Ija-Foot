@@ -5,6 +5,7 @@ import HomeScreen from '../screen/HomeScreen';
 import MyTeam from '../screen/MyTeam';
 import FindMatch from '../screen/FindMatch';
 import Match from '../screen/Match';
+import Profile from '../screen/Profile';
 
 const MainStack = createStackNavigator();
 
@@ -15,6 +16,7 @@ const MainNavigator = () => {
       <MainStack.Screen name="MyTeam" component={MyTeam} />
       <MainStack.Screen name="LookingForMatch" component={FindMatch} />
       <MainStack.Screen name="Match" component={Match} />
+      <MainStack.Screen name="Profile" component={Profile} />
     </MainStack.Navigator>
   );
 };

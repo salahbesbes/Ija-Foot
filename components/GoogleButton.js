@@ -7,12 +7,11 @@ export default function GoogleButton({nav}) {
   return (
     <>
       <Button
-        color={user ? 'violet' : loading ? 'black' : 'orange'}
-        title={user ? 'user is signed In' : 'sign in With google'}
+        color="orange"
+        title="sign in With google"
         onPress={async () => {
           //todo: check for the return val if undefined dont push
           await signUpWithGoogle();
-          /* nav.push('Profile'); */
         }}
       />
     </>

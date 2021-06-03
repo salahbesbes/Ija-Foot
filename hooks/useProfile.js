@@ -1,6 +1,6 @@
 import db from '@react-native-firebase/firestore';
 
-import {useCallback, useContext, useEffect} from 'react';
+import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
 
@@ -12,34 +12,23 @@ const useProfile = () => {
   const {authContext} = useContext(AppStateContext);
   const [state, dispatch] = authContext;
   const {user} = state;
-  // this snap is watching on any change made on the document
-  // this sucscriber execute on every time the doc updates and update the local state
-  useEffect(() => {
-    const subscriber = db()
-      .collection('users')
-      .doc(user.uid)
-      .onSnapshot(documentSnapshot => {
-        let updatedUser = documentSnapshot.data();
-        dispatch(actionCreators.loadUser({...updatedUser, uid: user.uid}));
-        console.log('local user updated');
-      });
-
-    console.log('profile useeffect');
-    // Stop listening for updates when no longer required
-    return () => subscriber();
-  }, [dispatch, user.uid]);
 
   // since we need sinIn to call it on Click events we returning it with the reducer state modified
   const updateProfile = useCallback(
     async newProfile => {
       dispatch(actionCreators.loading());
       try {
-        // console.log('newProfile :>> ', newProfile);
-        await db().collection('users').doc(user.uid).update(newProfile);
-
-        // dispatch(actionCreators.loadUser({...loadedUser, uid: user.uid}));
+        // let code = await auth().sendPasswordResetEmail(
+        //   'salah.besbes9@gmail.com',
+        // );
+        // console.log('code :>> ', code);
+        // let res = await auth().confirmPasswordReset('555', '987654');
+        // console.log('res', res);
+        await db().collection('players').doc(user.uid).update(newProfile);
+        dispatch(actionCreators.loadUser({...newProfile, uid: user.id}));
       } catch (error) {
         dispatch(actionCreators.failure(error.message));
+        console.log('updateProfile ERROR => ', error.message);
         return;
       }
     },

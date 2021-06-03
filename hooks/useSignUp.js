@@ -41,9 +41,10 @@ const signUpUser = async (dispatch, {email, password}) => {
 
     let defaultProfile = {
       email: user.email,
+      available: false,
     };
     // when we create new account we are creting a new doc in users collection
-    await db().collection('users').doc(user.uid).set(defaultProfile);
+    await db().collection('players').doc(user.uid).set(defaultProfile);
     dispatch(actionCreators.reset());
     console.log('User  created !');
   } catch (error) {

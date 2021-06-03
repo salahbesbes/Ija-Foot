@@ -19,7 +19,7 @@ const RootNavigator = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async userChanged => {
       if (userChanged) {
-        let doc = await db().collection('users').doc(userChanged.uid).get();
+        let doc = await db().collection('players').doc(userChanged.uid).get();
         let loggedUser = doc.data();
         dispatch(
           actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
@@ -38,7 +38,6 @@ const RootNavigator = () => {
     });
     return subscriber; // unsubscribe on unmount
   }, [dispatch]);
-  console.log('routNav', user);
   return (
     <NavigationContainer>
       {user ? (

@@ -24,8 +24,8 @@ const useProfile = () => {
         // console.log('code :>> ', code);
         // let res = await auth().confirmPasswordReset('555', '987654');
         // console.log('res', res);
-        await db().collection('users').doc(user.uid).update(newProfile);
-        dispatch(actionCreators.loadUser(newProfile));
+        await db().collection('players').doc(user.uid).update(newProfile);
+        dispatch(actionCreators.loadUser({...newProfile, uid: user.id}));
       } catch (error) {
         dispatch(actionCreators.failure(error.message));
         console.log('updateProfile ERROR => ', error.message);

@@ -53,7 +53,6 @@ const Profile = ({navigation}) => {
               fullName: fullName || '',
               nickName: nickName || '',
               phoneNumber: phoneNumber || '',
-              uid: user.uid || '',
             });
           }}
         />

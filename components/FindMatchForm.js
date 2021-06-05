@@ -9,10 +9,12 @@ import {
 } from 'react-native';
 
 import LocationPicker from './LocationPicker';
+import ToggleButton from './ToggleButton';
 
 const FindMatchForm = ({modalState, setModalState}) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [location, setLocation] = useState(undefined);
+  const [isMotorized, setIsMotorized] = useState(false);
   const [descriptionText, setDescriptionText] = useState('');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
@@ -38,7 +40,17 @@ const FindMatchForm = ({modalState, setModalState}) => {
         />
       </View>
       <View style={styles.body}>
-        <LocationPicker location={location} onLocationChange={changeLocation} />
+        <View style={{flexDirection: 'row'}}>
+          <LocationPicker
+            location={location}
+            onLocationChange={changeLocation}
+          />
+          <ToggleButton
+            displayText="Motorized"
+            isEnabled={isMotorized}
+            setIsEnabled={setIsMotorized}
+          />
+        </View>
         <TextInput
           style={styles.input}
           placeholder="Description"

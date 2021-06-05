@@ -1,10 +1,13 @@
 import {Pressable, StyleSheet, Text} from 'react-native';
 import React, {useState} from 'react';
 
-const ToggleButton = ({displayText, isEnabled, setIsEnabled}) => {
+const ToggleButton = ({displayText, isEnabled, setIsEnabled, disabled}) => {
   return (
     <Pressable
-      style={[styles.button, isEnabled ? styles.enabled : styles.disabled]}
+      style={[
+        styles.button,
+        isEnabled && !disabled ? styles.enabled : styles.disabled,
+      ]}
       onPress={() => setIsEnabled(!isEnabled)}>
       <Text>{displayText}</Text>
     </Pressable>

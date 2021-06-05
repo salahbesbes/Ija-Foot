@@ -15,23 +15,23 @@ const RootNavigator = () => {
   const {authContext} = React.useContext(AppStateContext);
   const [state, dispatch] = authContext; // distructuring
   const {user} = state;
-
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async userChanged => {
       try {
         if (userChanged) {
           let doc = await db().collection('players').doc(userChanged.uid).get();
           let loggedUser = doc.data();
+          dispatch(
+            actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
+          );
           let docs = await db()
             .collection('players')
             .doc(userChanged.uid)
             .collection('friends')
             .get();
-          let playerFriends = docs.docs;
-          console.log(playerFriends);
-          dispatch(
-            actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
-          );
+          let playerFriends = docs.docs.map(playerDoc => {
+            return {...playerDoc.data(), uid: playerDoc.id};
+          });
           dispatch(actionCreators.setFriends(playerFriends));
         } else {
           /// no one connected userChanged === null

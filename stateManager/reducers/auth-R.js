@@ -54,12 +54,11 @@ export function authReducer(state, {type, payload}) {
         userFriends: newUserFriends,
       };
     case SETFRIEDNS:
-      const newList = payload.map(el => el.data());
       return {
         ...state,
         loading: false,
         error: false,
-        userFriends: newList,
+        userFriends: payload,
       };
     default:
       return state;

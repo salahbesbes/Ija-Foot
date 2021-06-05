@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
-import {useFriends} from '../hooks/useFriends';
 import useProfile from '../hooks/useProfile';
 import {styles} from '../styles/default';
 

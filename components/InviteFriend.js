@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Button,
   FlatList,
@@ -9,15 +9,10 @@ import {
 import {Alert, Modal, Pressable, View} from 'react-native';
 import SignOutButton from './SignOutButton';
 import {useFriends} from '../hooks/useFriends';
-import db from '@react-native-firebase/firestore';
 import {actionCreators} from '../stateManager/actions/auth-A';
 
 const Friend = ({friend, backgroundColor, textColor, setSelectedId}) => {
   const {addFriend, deletFriend} = useFriends();
-
-  // useEffect(() => {
-  //   return getFriend(friend);
-  // }, [getFriend, friend]);
 
   return (
     <View style={{flexDirection: 'row'}}>
@@ -43,8 +38,8 @@ const Friend = ({friend, backgroundColor, textColor, setSelectedId}) => {
           {flexDirection: 'row', justifyContent: 'flex-end'},
         ]}>
         <Text style={[modal.title, textColor]}>
-          {friend.nickName}
-          {friend.age}
+          {friend?.nickName}
+          {friend?.age}
         </Text>
         <Text style={modal.avatar}>Avatar</Text>
       </TouchableOpacity>
@@ -56,7 +51,7 @@ const renderItem = ({item}, selectedId, setSelectedId) => {
   const color = item.uid === selectedId ? 'white' : 'black';
   return (
     <Friend
-      friend={{...item, uid: item.uid}}
+      friend={item}
       backgroundColor={{backgroundColor}}
       textColor={{color}}
       setSelectedId={setSelectedId}
@@ -67,29 +62,8 @@ const renderItem = ({item}, selectedId, setSelectedId) => {
 const InviteFriends = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [players, setplayers] = useState([]);
-  const {userFriends, fetchFriendList, friendsList, dispatch} = useFriends();
-  const fetchAllplayers = useCallback(async () => {
-    try {
-      let res = await db().collection('players').get();
-      /// the element in the arrau doesnt have uid
-      // thats why i have created an attribute id in the doc
-
-      let tempList = [];
-      res.docs.map(async friend => {
-        let friendData = friend.data();
-        tempList.push({uid: friend.id, ...friendData});
-      });
-      setplayers(tempList);
-    } catch (error) {
-      console.log('useFriends ERROR :>> ', error);
-    }
-  }, []);
-  useEffect(() => {
-    console.log('===============================');
-    fetchAllplayers();
-    return fetchFriendList();
-  }, [fetchFriendList, fetchAllplayers]);
+  const {userFriends, dispatch} = useFriends();
+  console.log(userFriends.length);
 
   return (
     <View style={modal.container}>
@@ -102,7 +76,7 @@ const InviteFriends = ({navigation}) => {
         }}>
         <View style={[modal.body, modal.container]}>
           <FlatList
-            data={players}
+            data={userFriends}
             renderItem={item => renderItem(item, selectedId, setSelectedId)}
             keyExtractor={playerData => playerData.uid}
             extraData={selectedId}

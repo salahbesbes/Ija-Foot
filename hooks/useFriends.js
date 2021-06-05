@@ -1,6 +1,6 @@
 import db from '@react-native-firebase/firestore';
 
-import {useCallback, useContext, useState} from 'react';
+import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
 
@@ -9,8 +9,6 @@ import {AppStateContext} from '../stateProvider';
 
 export const useFriends = () => {
   // we are using the reducer here so we returning its value
-  //todo: try to export line below to the main component and pass them as props here
-  const [friendsList, setFriendsList] = useState([]);
   const {authContext} = useContext(AppStateContext);
   const [state, dispatch] = authContext;
   const {user, userFriends} = state;
@@ -23,43 +21,38 @@ export const useFriends = () => {
         .doc(user.uid)
         .collection('friends')
         .get();
-      /// the element in the arrau doesnt have uid
-      // thats why i have created an attribute id in the doc
-
+      // create a friend data() + uid
       let tempList = [];
-      res.docs.map(async friend => {
-        let friendData = friend.data();
-        tempList.push({uid: friend.id, ...friendData});
+      res.docs.map(async friendDoc => {
+        let friendData = friendDoc.data();
+        tempList.push({uid: friendDoc.id, ...friendData});
       });
-      setFriendsList(tempList);
-      // dispatch(actionCreators.updateFriends(tempList));
+      // setFriendsList(tempList);
+      dispatch(actionCreators.setFriends(tempList));
     } catch (error) {
       console.log('useFriends ERROR :>> ', error);
     }
-  }, [dispatch]);
+  }, [dispatch, user.uid]);
   /// create new doc in the friends coolection containing only the player Reference
   // if a player already exist we overwrite him
   // this logic need the player uid
   const addFriend = useCallback(
     async playerData => {
-      const newFriend = {uid: playerData.uid};
-      dispatch(actionCreators.addFriend(newFriend));
+      const {uid, ...other} = playerData;
+      // dispatch(actionCreators.addFriend(newFriend));
       try {
         await db()
           .collection('players')
           .doc(user.uid)
           .collection('friends')
           .doc(playerData.uid)
-          .set({
-            nickName: playerData.nickName,
-            fullName: 'this val is set bu default',
-            avatar: 'default avatar',
-          });
+          .set(other);
+        fetchFriendList();
       } catch (error) {
         console.log('useFriends ERROR :>> ', error);
       }
     },
-    [dispatch, user.uid],
+    [user.uid, fetchFriendList],
   );
 
   const deletFriend = useCallback(
@@ -72,14 +65,14 @@ export const useFriends = () => {
           .collection('friends')
           .doc(playerData.uid)
           .delete();
+        // fetchFriendList();
       } catch (error) {
         console.log('useFriends ERROR :>> ', error);
       }
     },
-    [dispatch, user.uid],
+    [user.uid, dispatch],
   );
   return {
-    friendsList,
     userFriends,
     addFriend,
     fetchFriendList,

@@ -41,6 +41,8 @@ const signUpUser = async (dispatch, {email, password}) => {
 
     let defaultProfile = {
       email: user.email,
+      //todo: remove or not this attribute
+      nickName: user.email.split('@')[0] + ' nickName',
       available: false,
     };
     // when we create new account we are creting a new doc in users collection

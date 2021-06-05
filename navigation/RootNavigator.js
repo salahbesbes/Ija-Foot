@@ -18,18 +18,25 @@ const RootNavigator = () => {
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async userChanged => {
-      if (userChanged) {
-        let doc = await db().collection('players').doc(userChanged.uid).get();
-        let loggedUser = doc.data();
-        dispatch(
-          actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
-        );
-      } else {
-        /// no one connected userChanged === null
-        dispatch(actionCreators.logOut());
-      }
-
       try {
+        if (userChanged) {
+          let doc = await db().collection('players').doc(userChanged.uid).get();
+          let loggedUser = doc.data();
+          let docs = await db()
+            .collection('players')
+            .doc(userChanged.uid)
+            .collection('friends')
+            .get();
+          let playerFriends = docs.docs;
+          console.log(playerFriends);
+          dispatch(
+            actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
+          );
+          dispatch(actionCreators.setFriends(playerFriends));
+        } else {
+          /// no one connected userChanged === null
+          dispatch(actionCreators.logOut());
+        }
       } catch (error) {
         console.log('routNav ERROR :>> ', error.message);
         dispatch(actionCreators.failure(error.message));

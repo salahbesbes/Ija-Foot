@@ -15,21 +15,28 @@ const RootNavigator = () => {
   const {authContext} = React.useContext(AppStateContext);
   const [state, dispatch] = authContext; // distructuring
   const {user} = state;
-
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async userChanged => {
-      if (userChanged) {
-        let doc = await db().collection('players').doc(userChanged.uid).get();
-        let loggedUser = doc.data();
-        dispatch(
-          actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
-        );
-      } else {
-        /// no one connected userChanged === null
-        dispatch(actionCreators.logOut());
-      }
-
       try {
+        if (userChanged) {
+          let doc = await db().collection('players').doc(userChanged.uid).get();
+          let loggedUser = doc.data();
+          dispatch(
+            actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
+          );
+          let docs = await db()
+            .collection('players')
+            .doc(userChanged.uid)
+            .collection('friends')
+            .get();
+          let playerFriends = docs.docs.map(playerDoc => {
+            return {...playerDoc.data(), uid: playerDoc.id};
+          });
+          dispatch(actionCreators.setFriends(playerFriends));
+        } else {
+          /// no one connected userChanged === null
+          dispatch(actionCreators.logOut());
+        }
       } catch (error) {
         console.log('routNav ERROR :>> ', error.message);
         dispatch(actionCreators.failure(error.message));

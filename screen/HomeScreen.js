@@ -28,6 +28,19 @@ const HomeScreen = ({navigation}) => {
         />
         <GoogleButton nav={navigation} />
       </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          height: 60,
+          backgroundColor: 'magenta',
+        }}>
+        <Button
+          title="InviteFriend"
+          onPress={() => {
+            navigation.navigate('InviteFriend');
+          }}
+        />
+      </View>
       <FeedTab.Navigator>
         <FeedTab.Screen name="PlayersFeed" component={PlayersFeed} />
         <FeedTab.Screen name="TeamsFeed" component={TeamsFeed} />

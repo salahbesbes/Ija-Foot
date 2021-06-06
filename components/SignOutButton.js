@@ -2,7 +2,7 @@ import React from 'react';
 import {Button} from 'react-native';
 import {useSignOut} from '../hooks/useSignOut';
 
-export default function SignOutButton({nav}) {
+export default function SignOutButton() {
   const {signOut} = useSignOut();
   return (
     <>

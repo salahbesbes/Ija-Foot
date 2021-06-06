@@ -7,6 +7,7 @@ import TeamsFeed from './TeamsFeed';
 import SignOutButton from '../components/SignOutButton';
 import GoogleButton from '../components/GoogleButton';
 import FindMatchModal from '../components/FindMatchModal';
+import CreateTeamModal from '../components/team/CreateTeamModal';
 
 const FeedTab = createMaterialTopTabNavigator();
 
@@ -52,10 +53,7 @@ const HomeScreen = ({navigation}) => {
           padding: 5,
         }}>
         <FindMatchModal />
-        <Button
-          title="go to MyTeam"
-          onPress={() => navigation.navigate('MyTeam')}
-        />
+        <CreateTeamModal />
         <Button
           title="go to Match"
           onPress={() => navigation.navigate('Match')}

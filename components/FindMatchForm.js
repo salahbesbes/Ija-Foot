@@ -12,7 +12,6 @@ import useAvailableForMatch from '../hooks/useAvailableForMatch';
 import LocationPicker from './LocationPicker';
 import ToggleButton from './ToggleButton';
 
-
 const FindMatchForm = ({modalState, setModalState}) => {
   const {user, updateAvailability} = useAvailableForMatch();
 

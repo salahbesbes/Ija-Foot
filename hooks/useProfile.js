@@ -51,6 +51,13 @@ const useProfile = () => {
                 );
               }
             });
+
+            // todo: update team profile
+            /**
+              await db()
+              .doc(`teams/${snap.id}/members/${user.uid}`)
+              .set(newProfile);
+             */
           });
       } catch (error) {
         dispatch(actionCreators.failure(error.message));

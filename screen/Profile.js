@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
+import UploadFile from '../components/UploadFile';
 import useProfile from '../hooks/useProfile';
 import {styles} from '../styles/default';
 
@@ -56,13 +57,8 @@ const Profile = ({navigation}) => {
             });
           }}
         />
-        <Button
-          title="go Home"
-          onPress={() => {
-            navigation.navigate('Home');
-          }}
-        />
       </View>
+      <UploadFile />
       {error && (
         <Text style={{backgroundColor: 'red', margin: 50, height: 80}}>
           {error}

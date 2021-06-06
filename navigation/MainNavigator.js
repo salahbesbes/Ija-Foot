@@ -7,6 +7,7 @@ import FindMatch from '../screen/FindMatch';
 import Match from '../screen/Match';
 import Profile from '../screen/Profile';
 import InviteFriend from '../components/InviteFriend';
+import Avatar from '../components/Avatar';
 
 const MainStack = createStackNavigator();
 

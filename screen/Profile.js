@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
+import TestUpload from '../components/TestUpload';
 import UploadFile from '../components/UploadFile';
 import useProfile from '../hooks/useProfile';
 import {styles} from '../styles/default';
@@ -59,6 +60,7 @@ const Profile = ({navigation}) => {
         />
       </View>
       <UploadFile />
+      {/* <TestUpload /> */}
       {error && (
         <Text style={{backgroundColor: 'red', margin: 50, height: 80}}>
           {error}

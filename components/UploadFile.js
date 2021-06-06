@@ -1,6 +1,6 @@
 import db from '@react-native-firebase/firestore';
-import {View, Button} from 'react-native';
-import RNFetchBlob from 'rn-fetch-blob';
+import {View, Button, Platform} from 'react-native';
+// import RNFetchBlob from 'rn-fetch-blob';
 
 import {utils} from '@react-native-firebase/app';
 import storage from '@react-native-firebase/storage';
@@ -39,21 +39,14 @@ const UploadFile = () => {
         const response = await DocumentPicker.pick({
           type: [DocumentPicker.types.images],
         });
-
-        console.log(response.uri);
-        //output: content://com.android.providers.media.documents/document/image%3A4055
-        const ref = storage().ref('images');
-        await ref.putFile(response.uri);
-        RNFetchBlob.fs
-          .stat(response.uri)
-          .then(async stats => {
-            console.log('stat', stats.path);
-            // const ref = storage().ref('images');
-            // await ref.putFile(stats.path);
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        console.log('response :>> ', JSON.stringify(response));
+        console.log('LOCAL :>> ', utils.FilePath.PICTURES_DIRECTORY);
+        console.log('uri', response.uri);
+        //output: /storage/0/content..://com.android.providers.media.documents/document/image%3A4055
+        const ref = storage().ref('images/test.png');
+        ref.putFile(response.uri).on('state_changed', snap => {
+          console.log('snap', snap);
+        });
       } catch (err) {
         if (DocumentPicker.isCancel(err)) {
         } else {
@@ -73,22 +66,15 @@ const UploadFile = () => {
       }
     }
   };
-  let uploadImage = async () => {
-    //Check if any file is selected or not
-    if (singleFile != null) {
-      //If file selected then create FormData
-      const fileToUpload = singleFile;
-      const data = new FormData();
-      data.append('name', 'Image Upload');
-      data.append('file_attachment', fileToUpload);
-      console.log(data);
-      if (data.status === 1) {
-        alert('Upload Successful');
+  let getPlatformURI = imagePath => {
+    let imgSource = imagePath;
+    if (isNaN(imagePath)) {
+      imgSource = {uri: this.state.imagePath};
+      if (Platform.OS === 'android') {
+        imgSource.uri = 'file:///' + imgSource.uri;
       }
-    } else {
-      //if no file selected the show alert
-      alert('Please Select File first');
     }
+    return imgSource;
   };
   return (
     <View style={styles.mainBody}>
@@ -128,7 +114,8 @@ const UploadFile = () => {
       <TouchableOpacity
         style={styles.buttonStyle}
         activeOpacity={0.5}
-        onPress={uploadImage}>
+        // onPress={uploadImage}
+      >
         <Text style={styles.buttonTextStyle}>Upload File</Text>
       </TouchableOpacity>
     </View>

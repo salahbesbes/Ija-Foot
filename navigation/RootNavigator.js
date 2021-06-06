@@ -21,6 +21,7 @@ const RootNavigator = () => {
         if (userChanged) {
           let doc = await db().collection('players').doc(userChanged.uid).get();
           let loggedUser = doc.data();
+
           dispatch(
             actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
           );

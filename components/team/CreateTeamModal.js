@@ -9,14 +9,15 @@ import {
   TextInput,
   Modal,
 } from 'react-native';
+import {useCreateTeam} from '../../hooks/useCreateTeam';
 import {actionCreators} from '../../stateManager/actions/auth-A';
+import {teamActions} from '../../stateManager/actions/team-A';
 import {AppStateContext} from '../../stateProvider';
 import CreateTeamForm from './CreateTeamForm';
 const CreateTeamModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [state, dispatch] = useContext(AppStateContext).authContext;
-  const {user, error} = state;
+  const {team, user, userDispatch, teamDispatch} = useCreateTeam();
 
   return (
     <View>
@@ -26,7 +27,7 @@ const CreateTeamModal = () => {
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(false);
-          dispatch(actionCreators.reset());
+          teamDispatch(teamActions.reset());
         }}>
         <View style={{justifyContent: 'center', marginTop: 10, flex: 1}}>
           <View style={styles.modalView}>
@@ -35,7 +36,7 @@ const CreateTeamModal = () => {
         </View>
       </Modal>
       <Pressable style={styles.openModal} onPress={() => setModalVisible(true)}>
-        <Text>Show Modal</Text>
+        <Text>{team.teamName ? 'My Team' : 'Create Team'}</Text>
       </Pressable>
     </View>
   );

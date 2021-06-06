@@ -18,8 +18,8 @@ const CreateTeamForm = ({setModalVisible}) => {
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
-  const {dispatch, createTeam, error} = useCreateTeam();
-
+  const {dispatch, createTeam, teamError, team} = useCreateTeam();
+  console.log(team);
   const submitCreateTeam = () => {
     if (teamName === '') {
       dispatch(actionCreators.failure('pls set a name'));
@@ -36,43 +36,46 @@ const CreateTeamForm = ({setModalVisible}) => {
   };
 
   return (
-    <ScrollView>
+    <View>
       <View style={styles.header}>
         <Text style={styles.headerText}>Create Team</Text>
-        <Text style={{color: 'red', flex: 1}}>{error}</Text>
+        <Text style={{color: 'red', flex: 1}}>{teamError}</Text>
         <Button style={{flex: 1}} title="Create" onPress={submitCreateTeam} />
       </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Team Name"
-        value={teamName}
-        onChangeText={setTeamName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Stadium Name"
-        value={stadium}
-        onChangeText={setStadium}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Description"
-        value={description}
-        onChangeText={setDescription}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="pick Date"
-        value={date}
-        onChangeText={setDate}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Location"
-        value={location}
-        onChangeText={setLocation}
-      />
-    </ScrollView>
+
+      <ScrollView>
+        <TextInput
+          style={styles.input}
+          placeholder="Team Name"
+          value={teamName}
+          onChangeText={setTeamName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Stadium Name"
+          value={stadium}
+          onChangeText={setStadium}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Description"
+          value={description}
+          onChangeText={setDescription}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="pick Date"
+          value={date}
+          onChangeText={setDate}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Location"
+          value={location}
+          onChangeText={setLocation}
+        />
+      </ScrollView>
+    </View>
   );
 };
 export default CreateTeamForm;

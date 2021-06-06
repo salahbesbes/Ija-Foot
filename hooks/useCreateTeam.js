@@ -2,37 +2,64 @@ import db from '@react-native-firebase/firestore';
 import {useEffect} from 'react';
 
 import {useCallback, useContext} from 'react';
+import {teamActions} from '../stateManager/actions/team-A';
 import {AppStateContext} from '../stateProvider';
 const timeStump = db.FieldValue.serverTimestamp();
 
 export const useCreateTeam = params => {
-  const [state, dispatch] = useContext(AppStateContext).authContext;
-  const {user} = state;
+  const {authContext, teamContext} = useContext(AppStateContext);
+  const [authState, userDispatch] = authContext;
+  const [teamState, teamDispatch] = teamContext;
+  const {team} = teamState;
+  const {user} = authState;
+
   useEffect(() => {}, []);
   const createTeam = useCallback(
     async teamData => {
       try {
-        let res = await db().collection('teams').add(teamData);
+        // update local state merge 2 objects
+        const newTeam = {...team, ...teamData};
+        console.log(newTeam);
+        let res = await db()
+          .collection('teams')
+          .add({...teamData, createdAt: timeStump});
 
         res.onSnapshot(async snap => {
           try {
+            const admin = {
+              fullName: user.fullName,
+              nickName: user.nickName,
+              email: user.email,
+            };
             // create Admin member
-            await db().doc(`teams/${snap.id}/members/${user.uid}`).set(user);
             const chatroom = await db()
+              .doc(`teams/${snap.id}/chatRoom/${user.uid}`)
+              .set({
+                createdAt: timeStump,
+                admin,
+              });
+            // we dont save all user info
+            const {availabilityData, isAvailable, uid, ...restProps} = user;
+            await db()
               .doc(`teams/${snap.id}`)
-              .collection('chatRoom')
-              .add({createdAt: timeStump});
-            console.log('chatroom :>> ', chatroom);
+              .collection('members')
+              .add(restProps);
+            newTeam.admin = {...admin, uid: user.uid};
+            newTeam.chatRoomId = chatroom.id;
+            newTeam.uid = snap.id;
+            newTeam.members = [{...restProps, uid: user.uid}];
+            teamDispatch(teamActions.createTeam(newTeam));
           } catch (error) {
-            console.log('create admin Team ERROR =>> ', error.message);
+            console.log(error);
+            console.log('create collections Team ERROR =>> ', error.message);
           }
         });
       } catch (error) {
         console.log('useCreateTeam ERROR =>> ', error.message);
       }
     },
-    [user],
+    [team, teamDispatch, user],
   );
 
-  return {createTeam, ...state, dispatch};
+  return {createTeam, userDispatch, teamDispatch, ...authState, ...teamState};
 };

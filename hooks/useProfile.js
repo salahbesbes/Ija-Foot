@@ -1,5 +1,4 @@
 import db from '@react-native-firebase/firestore';
-
 import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
@@ -25,7 +24,34 @@ const useProfile = () => {
         // let res = await auth().confirmPasswordReset('555', '987654');
         // console.log('res', res);
         await db().collection('players').doc(user.uid).update(newProfile);
-        dispatch(actionCreators.loadUser({...newProfile, uid: user.id}));
+        dispatch(actionCreators.loadUser({...newProfile, uid: user.uid}));
+
+        db()
+          .collection('players')
+          .doc(user.uid)
+          .onSnapshot(async _ => {
+            const friendDocs = await db()
+              .collection('players')
+              .doc(user.uid)
+              .collection('friends')
+              .get();
+            const lisFriends = friendDocs.docs;
+            lisFriends.forEach(async friendDoc => {
+              // friendDoc.ref.id friend id
+              try {
+                await db()
+                  .doc(
+                    `players/${friendDoc.ref.id.trim()}/friends/${user.uid.trim()}`,
+                  )
+                  .update(newProfile);
+              } catch (error) {
+                console.log(
+                  'i dont exist on my friend List of friends =>> ',
+                  error.message,
+                );
+              }
+            });
+          });
       } catch (error) {
         dispatch(actionCreators.failure(error.message));
         console.log('updateProfile ERROR => ', error.message);
@@ -36,4 +62,5 @@ const useProfile = () => {
   );
   return {...state, dispatch, updateProfile};
 };
+
 export default useProfile;

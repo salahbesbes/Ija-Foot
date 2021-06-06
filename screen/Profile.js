@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {View, TextInput, Button, SafeAreaView} from 'react-native';
+import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
 import useProfile from '../hooks/useProfile';
 import {styles} from '../styles/default';
 
 const Profile = ({navigation}) => {
-  const {user, updateProfile} = useProfile();
+  const {user, error, updateProfile} = useProfile();
   console.log('profile rendred');
   /// default value must be null so that the props defaultValue works
   const [age, setAge] = useState(null);
@@ -63,6 +63,11 @@ const Profile = ({navigation}) => {
           }}
         />
       </View>
+      {error && (
+        <Text style={{backgroundColor: 'red', margin: 50, height: 80}}>
+          {error}
+        </Text>
+      )}
     </SafeAreaView>
   );
 };

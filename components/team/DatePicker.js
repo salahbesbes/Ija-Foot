@@ -1,27 +1,25 @@
 import React, {useState} from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {Button, Platform, Text, View} from 'react-native';
-import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
+import {Text, View, Pressable} from 'react-native';
 
-const DatePicker = ({date, setDate}) => {
-  console.log(date, typeof date);
+const DatePicker = ({formDate, setFormDate}) => {
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [date, setDate] = useState(new Date());
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    console.log(event);
-    // setShow(Platform.OS === 'ios');
     if (event.type === 'set' && mode === 'date') {
       showMode('time');
     }
     if (event.type === 'set' && mode === 'time') {
       setShow(false);
       setDate(currentDate);
+      setFormDate(currentDate);
     }
     if (event.type === 'dismissed') {
-      setDate(new Date());
       setShow(false);
+      setFormDate(undefined);
     }
   };
 
@@ -34,10 +32,6 @@ const DatePicker = ({date, setDate}) => {
     showMode('date');
   };
 
-  const showTimepicker = () => {
-    showMode('time');
-  };
-
   return (
     <View>
       <Pressable style={{}} onPress={showDatepicker}>
@@ -47,7 +41,7 @@ const DatePicker = ({date, setDate}) => {
             paddingHorizontal: 30,
             height: 30,
           }}>
-          {date?.toLocaleString()}
+          {formDate ? formDate?.toLocaleString() : 'pick a Date'}
         </Text>
       </Pressable>
 
@@ -66,6 +60,6 @@ const DatePicker = ({date, setDate}) => {
 };
 
 DatePicker.defaultProps = {
-  date: new Date(),
+  formDate: undefined,
 };
 export default DatePicker;

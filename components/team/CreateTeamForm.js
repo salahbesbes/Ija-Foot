@@ -1,10 +1,7 @@
 import React, {useState} from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {
-  Switch,
   StyleSheet,
   Text,
-  Pressable,
   View,
   TextInput,
   ScrollView,
@@ -19,8 +16,8 @@ const CreateTeamForm = ({setModalVisible}) => {
   const [stadium, setStadium] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(undefined);
-  const {dispatch, createTeam, teamError, team} = useCreateTeam();
+  const [formDate, setFormDate] = useState(undefined);
+  const {dispatch, createTeam, teamError} = useCreateTeam();
   const submitCreateTeam = () => {
     if (teamName === '') {
       dispatch(actionCreators.failure('pls set a name'));
@@ -31,12 +28,11 @@ const CreateTeamForm = ({setModalVisible}) => {
       stadium,
       location,
       description,
-      date,
+      formDate,
     };
     createTeam(teamData);
   };
 
-  // todo: convert date to timestump that firebase understand
   return (
     <View>
       <View style={styles.header}>
@@ -64,7 +60,7 @@ const CreateTeamForm = ({setModalVisible}) => {
           value={description}
           onChangeText={setDescription}
         />
-        <DatePicker date={date} setDate={setDate} />
+        <DatePicker formDate={formDate} setFormDate={setFormDate} />
         <TextInput
           style={styles.input}
           placeholder="Location"

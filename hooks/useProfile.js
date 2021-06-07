@@ -2,7 +2,6 @@ import db from '@react-native-firebase/firestore';
 import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
-import {useUploadFile} from './useUpload';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import storage from '@react-native-firebase/storage';
 

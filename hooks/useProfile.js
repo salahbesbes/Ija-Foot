@@ -30,6 +30,7 @@ const useProfile = () => {
           .collection('players')
           .doc(user.uid)
           .onSnapshot(async _ => {
+            // todo: update the document in the member collection in team collection
             const friendDocs = await db()
               .collection('players')
               .doc(user.uid)

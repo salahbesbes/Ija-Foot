@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
-import TestUpload from '../components/TestUpload';
+import Avatar from '../components/Avatar';
 import UploadFile from '../components/UploadFile';
 import useProfile from '../hooks/useProfile';
 import {styles} from '../styles/default';
@@ -55,11 +55,13 @@ const Profile = ({navigation}) => {
               fullName: fullName || '',
               nickName: nickName || '',
               phoneNumber: phoneNumber || '',
+              avatar: user?.avatar,
             });
           }}
         />
       </View>
       <UploadFile />
+      <Avatar navigation={navigation} />
       {/* <TestUpload /> */}
       {error && (
         <Text style={{backgroundColor: 'red', margin: 50, height: 80}}>

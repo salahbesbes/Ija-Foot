@@ -24,7 +24,7 @@ const Avatar = ({navigation, imageUri}) => {
           <Image
             style={styles.tinyLogo}
             source={{
-              uri: imageUri ? imageUri : user.avatar,
+              uri: user.avatar,
             }}
           />
         ) : (

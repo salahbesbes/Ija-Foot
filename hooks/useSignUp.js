@@ -44,7 +44,6 @@ const signUpUser = async (dispatch, {email, password}) => {
       avatar: 'gs://ija-foot-a1c03.appspot.com/images/avatar/default.png',
       //todo: remove or not this attribute
       nickName: user.email.split('@')[0] + ' nickName',
-      available: false,
     };
     // when we create new account we are creting a new doc in users collection
     await db().collection('players').doc(user.uid).set(defaultProfile);

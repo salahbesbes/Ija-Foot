@@ -1,62 +1,10 @@
-import db from '@react-native-firebase/firestore';
-import {View, Button, Platform, Alert} from 'react-native';
-// import RNFetchBlob from 'rn-fetch-blob';
-import getPath from '@flyerhq/react-native-android-uri-path';
-
-import {utils} from '@react-native-firebase/app';
-import storage from '@react-native-firebase/storage';
-import React, {useContext, useState} from 'react';
+import React from 'react';
+import {View} from 'react-native';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
-import DocumentPicker from 'react-native-document-picker';
-import useProfile from '../hooks/useProfile';
-import {actionCreators} from '../stateManager/actions/auth-A';
-import {AppStateContext} from '../stateProvider';
+import {useUploadFile} from '../hooks/useUpload';
 
-const UploadFile = () => {
-  const {updateProfile, user, dispatch} = useProfile();
-  const selectFile = async () => {
-    // Opening Document Picker to select one file
-    try {
-      const response = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
-      });
-      const imageName = user.nickName + response.name; // salou7IMG20210520010840.jpg
-      const avatarRef = storage().ref(`images/avatar/${imageName}`);
-      const AbsImagePath = getPath(response.uri);
-
-      const uploadImageToStorage = avatarRef.putFile(AbsImagePath);
-
-      //while uploading
-      uploadImageToStorage.on(
-        'state_changed',
-        snap => {
-          //todo: Set the loading component
-          let percentage = Math.floor(
-            (snap.bytesTransferred / snap.totalBytes) * 100,
-          );
-          console.log(percentage);
-        },
-        err => {
-          console.log('Progess ERROR =>> ', err);
-        },
-      );
-      // after upload is complete
-      uploadImageToStorage.then(async () => {
-        const url = await avatarRef.getDownloadURL();
-        // send the url to the database and create a timestamp on create
-        console.log('we download the url from storage');
-        // we add the avatar url from the storage to the user localy first then
-        // when the user press submit the update the db with the new profile
-        dispatch(actionCreators.loadUser({...user, avatar: url}));
-      });
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-      } else {
-        console.log(err);
-      }
-    }
-  };
-
+const UploadFile = ({setFileObj}) => {
+  const {selectFile} = useUploadFile();
   return (
     <View style={styles.mainBody}>
       <View style={{alignItems: 'center'}}>
@@ -73,11 +21,14 @@ const UploadFile = () => {
           www.aboutreact.com
         </Text>
       </View>
-
       <TouchableOpacity
         style={styles.buttonStyle}
         activeOpacity={0.5}
-        onPress={selectFile}>
+        onPress={async () => {
+          //* return an bject that we need for the upload
+          const file = await selectFile();
+          setFileObj(file);
+        }}>
         <Text style={styles.buttonTextStyle}>Select File</Text>
       </TouchableOpacity>
     </View>

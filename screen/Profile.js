@@ -3,16 +3,17 @@ import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
 import Avatar from '../components/Avatar';
 import UploadFile from '../components/UploadFile';
 import useProfile from '../hooks/useProfile';
+import {useUploadFile} from '../hooks/useUpload';
 import {styles} from '../styles/default';
 
 const Profile = ({navigation}) => {
-  const {user, error, updateProfile} = useProfile();
-  console.log('profile rendred');
-  /// default value must be null so that the props defaultValue works
+  const {user, error, updateProfile, userDispatch} = useProfile();
   const [age, setAge] = useState(null);
   const [fullName, setFullName] = useState(null);
   const [nickName, setNickName] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
+  const [fileObj, setFileObj] = useState(null);
+
   useEffect(() => {
     setAge(user.age);
     setFullName(user.fullName);
@@ -49,18 +50,26 @@ const Profile = ({navigation}) => {
 
         <Button
           title="update Profile"
-          onPress={() => {
-            updateProfile({
-              age: age || '',
-              fullName: fullName || '',
-              nickName: nickName || '',
-              phoneNumber: phoneNumber || '',
-              avatar: user?.avatar,
-            });
+          onPress={async () => {
+            updateProfile(
+              {
+                age: age || '',
+                fullName: fullName || '',
+                nickName: nickName || '',
+                phoneNumber: phoneNumber || '',
+                avatar: user?.avatar,
+              },
+              fileObj,
+            );
+            setFileObj(null);
           }}
         />
       </View>
-      <UploadFile />
+      <UploadFile
+        user={user}
+        setFileObj={setFileObj}
+        userDispatch={userDispatch}
+      />
       <Avatar navigation={navigation} />
       {/* <TestUpload /> */}
       {error && (

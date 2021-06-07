@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useContext} from 'react';
 import {Button, View} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
@@ -6,11 +6,22 @@ import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
 import SignOutButton from '../components/SignOutButton';
 import GoogleButton from '../components/GoogleButton';
+import Avatar from '../components/Avatar';
+import {AppStateContext} from '../stateProvider';
 import FindMatchModal from '../components/FindMatchModal';
+import CreateTeamModal from '../components/team/CreateTeamModal';
 
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
+  const {authContext} = useContext(AppStateContext);
+  const [state, dispatch] = authContext;
+  const {user, userFriends} = state;
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <Avatar navigation={navigation} />,
+    });
+  }, [navigation]);
   return (
     <>
       <View
@@ -26,7 +37,7 @@ const HomeScreen = ({navigation}) => {
             navigation.navigate('Profile');
           }}
         />
-        <GoogleButton nav={navigation} />
+        <GoogleButton />
       </View>
       <View
         style={{
@@ -52,10 +63,7 @@ const HomeScreen = ({navigation}) => {
           padding: 5,
         }}>
         <FindMatchModal />
-        <Button
-          title="go to MyTeam"
-          onPress={() => navigation.navigate('MyTeam')}
-        />
+        <CreateTeamModal />
         <Button
           title="go to Match"
           onPress={() => navigation.navigate('Match')}

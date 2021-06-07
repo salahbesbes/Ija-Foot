@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import MainNavigator from './MainNavigator';
@@ -12,18 +12,26 @@ import {actionCreators} from '../stateManager/actions/auth-A';
 const Stack = createStackNavigator();
 
 const RootNavigator = () => {
-  const {authContext} = React.useContext(AppStateContext);
-  const [state, dispatch] = authContext; // distructuring
-  const {user} = state;
+  const {authContext, teamContext} = useContext(AppStateContext);
+  const [authState, userDispatch] = authContext;
+  const [teamState, teamDispatch] = teamContext;
+  const {team} = teamState;
+  const {user} = authState;
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async userChanged => {
       try {
         if (userChanged) {
+          //* fetch player
+
           let doc = await db().collection('players').doc(userChanged.uid).get();
           let loggedUser = doc.data();
-          dispatch(
+
+          userDispatch(
             actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
           );
+
+          //* fetch friends
+
           let docs = await db()
             .collection('players')
             .doc(userChanged.uid)
@@ -32,19 +40,21 @@ const RootNavigator = () => {
           let playerFriends = docs.docs.map(playerDoc => {
             return {...playerDoc.data(), uid: playerDoc.id};
           });
-          dispatch(actionCreators.setFriends(playerFriends));
+          userDispatch(actionCreators.setFriends(playerFriends));
+
+          //* fetch team if exist
         } else {
           /// no one connected userChanged === null
-          dispatch(actionCreators.logOut());
+          userDispatch(actionCreators.logOut());
         }
       } catch (error) {
         console.log('routNav ERROR :>> ', error.message);
-        dispatch(actionCreators.failure(error.message));
+        userDispatch(actionCreators.failure(error.message));
         return;
       }
     });
     return subscriber; // unsubscribe on unmount
-  }, [dispatch]);
+  }, [userDispatch]);
   return (
     <NavigationContainer>
       {user ? (

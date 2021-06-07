@@ -19,13 +19,13 @@ export const teamInitialState = {
 export function teamReducer(state, {type, payload}) {
   switch (type) {
     case LOADING:
-      return {...state, loading: true, error: false};
+      return {...state, teamLoading: true, teamError: false};
     case RESET:
-      return {...state, loading: false, error: false};
+      return {...state, teamLoading: false, teamError: false};
     case FAILURE:
-      return {...state, loading: false, error: payload};
+      return {...state, teamLoading: false, teamError: payload};
     case CREATETEAM:
-      return {...state, loading: false, error: false, team: payload};
+      return {...state, teamLoading: false, teamError: false, team: payload};
     default:
       return state;
   }

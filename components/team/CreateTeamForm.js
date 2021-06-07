@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-native';
 import {useCreateTeam} from '../../hooks/useCreateTeam';
-import {actionCreators} from '../../stateManager/actions/auth-A';
+import {teamActions} from '../../stateManager/actions/team-A';
 import DatePicker from './DatePicker';
 
 const CreateTeamForm = ({setModalVisible}) => {
@@ -17,10 +17,10 @@ const CreateTeamForm = ({setModalVisible}) => {
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [formDate, setFormDate] = useState(undefined);
-  const {dispatch, createTeam, teamError} = useCreateTeam();
+  const {teamDispatch, createTeam, teamError} = useCreateTeam();
   const submitCreateTeam = () => {
     if (teamName === '') {
-      dispatch(actionCreators.failure('pls set a name'));
+      teamDispatch(teamActions.failure('pls set a name'));
       return;
     }
     const teamData = {
@@ -31,6 +31,7 @@ const CreateTeamForm = ({setModalVisible}) => {
       formDate,
     };
     createTeam(teamData);
+    setModalVisible(false);
   };
 
   return (

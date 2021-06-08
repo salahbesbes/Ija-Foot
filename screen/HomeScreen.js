@@ -65,8 +65,8 @@ const HomeScreen = ({navigation}) => {
         <FindMatchModal />
         <CreateTeamModal />
         <Button
-          title="go to Match"
-          onPress={() => navigation.navigate('Match')}
+          title="go to MyTeam"
+          onPress={() => navigation.navigate('MyTeam')}
         />
       </View>
     </>

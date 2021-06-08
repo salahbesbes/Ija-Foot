@@ -19,6 +19,7 @@ const RootNavigator = () => {
   const {user} = authState;
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async userChanged => {
+      console.log('on auth changed is executed');
       try {
         if (userChanged) {
           //* fetch player

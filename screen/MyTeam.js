@@ -1,11 +1,15 @@
 import React from 'react';
-import {Text, SafeAreaView} from 'react-native';
+import {Text, SafeAreaView, View} from 'react-native';
+import {ChatRoom} from '../components/chat/chatRoom';
 
 const MyTeam = () => {
   return (
-    <SafeAreaView>
-      <Text> this is My team screen with chat </Text>
-    </SafeAreaView>
+    <>
+      <View>
+        <Text> this is a header </Text>
+      </View>
+      <ChatRoom />
+    </>
   );
 };
 

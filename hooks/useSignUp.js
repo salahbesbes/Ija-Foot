@@ -41,7 +41,7 @@ const signUpUser = async (dispatch, {email, password}) => {
 
     let defaultProfile = {
       email: user.email,
-      isAvailable: false,
+      avatar: 'gs://ija-foot-a1c03.appspot.com/images/avatar/default.png',
       //todo: remove or not this attribute
       nickName: user.email.split('@')[0] + ' nickName',
     };

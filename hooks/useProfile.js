@@ -105,6 +105,7 @@ const useProfile = () => {
   const ListningToChanges = useCallback(
     async newProfile => {
       try {
+        console.log('from Frofile => we are listnig');
         db()
           .collection('players')
           .doc(user.uid)
@@ -137,6 +138,7 @@ const useProfile = () => {
             //* if the player has a team
             if (team.uid) {
               const {availabilityData, isAvailable, uid, ...restProps} = user;
+              console.log('user :>> ', restProps);
               await db()
                 .doc(`teams/${team.uid}/members/${user.uid}`)
                 .set(restProps);
@@ -151,7 +153,13 @@ const useProfile = () => {
     },
     [team, user, userDispatch],
   );
-  return {...authState, userDispatch, updateProfile, team};
+  return {
+    ...authState,
+    userDispatch,
+    updateProfile,
+    ...teamState,
+    teamDispatch,
+  };
 };
 
 export default useProfile;

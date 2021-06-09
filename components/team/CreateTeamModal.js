@@ -1,24 +1,11 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {
-  Switch,
-  StyleSheet,
-  Text,
-  Pressable,
-  View,
-  Alert,
-  TextInput,
-  Modal,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, Pressable, View, Modal, Button} from 'react-native';
 import {useCreateTeam} from '../../hooks/useCreateTeam';
-import {actionCreators} from '../../stateManager/actions/auth-A';
 import {teamActions} from '../../stateManager/actions/team-A';
-import {AppStateContext} from '../../stateProvider';
 import CreateTeamForm from './CreateTeamForm';
 const CreateTeamModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
-
-  const {team, user, userDispatch, teamDispatch} = useCreateTeam();
-
+  const {team, teamDispatch, user} = useCreateTeam();
   return (
     <View>
       <Modal
@@ -35,9 +22,15 @@ const CreateTeamModal = () => {
           </View>
         </View>
       </Modal>
-      <Pressable style={styles.openModal} onPress={() => setModalVisible(true)}>
-        <Text>{team.teamName ? 'My Team' : 'Create Team'}</Text>
-      </Pressable>
+      {team.admin?.uid === user.uid ? (
+        <Button title="u are admin" disabled={false} />
+      ) : (
+        <Pressable
+          style={styles.openModal}
+          onPress={() => setModalVisible(true)}>
+          <Text> u can Create Team </Text>
+        </Pressable>
+      )}
     </View>
   );
 };

@@ -19,7 +19,7 @@ const DatePicker = ({formDate, setFormDate}) => {
     }
     if (event.type === 'dismissed') {
       setShow(false);
-      setFormDate(undefined);
+      setFormDate(null);
     }
   };
 
@@ -60,6 +60,6 @@ const DatePicker = ({formDate, setFormDate}) => {
 };
 
 DatePicker.defaultProps = {
-  formDate: undefined,
+  formDate: null,
 };
 export default DatePicker;

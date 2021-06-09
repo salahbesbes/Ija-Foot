@@ -10,13 +10,15 @@ import Avatar from '../components/Avatar';
 import {AppStateContext} from '../stateProvider';
 import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
+import {actionCreators} from '../stateManager/actions/auth-A';
+import {teamActions} from '../stateManager/actions/team-A';
 
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
-  const {authContext} = useContext(AppStateContext);
-  const [state, dispatch] = authContext;
-  const {user, userFriends} = state;
+  const {authContext, teamContext} = useContext(AppStateContext);
+  const [authState, userDispatch] = authContext;
+  const [teamState, teamDispatch] = teamContext;
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => <Avatar navigation={navigation} />,
@@ -51,6 +53,13 @@ const HomeScreen = ({navigation}) => {
             navigation.navigate('InviteFriend');
           }}
         />
+        <Button
+          title="reset State"
+          onPress={() => {
+            userDispatch(actionCreators.reset());
+            teamDispatch(teamActions.logOut());
+          }}
+        />
       </View>
       <FeedTab.Navigator>
         <FeedTab.Screen name="PlayersFeed" component={PlayersFeed} />
@@ -65,8 +74,8 @@ const HomeScreen = ({navigation}) => {
         <FindMatchModal />
         <CreateTeamModal />
         <Button
-          title="go to Match"
-          onPress={() => navigation.navigate('Match')}
+          title="chat Room"
+          onPress={() => navigation.navigate('MyTeam')}
         />
       </View>
     </>

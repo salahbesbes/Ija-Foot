@@ -10,6 +10,7 @@ import {
 import {useCreateTeam} from '../../hooks/useCreateTeam';
 import {teamActions} from '../../stateManager/actions/team-A';
 import DatePicker from './DatePicker';
+import LocationPicker from '../LocationPicker';
 
 const CreateTeamForm = ({setModalVisible}) => {
   const [teamName, setTeamName] = useState('');
@@ -62,12 +63,7 @@ const CreateTeamForm = ({setModalVisible}) => {
           onChangeText={setDescription}
         />
         <DatePicker formDate={formDate} setFormDate={setFormDate} />
-        <TextInput
-          style={styles.input}
-          placeholder="Location"
-          value={location}
-          onChangeText={setLocation}
-        />
+        <LocationPicker location={location} onLocationChange={setLocation} />
       </ScrollView>
     </View>
   );

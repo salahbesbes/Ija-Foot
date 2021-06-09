@@ -30,9 +30,11 @@ const RootNavigator = () => {
             .doc(userChanged.uid)
             .get();
           let loggedUser = userDoc.data();
-
           userDispatch(
-            actionCreators.loadUser({...loggedUser, uid: userChanged.uid}),
+            actionCreators.loadUser({
+              ...loggedUser,
+              uid: userChanged.uid,
+            }),
           );
 
           //* fetch friends
@@ -49,8 +51,8 @@ const RootNavigator = () => {
 
           userDispatch(actionCreators.setFriends(playerFriends));
 
+          console.log('team of the player is ', loggedUser.teamId);
           //* fetch team if exist
-          console.log('logged.teamId :>> ', loggedUser.teamId);
           if (loggedUser.teamId) {
             let teamDoc = await db()
               .collection('teams')
@@ -85,7 +87,8 @@ const RootNavigator = () => {
             teamDispatch(
               teamActions.setTeam({
                 ...playerTeam,
-                teamId: teamDoc.id,
+                admin: chatRoom.admin,
+                uid: teamDoc.id,
                 chatRoomId: chatRoom.uid,
                 members: teamMembers,
               }),
@@ -102,7 +105,7 @@ const RootNavigator = () => {
         return;
       }
     });
-    return subscriber(); // unsubscribe on unmount
+    return () => subscriber(); // unsubscribe on unmount
   }, [userDispatch, teamDispatch]);
   return (
     <NavigationContainer>

@@ -1,21 +1,25 @@
 import db from '@react-native-firebase/firestore';
-import {useCallback, useContext, useState} from 'react';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {useCallback, useContext} from 'react';
 import {AppStateContext} from '../stateProvider';
-const timeStump = db.FieldValue.serverTimestamp();
 
-export const useChatRoom = setRoomMessages => {
+export const useChatRoom = () => {
   const {authContext, teamContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
   const [teamState, teamDispatch] = teamContext;
   const {team} = teamState;
   const {user} = authState;
 
-  const ListningOnTeamUpdates = useCallback(async () => {
+  const ListningOnTeamUpdates = useCallback(() => {
     try {
-      team.teamId &&
+      console.log(
+        'teamid =>',
+        team.uid,
+        '||||  chatroom id =>',
+        team.chatRoomId,
+      );
+      team.uid &&
         db()
-          .doc(`teams/${team.teamId}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
+          .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
           .collection('messages')
           .orderBy('createdAt', 'desc')
           .onSnapshot(snapshot => {
@@ -29,14 +33,20 @@ export const useChatRoom = setRoomMessages => {
                 user: msg?.user,
               };
             });
-            // console.log('chatMessages :>> ', chatMessages.length);
-            setRoomMessages(chatMessages);
+
+            console.log('chatMessages :>> ', chatMessages.length);
+            // setRoomMessages(chatMessages);
           });
+      const unsubscribe = () => {
+        console.log('TBC - Unsubscribe for listSagas.js');
+      };
+      return unsubscribe;
     } catch (error) {
       console.log('Listning to chatRoom ERROR =>> ', error.message);
       console.error(error);
     }
-  }, [setRoomMessages]);
+  }, [team]);
+
   const sendMessage = useCallback(
     async callBackMessages => {
       try {
@@ -48,14 +58,12 @@ export const useChatRoom = setRoomMessages => {
             createdAt: Date.parse(createdAt),
             user: {
               _id: user.uid,
-              name: user.fullName,
-              avatar: user.avatar,
+              name: user.fullName || null,
+              avatar: user.avatar || null,
             },
           };
           db()
-            .doc(
-              'teams/pf9LChzNfzesr9z9BEL5/chatRoom/byMvNSft2MOcEovT19jz8UEBjUM2',
-            ) // chatRoomIdd
+            .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
             .collection('messages')
             .add(message);
         });
@@ -70,7 +78,7 @@ export const useChatRoom = setRoomMessages => {
 
       console.log('we sent a message');
     },
-    [user],
+    [user, team],
   );
 
   return {
@@ -80,6 +88,5 @@ export const useChatRoom = setRoomMessages => {
     userDispatch,
     teamDispatch,
     sendMessage,
-    setRoomMessages,
   };
 };

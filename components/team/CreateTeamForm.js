@@ -16,7 +16,7 @@ const CreateTeamForm = ({setModalVisible}) => {
   const [stadium, setStadium] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [formDate, setFormDate] = useState(undefined);
+  const [formDate, setFormDate] = useState(null);
   const {teamDispatch, createTeam, teamError} = useCreateTeam();
   const submitCreateTeam = () => {
     if (teamName === '') {
@@ -28,7 +28,7 @@ const CreateTeamForm = ({setModalVisible}) => {
       stadium,
       location,
       description,
-      formDate,
+      date: formDate,
     };
     createTeam(teamData);
     setModalVisible(false);

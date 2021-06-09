@@ -13,24 +13,25 @@ export const useChatRoom = setRoomMessages => {
 
   const ListningOnTeamUpdates = useCallback(async () => {
     try {
-      db()
-        .doc('teams/pf9LChzNfzesr9z9BEL5/chatRoom/byMvNSft2MOcEovT19jz8UEBjUM2') // chatRoomIdd
-        .collection('messages')
-        .orderBy('createdAt', 'desc')
-        .onSnapshot(snapshot => {
-          let chatMessages = snapshot.docs.map(doc => {
-            const msg = doc.data();
-            // const time = msg.createdAt;
-            return {
-              _id: doc.id,
-              text: msg?.text,
-              createdAt: msg?.createdAt,
-              user: msg?.user,
-            };
+      team.teamId &&
+        db()
+          .doc(`teams/${team.teamId}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
+          .collection('messages')
+          .orderBy('createdAt', 'desc')
+          .onSnapshot(snapshot => {
+            let chatMessages = snapshot.docs.map(doc => {
+              const msg = doc.data();
+              // const time = msg.createdAt;
+              return {
+                _id: doc.id,
+                text: msg?.text,
+                createdAt: msg?.createdAt,
+                user: msg?.user,
+              };
+            });
+            // console.log('chatMessages :>> ', chatMessages.length);
+            setRoomMessages(chatMessages);
           });
-          // console.log('chatMessages :>> ', chatMessages.length);
-          setRoomMessages(chatMessages);
-        });
     } catch (error) {
       console.log('Listning to chatRoom ERROR =>> ', error.message);
       console.error(error);

@@ -1,24 +1,12 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {
-  Switch,
-  StyleSheet,
-  Text,
-  Pressable,
-  View,
-  Alert,
-  TextInput,
-  Modal,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, Pressable, View, Modal} from 'react-native';
 import {useCreateTeam} from '../../hooks/useCreateTeam';
-import {actionCreators} from '../../stateManager/actions/auth-A';
 import {teamActions} from '../../stateManager/actions/team-A';
-import {AppStateContext} from '../../stateProvider';
 import CreateTeamForm from './CreateTeamForm';
 const CreateTeamModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {team, user, userDispatch, teamDispatch} = useCreateTeam();
-
+  const {team, teamDispatch} = useCreateTeam();
   return (
     <View>
       <Modal

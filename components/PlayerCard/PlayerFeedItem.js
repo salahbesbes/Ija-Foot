@@ -8,7 +8,7 @@ const PlayerItem = ({item}) => {
 
   return (
     <Card>
-      <CardContent playerData={player.availabilityData} />
+      <CardContent player={player} />
     </Card>
   );
 };

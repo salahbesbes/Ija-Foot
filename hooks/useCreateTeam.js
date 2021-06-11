@@ -18,46 +18,51 @@ export const useCreateTeam = () => {
     async teamData => {
       try {
         // update local state merge 2 objects
-        teamDispatch(teamActions.logOut());
         const newTeam = {...team, ...teamData};
         await db()
           .collection('teams')
           .add({...teamData, createdAt: timeStump})
           .then(async snap => {
             try {
-              const admin = {
-                fullName: user.fullName || null,
-                nickName: user.nickName || null,
-                email: user.email || null,
-                uid: user.uid || null,
-              };
               // create new chatRoom
               const chatRoom = await db()
                 .doc(`teams/${snap.id}`)
                 .collection('chatRoom')
                 .add({
                   createdAt: timeStump,
-                  admin,
+                  admins: [user.uid],
                 });
               console.log('from create team');
 
               // update profile
               db().doc(`players/${user.uid}`).update({
                 isAvailable: false,
-                availabilityData: null,
                 teamId: snap.id,
               });
 
               // we dont save all user info
               const {availabilityData, isAvailable, uid, ...restProps} = user;
               console.log('restProps :>> ', restProps);
-              await db()
-                .doc(`teams/${snap.id}/members/${user.uid}`)
-                .set(restProps);
-              newTeam.admin = admin;
+
+              const fakeFriends = [
+                {uid: 'fRNCo14Bl3aqwj7tvWM60FB8WIP2'},
+                {uid: 'byMvNSft2MOcEovT19jz8UEBjUM2'},
+                {uid: 'TtiY62vegubkXQgB1kIisdex5852'},
+                {uid: 'JyHSe4DMerbNUbisFApttw955uW2'},
+                {uid: user.uid},
+              ];
+              fakeFriends.forEach(async el => {
+                await db().doc(`teams/${snap.id}/members/${el.uid}`).set({});
+              });
+              newTeam.members = fakeFriends;
+
+              // await db()
+              //   .doc(`teams/${snap.id}/members/${user.uid}`)
+              //   .set(restProps);
+              newTeam.admins = [user.uid];
               newTeam.chatRoomId = chatRoom.id;
               newTeam.uid = snap.id;
-              newTeam.members = [{...restProps, uid: user.uid}];
+              // newTeam.members = [{...restProps, uid: user.uid}];
               teamDispatch(teamActions.setTeam(newTeam));
             } catch (error) {
               console.log(error);

@@ -13,7 +13,7 @@ export const teamInitialState = {
   team: {
     uid: null,
     members: [],
-    admin: null,
+    admins: [],
     createdAt: null,
     teamName: null,
     location: null,
@@ -32,7 +32,7 @@ export function teamReducer(state, {type, payload}) {
     case FAILURE:
       return {...state, teamLoading: false, teamError: payload};
     case LOGOUT:
-      return {...teamInitialState};
+      return teamInitialState;
 
     case CREATETEAM:
       return {...state, teamLoading: false, teamError: false, team: payload};

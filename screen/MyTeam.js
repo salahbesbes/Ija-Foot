@@ -1,12 +1,24 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Text, SafeAreaView, View} from 'react-native';
 import {ChatRoom} from '../components/chat/chatRoom';
+import {AppStateContext} from '../stateProvider';
 
 const MyTeam = () => {
+  const {authContext, teamContext} = useContext(AppStateContext);
+  const [authState, userDispatch] = authContext;
+  const [teamState, teamDispatch] = teamContext;
+  const {team} = teamState;
+  const {user} = authState;
+  const [members, setmembers] = useState([]);
+  useEffect(() => {
+    setmembers(team.members);
+  }, [team]);
   return (
     <>
       <View>
-        <Text> this is a header </Text>
+        {members?.map(el => {
+          <Text> {el.nickName} </Text>;
+        })}
       </View>
       <ChatRoom />
     </>

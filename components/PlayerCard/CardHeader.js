@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 
-export default function CardHeader() {
+export default function CardHeader({player}) {
   return (
     <View style={styles.container}>
       <View style={styles.avatar} />
-      <Text>loreum sample text</Text>
+      <Text>{player?.nickName}</Text>
     </View>
   );
 }

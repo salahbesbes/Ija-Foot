@@ -1,38 +1,16 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import db from '@react-native-firebase/firestore';
 
 import {GiftedChat} from 'react-native-gifted-chat';
 import {useChatRoom} from '../../hooks/useChatRoom';
 export function ChatRoom() {
-  console.log('chatroom rendred');
   const [roomMessages, setRoomMessages] = useState([]);
 
-  const {sendMessage, user, team} = useChatRoom(setRoomMessages);
+  const {sendMessage, ListningOnTeamUpdates, user} =
+    useChatRoom(setRoomMessages);
   useEffect(() => {
-    // 1st Argument - subscriber function
-    console.log('List Updates being Requested');
-    const unsubscribe = db()
-      .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
-      .collection('messages')
-      .orderBy('createdAt', 'desc')
-      .onSnapshot(snapshot => {
-        let chatMessages = snapshot.docs.map(doc => {
-          const msg = doc.data();
-          // const time = msg.createdAt;
-          return {
-            _id: doc.id,
-            text: msg?.text,
-            createdAt: msg?.createdAt,
-            user: msg?.user,
-          };
-        });
-
-        console.log('chatMessages :>> ', chatMessages.length);
-        setRoomMessages(chatMessages);
-      });
-    // console.log(unsubscribe.arguments);
-    return () => unsubscribe();
-  }, [team]);
+    ListningOnTeamUpdates(setRoomMessages);
+    return () => ListningOnTeamUpdates(setRoomMessages);
+  }, [ListningOnTeamUpdates]);
 
   const onSend = useCallback(
     (callBackMessages = []) => {

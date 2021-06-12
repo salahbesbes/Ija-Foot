@@ -25,7 +25,11 @@ const CreateTeamModal = () => {
         </View>
       </Modal>
       {team?.admins?.includes(user.uid) ? (
-        <Button title="u are admin" disabled={false} />
+        <Button
+          title="open"
+          disabled={false}
+          onPress={() => setModalVisible(true)}
+        />
       ) : (
         <Pressable
           style={styles.openModal}

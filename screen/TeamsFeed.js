@@ -26,7 +26,7 @@ const TeamsFeed = () => {
   }, [team]);
   return (
     <>
-      <FlatList
+      {/* <FlatList
         renderItem={({item}) => {
           return (
             <TouchableOpacity onPress={() => {}}>
@@ -55,7 +55,7 @@ const TeamsFeed = () => {
         }}
         data={members}
         keyExtractor={item => item.uid}
-      />
+      /> */}
 
       {/* <FlatList
         renderItem={({item}) => {

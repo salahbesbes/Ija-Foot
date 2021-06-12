@@ -1,16 +1,42 @@
 import React, {useState, useCallback, useEffect} from 'react';
-
+import CreateTeamModal from '../team/CreateTeamModal';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {useChatRoom} from '../../hooks/useChatRoom';
-export function ChatRoom() {
+export function ChatRoom({navigation}) {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <CreateTeamModal />,
+    });
+  }, [navigation]);
   const [roomMessages, setRoomMessages] = useState([]);
 
-  const {sendMessage, ListningOnTeamUpdates, user} =
-    useChatRoom(setRoomMessages);
+  const {
+    sendMessage,
+    ListenOnMessages,
+    user,
+    ListenOnChatRoomDoc,
+    ListenOnTeamDoc,
+  } = useChatRoom(setRoomMessages);
+
   useEffect(() => {
-    ListningOnTeamUpdates(setRoomMessages);
-    return () => ListningOnTeamUpdates(setRoomMessages);
-  }, [ListningOnTeamUpdates]);
+    const unsub = ListenOnMessages(setRoomMessages);
+    return () => unsub();
+  }, [ListenOnMessages]);
+
+  useEffect(() => {
+    const unsub = ListenOnTeamDoc();
+    return () => unsub();
+  }, [ListenOnTeamDoc]);
+
+  useEffect(() => {
+    const unsub = ListenOnTeamDoc();
+    return () => unsub();
+  }, [ListenOnTeamDoc]);
+
+  useEffect(() => {
+    const unsub = ListenOnChatRoomDoc();
+    return () => unsub();
+  }, [ListenOnChatRoomDoc]);
 
   const onSend = useCallback(
     (callBackMessages = []) => {
@@ -21,7 +47,6 @@ export function ChatRoom() {
     },
     [sendMessage],
   );
-
   return (
     <GiftedChat
       messages={roomMessages}

@@ -86,7 +86,7 @@ const PlayersFeed = () => {
   return (
     <>
       <View style={styles.flatList}>
-        <FlatList
+        {/* <FlatList
           renderItem={({item}) => <PlayerItem item={item} />}
           data={snapshots}
           onEndReachedThreshold={0}
@@ -96,7 +96,7 @@ const PlayersFeed = () => {
           onRefresh={onRefresh}
           refreshing={refreshing}
           keyExtractor={item => item.id}
-        />
+        /> */}
       </View>
       {/* <FlatList
         renderItem={({item}) => (

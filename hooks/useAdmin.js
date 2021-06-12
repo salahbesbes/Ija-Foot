@@ -134,5 +134,22 @@ export const useAdmin = () => {
     },
     [team, teamDispatch],
   );
-  return {kickPlayer, getAllMembers, givePrivilege, ...authState, ...teamState};
+  const updateDeatails = useCallback(
+    async chatRoomDetails => {
+      try {
+        await db().doc(`teams/${team.uid}`).update(chatRoomDetails);
+      } catch (error) {
+        console.log('update teamDoc Details ERROR =>>  ', error.message);
+      }
+    },
+    [team],
+  );
+  return {
+    updateDeatails,
+    kickPlayer,
+    getAllMembers,
+    givePrivilege,
+    ...authState,
+    ...teamState,
+  };
 };

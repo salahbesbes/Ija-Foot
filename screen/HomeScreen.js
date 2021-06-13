@@ -18,6 +18,7 @@ const HomeScreen = ({navigation}) => {
   const {authContext} = useContext(AppStateContext);
   const [state, dispatch] = authContext;
   const {user, userFriends} = state;
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => <Avatar navigation={navigation} />,
@@ -25,7 +26,7 @@ const HomeScreen = ({navigation}) => {
   }, [navigation]);
   return (
     <>
-      <View
+      {/* <View
         style={{
           flexDirection: 'row',
           height: 60,
@@ -52,7 +53,7 @@ const HomeScreen = ({navigation}) => {
             navigation.navigate('InviteFriend');
           }}
         />
-      </View>
+      </View> */}
       <FeedTab.Navigator>
         <FeedTab.Screen name="PlayersFeed" component={PlayersFeed} />
         <FeedTab.Screen name="TeamsFeed" component={TeamsFeed} />
@@ -60,9 +61,15 @@ const HomeScreen = ({navigation}) => {
       <View style={styles.bottomBar}>
         <FindMatchModal />
         <CreateTeamModal />
-        <Pressable onPress={() => navigation.navigate('Match')}>
+        <Pressable
+          style={styles.button}
+          onPress={() => navigation.navigate('Match')}>
           <View>
-            <Image source={require('../assets/icons/icons8-stadium-100.png')} />
+            <Image
+              resizeMode="contain"
+              style={styles.image}
+              source={require('../assets/icons/icons8-stadium-100.png')}
+            />
           </View>
         </Pressable>
       </View>
@@ -75,20 +82,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     height: 65,
-    elevation: 2,
-    backgroundColor: '#ffffee',
+    elevation: 5,
+    backgroundColor: '#22A826',
     marginBottom: 15,
     borderRadius: 24,
-    shadowColor: '#7F5DF0',
+    shadowColor: '#000',
     shadowOffset: {
-      width: 0,
+      width: 25,
       height: 10,
     },
-    shadowOpacity: 0.25,
+    shadowOpacity: 1,
     shadowRadius: 3.5,
     //bottom: -15,
     //elevation: 5,
   },
+  button: {
+    height: 60,
+    width: 60,
+    borderRadius: 20,
+    backgroundColor: '#23A727',
+    elevation: 5,
+  },
+  image: {width: 60, height: 60},
+
   shadow: {
     shadowColor: '#7F5DF0',
     shadowOffset: {

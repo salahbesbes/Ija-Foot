@@ -65,9 +65,8 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 20,
-    backgroundColor: '#ffffed',
-    //padding: 10,
-    elevation: 2,
+    backgroundColor: '#23A727',
+    elevation: 5,
   },
   image: {width: 60, height: 60},
   buttonOpen: {

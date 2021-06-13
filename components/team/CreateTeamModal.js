@@ -71,12 +71,19 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  image:{
+  image: {
+    //top: -27,
+    width: 80,
+    height: 80,
+    //backgroundColor: '#ffffee',
+    borderRadius: 36,
+  },
+  openModal: {
+    elevation: 5,
+    backgroundColor: '#F0A73E',
     top: -27,
     width: 80,
     height: 80,
-    backgroundColor: '#ffffee',
     borderRadius: 36,
   },
-  openModal: {elevation: 5},
 });

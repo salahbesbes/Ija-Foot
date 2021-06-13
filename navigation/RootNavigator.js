@@ -87,7 +87,7 @@ const RootNavigator = () => {
             teamDispatch(
               teamActions.setTeam({
                 ...playerTeam,
-                admin: chatRoom.admin,
+                admins: chatRoom.admins,
                 uid: teamDoc.id,
                 chatRoomId: chatRoom.uid,
                 members: teamMembers,
@@ -97,7 +97,7 @@ const RootNavigator = () => {
         } else {
           /// no one connected userChanged === null
           userDispatch(actionCreators.logOut());
-          userDispatch(teamActions.logOut());
+          teamDispatch(teamActions.logOut());
         }
       } catch (error) {
         console.log('routNav ERROR :>> ', error.message);

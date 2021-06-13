@@ -1,38 +1,47 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import db from '@react-native-firebase/firestore';
-
+import CreateTeamModal from '../team/CreateTeamModal';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {useChatRoom} from '../../hooks/useChatRoom';
-export function ChatRoom() {
-  console.log('chatroom rendred');
+export function ChatRoom({navigation}) {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <CreateTeamModal />,
+    });
+  }, [navigation]);
   const [roomMessages, setRoomMessages] = useState([]);
 
-  const {sendMessage, user, team} = useChatRoom(setRoomMessages);
-  useEffect(() => {
-    // 1st Argument - subscriber function
-    console.log('List Updates being Requested');
-    const unsubscribe = db()
-      .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
-      .collection('messages')
-      .orderBy('createdAt', 'desc')
-      .onSnapshot(snapshot => {
-        let chatMessages = snapshot.docs.map(doc => {
-          const msg = doc.data();
-          // const time = msg.createdAt;
-          return {
-            _id: doc.id,
-            text: msg?.text,
-            createdAt: msg?.createdAt,
-            user: msg?.user,
-          };
-        });
+  const {
+    sendMessage,
+    ListenOnMessages,
+    user,
+    ListenOnChatRoomDoc,
+    ListenOnTeamDoc,
+    listenOnMembersCollection,
+  } = useChatRoom(setRoomMessages);
 
-        console.log('chatMessages :>> ', chatMessages.length);
-        setRoomMessages(chatMessages);
-      });
-    // console.log(unsubscribe.arguments);
-    return () => unsubscribe();
-  }, [team]);
+  useEffect(() => {
+    const unsub = ListenOnMessages(setRoomMessages);
+    return () => unsub();
+  }, [ListenOnMessages]);
+
+  useEffect(() => {
+    const unsub = ListenOnTeamDoc();
+    return () => unsub();
+  }, [ListenOnTeamDoc]);
+
+  useEffect(() => {
+    const unsub = ListenOnTeamDoc();
+    return () => unsub();
+  }, [ListenOnTeamDoc]);
+
+  useEffect(() => {
+    const unsub = ListenOnChatRoomDoc();
+    return () => unsub();
+  }, [ListenOnChatRoomDoc]);
+  useEffect(() => {
+    const unsub = listenOnMembersCollection();
+    return () => unsub();
+  }, [listenOnMembersCollection]);
 
   const onSend = useCallback(
     (callBackMessages = []) => {
@@ -43,7 +52,6 @@ export function ChatRoom() {
     },
     [sendMessage],
   );
-
   return (
     <GiftedChat
       messages={roomMessages}

@@ -138,7 +138,6 @@ const useProfile = () => {
             //* if the player has a team
             if (team.uid) {
               const {availabilityData, isAvailable, uid, ...restProps} = user;
-              console.log('user :>> ', restProps);
               await db()
                 .doc(`teams/${team.uid}/members/${user.uid}`)
                 .set(restProps);

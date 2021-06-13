@@ -1,14 +1,16 @@
 import React from 'react';
+import {useInvitaion} from '../../hooks/useInvitation';
 
 import Card from '../Card';
 import CardContent from './PlayerCardContent';
 
 const PlayerItem = ({item}) => {
-  const player = item.data();
+  const player = {...item.data(), uid: item.id};
+  const {addFriend} = useInvitaion();
 
   return (
     <Card>
-      <CardContent playerData={player.availabilityData} />
+      <CardContent player={player} addFriend={addFriend} />
     </Card>
   );
 };

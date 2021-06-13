@@ -4,14 +4,15 @@ import {View} from 'react-native';
 import CardHeader from './CardHeader';
 import CardBody from './CardBody';
 
-export default function CardContent({playerData}) {
+export default function CardContent({player, addFriend}) {
+  const {availabilityData} = player;
   return (
     <View>
-      <CardHeader />
+      <CardHeader player={player} addFriend={addFriend} />
       <CardBody
-        location={playerData?.location}
-        isMotorized={playerData?.isMotorized}
-        description={playerData?.description}
+        location={availabilityData?.location}
+        isMotorized={availabilityData?.isMotorized}
+        description={availabilityData?.description}
       />
     </View>
   );

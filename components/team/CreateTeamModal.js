@@ -6,6 +6,8 @@ import CreateTeamForm from './CreateTeamForm';
 const CreateTeamModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const {team, teamDispatch, user} = useCreateTeam();
+  // console.log('team :>> ', team.admins, team.admins.includes(user.uid));
+
   return (
     <View>
       <Modal
@@ -22,8 +24,12 @@ const CreateTeamModal = () => {
           </View>
         </View>
       </Modal>
-      {team.admin?.uid === user.uid ? (
-        <Button title="u are admin" disabled={false} />
+      {team?.admins?.includes(user.uid) ? (
+        <Button
+          title="open"
+          disabled={false}
+          onPress={() => setModalVisible(true)}
+        />
       ) : (
         <Pressable
           style={styles.openModal}

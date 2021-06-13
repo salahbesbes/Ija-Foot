@@ -1,5 +1,6 @@
 import db from '@react-native-firebase/firestore';
 import {useCallback, useContext} from 'react';
+import {teamActions} from '../stateManager/actions/team-A';
 import {AppStateContext} from '../stateProvider';
 
 export const useChatRoom = () => {
@@ -9,16 +10,11 @@ export const useChatRoom = () => {
   const {team} = teamState;
   const {user} = authState;
 
-  const ListningOnTeamUpdates = useCallback(() => {
-    try {
-      console.log(
-        'teamid =>',
-        team.uid,
-        '||||  chatroom id =>',
-        team.chatRoomId,
-      );
-      team.uid &&
-        db()
+  const ListenOnMessages = useCallback(setRoomMessages => {
+    console.log('teamid =>', team.uid, '||||  chatroom id =>', team.chatRoomId);
+    if (team.uid) {
+      try {
+        const listenMessage = db()
           .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
           .collection('messages')
           .orderBy('createdAt', 'desc')
@@ -35,18 +31,129 @@ export const useChatRoom = () => {
             });
 
             console.log('chatMessages :>> ', chatMessages.length);
-            // setRoomMessages(chatMessages);
+            if (setRoomMessages) setRoomMessages(chatMessages);
           });
-      const unsubscribe = () => {
-        console.log('TBC - Unsubscribe for listSagas.js');
-      };
-      return unsubscribe;
-    } catch (error) {
-      console.log('Listning to chatRoom ERROR =>> ', error.message);
-      console.error(error);
-    }
-  }, [team]);
 
+        return listenMessage;
+      } catch (error) {
+        console.log('listnng to message and RoomDoc ERROR =>> ', error.message);
+      }
+    } else {
+      console.log('you are not be able to log to chat Room');
+      console.log('members Now', team.members.length, team.members);
+      return () => {};
+    }
+  }, []);
+
+  const ListenOnTeamDoc = useCallback(() => {
+    const unsub = db()
+      .collection('teams')
+      .onSnapshot(snapshot => {
+        console.log('the team doc has changed');
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added') {
+            console.log('TEAM DOC ==> listning on ADD action: ');
+          }
+          if (change.type === 'modified') {
+            console.log('TEAM DOC ==> listning on modified action: ');
+            const {createdAt, ...updatedTeam} = change.doc.data();
+            teamDispatch(teamActions.setTeam({...team, ...updatedTeam}));
+          }
+          if (change.type === 'removed') {
+            console.log(
+              'TEAM DOC ==> listning on removed action: ',
+              change.doc.data(),
+            );
+          }
+        });
+      });
+
+    return unsub;
+  }, []);
+
+  const ListenOnChatRoomDoc = useCallback(() => {
+    const unsub = db()
+      .doc(`teams/${team.uid}`)
+      .collection('chatRoom')
+      .onSnapshot(snapshot => {
+        console.log('the chatRoom doc has changed');
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added') {
+            const chatRoom = change.doc.data();
+            teamDispatch(
+              teamActions.setTeam({...team, admins: chatRoom.admins}),
+            );
+
+            console.log('ChatRoom -->listning on ADD action: ');
+          }
+          if (change.type === 'modified') {
+            console.log('ChatRoom -->listning on modified action: ');
+            const chatRoom = change.doc.data();
+            teamDispatch(
+              teamActions.setTeam({...team, admins: chatRoom.admins}),
+            );
+          }
+          if (change.type === 'removed') {
+            console.log(
+              'ChatRoom -->listning on removed action: ',
+              change.doc.data(),
+            );
+          }
+        });
+      });
+    return unsub;
+  }, []);
+
+  const listenOnMembersCollection = useCallback(() => {
+    const unsub = db()
+      .doc(`teams/${team.uid}`)
+      .collection('members')
+      .onSnapshot(snapshot => {
+        console.log('the MEMBERS collecton  has changed');
+        // console.log('snapshot.docs', snapshot.docs.length);
+        // console.log('snapshot.docChanges()', snapshot.docChanges().length);
+        // cteate new list of members --> update local state
+
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added') {
+            const docChanged = {...change.doc.data(), uid: change.doc.id};
+
+            // if the player is not already in the team
+            const playerIsMember = team.members // true or false
+              .map(player => player.uid)
+              .includes(docChanged.uid);
+
+            if (!playerIsMember) {
+              teamDispatch(
+                teamActions.setTeam({
+                  ...team,
+                  members: [...team.members, docChanged],
+                }),
+              );
+            }
+          }
+          if (change.type === 'modified') {
+            console.log('listning on member  modified ');
+          }
+          if (change.type === 'removed') {
+            const removedPlayer = {...change.doc.data(), uid: change.doc.id};
+            console.log(team.members.length);
+
+            const newList = team.members.filter(
+              player => player.uid !== removedPlayer.uid,
+            );
+            console.log(newList.length);
+            teamDispatch(
+              teamActions.setTeam({
+                ...team,
+                members: newList,
+              }),
+            );
+          }
+        });
+      });
+    return unsub;
+  }, []);
   const sendMessage = useCallback(
     async callBackMessages => {
       try {
@@ -70,23 +177,20 @@ export const useChatRoom = () => {
       } catch (error) {
         console.log('send Message ERROR =>> ', error.message);
       }
-      // .then(() => {
-      //   setRoomMessages(previousMessages =>
-      //     GiftedChat.append(previousMessages, ckallBackMessage),
-      //   );
-      // });
-
       console.log('we sent a message');
     },
     [user, team],
   );
 
   return {
-    ListningOnTeamUpdates,
+    ListenOnMessages,
     ...authState,
     ...teamState,
     userDispatch,
     teamDispatch,
     sendMessage,
+    ListenOnChatRoomDoc,
+    ListenOnTeamDoc,
+    listenOnMembersCollection,
   };
 };

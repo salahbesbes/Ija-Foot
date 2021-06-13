@@ -64,25 +64,7 @@ const PlayersFeed = () => {
   useEffect(() => {
     fetchPlayers(null, PAGINATION_LIMIT);
   }, []);
-  const [playerss, setPlayers] = useState([]);
-  const getplayers = useCallback(async () => {
-    try {
-      const playersDoc = await db().collection('players').get();
-      setPlayers(
-        playersDoc.docs.map(el => {
-          return {
-            ...el.data(),
-            uid: el.id,
-          };
-        }),
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-  // useEffect(() => {
-  //   getplayers();
-  // }, [getplayers]);
+
   const useAdminData = useAdmin();
   // console.log('team.id :>> ', team.uid);
   const useInviData = useInvitaion();

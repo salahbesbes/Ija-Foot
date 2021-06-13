@@ -1,6 +1,7 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Button, View} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import db from '@react-native-firebase/firestore';
 
 import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
@@ -19,6 +20,23 @@ const HomeScreen = ({navigation}) => {
   const {authContext, teamContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
   const [teamState, teamDispatch] = teamContext;
+  const {user} = authState;
+  const {team} = teamState;
+  useEffect(() => {
+    const unsubProfile = db()
+      .doc(`players/${user.uid}`)
+      .onSnapshot(snapchot => {
+        console.log('snapchot :>> ', snapchot);
+        teamDispatch(
+          teamActions.setTeam({
+            ...team,
+            uid: snapchot.data()?.teamId,
+            chatRoomId: snapchot.data()?.chatRoomId,
+          }),
+        );
+      });
+    return unsubProfile;
+  }, []);
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => <Avatar navigation={navigation} />,

@@ -103,6 +103,57 @@ export const useChatRoom = () => {
       });
     return unsub;
   }, []);
+
+  const listenOnMembersCollection = useCallback(() => {
+    const unsub = db()
+      .doc(`teams/${team.uid}`)
+      .collection('members')
+      .onSnapshot(snapshot => {
+        console.log('the MEMBERS collecton  has changed');
+        // console.log('snapshot.docs', snapshot.docs.length);
+        // console.log('snapshot.docChanges()', snapshot.docChanges().length);
+        // cteate new list of members --> update local state
+
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added') {
+            const docChanged = {...change.doc.data(), uid: change.doc.id};
+
+            // if the player is not already in the team
+            const playerIsMember = team.members // true or false
+              .map(player => player.uid)
+              .includes(docChanged.uid);
+
+            if (!playerIsMember) {
+              teamDispatch(
+                teamActions.setTeam({
+                  ...team,
+                  members: [...team.members, docChanged],
+                }),
+              );
+            }
+          }
+          if (change.type === 'modified') {
+            console.log('listning on member  modified ');
+          }
+          if (change.type === 'removed') {
+            const removedPlayer = {...change.doc.data(), uid: change.doc.id};
+            console.log(team.members.length);
+
+            const newList = team.members.filter(
+              player => player.uid !== removedPlayer.uid,
+            );
+            console.log(newList.length);
+            teamDispatch(
+              teamActions.setTeam({
+                ...team,
+                members: newList,
+              }),
+            );
+          }
+        });
+      });
+    return unsub;
+  }, []);
   const sendMessage = useCallback(
     async callBackMessages => {
       try {
@@ -140,5 +191,6 @@ export const useChatRoom = () => {
     sendMessage,
     ListenOnChatRoomDoc,
     ListenOnTeamDoc,
+    listenOnMembersCollection,
   };
 };

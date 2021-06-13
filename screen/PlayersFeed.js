@@ -82,22 +82,21 @@ const PlayersFeed = () => {
   // useEffect(() => {
   //   getplayers();
   // }, [getplayers]);
-  const {kickPlayer, givePrivilege} = useAdmin();
+  const {kickPlayer, givePrivilege, team} = useAdmin();
+  console.log('team.id :>> ', team.uid);
   return (
     <>
-      <View style={styles.flatList}>
-        {/* <FlatList
-          renderItem={({item}) => <PlayerItem item={item} />}
-          data={snapshots}
-          onEndReachedThreshold={0}
-          onEndReached={() =>
-            fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)
-          }
-          onRefresh={onRefresh}
-          refreshing={refreshing}
-          keyExtractor={item => item.id}
-        /> */}
-      </View>
+      {/* <View style={styles.flatList}> */}
+      <FlatList
+        renderItem={({item}) => <PlayerItem item={item} />}
+        data={snapshots}
+        onEndReachedThreshold={0}
+        onEndReached={() => fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+        // keyExtractor={item => item.id}
+      />
+      {/* </View> */}
       {/* <FlatList
         renderItem={({item}) => (
           <TouchableOpacity onPress={() => givePrivilege(item.uid)}>

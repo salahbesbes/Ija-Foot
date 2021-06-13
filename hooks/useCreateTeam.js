@@ -42,27 +42,14 @@ export const useCreateTeam = () => {
 
               // we dont save all user info
               const {availabilityData, isAvailable, uid, ...restProps} = user;
-              console.log('restProps :>> ', restProps);
 
-              const fakeFriends = [
-                {uid: 'fRNCo14Bl3aqwj7tvWM60FB8WIP2'},
-                {uid: 'byMvNSft2MOcEovT19jz8UEBjUM2'},
-                {uid: 'TtiY62vegubkXQgB1kIisdex5852'},
-                {uid: 'JyHSe4DMerbNUbisFApttw955uW2'},
-                {uid: user.uid},
-              ];
-              fakeFriends.forEach(async el => {
-                await db().doc(`teams/${snap.id}/members/${el.uid}`).set({});
-              });
-              newTeam.members = fakeFriends;
-
-              // await db()
-              //   .doc(`teams/${snap.id}/members/${user.uid}`)
-              //   .set(restProps);
+              await db()
+                .doc(`teams/${snap.id}/members/${user.uid}`)
+                .set(restProps);
               newTeam.admins = [user.uid];
               newTeam.chatRoomId = chatRoom.id;
               newTeam.uid = snap.id;
-              // newTeam.members = [{...restProps, uid: user.uid}];
+              newTeam.members = [{...restProps, uid: user.uid}];
               teamDispatch(teamActions.setTeam(newTeam));
             } catch (error) {
               console.log(error);

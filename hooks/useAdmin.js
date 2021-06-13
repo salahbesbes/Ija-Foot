@@ -7,13 +7,6 @@ import {teamActions} from '../stateManager/actions/team-A';
 import {AppStateContext} from '../stateProvider';
 
 export const useAdmin = () => {
-  const [members, setMembers] = useState([
-    {uid: '1'},
-    {uid: '2'},
-    {uid: '3'},
-    {uid: '4'},
-    {uid: '5'},
-  ]);
   const {authContext, teamContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
   const [teamState, teamDispatch] = teamContext;
@@ -138,11 +131,12 @@ export const useAdmin = () => {
     async chatRoomDetails => {
       try {
         await db().doc(`teams/${team.uid}`).update(chatRoomDetails);
+        teamDispatch(teamActions.setTeam({...team, ...chatRoomDetails}));
       } catch (error) {
         console.log('update teamDoc Details ERROR =>>  ', error.message);
       }
     },
-    [team],
+    [teamDispatch],
   );
   return {
     updateDeatails,

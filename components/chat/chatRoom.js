@@ -16,6 +16,7 @@ export function ChatRoom({navigation}) {
     user,
     ListenOnChatRoomDoc,
     ListenOnTeamDoc,
+    listenOnMembersCollection,
   } = useChatRoom(setRoomMessages);
 
   useEffect(() => {
@@ -37,6 +38,10 @@ export function ChatRoom({navigation}) {
     const unsub = ListenOnChatRoomDoc();
     return () => unsub();
   }, [ListenOnChatRoomDoc]);
+  useEffect(() => {
+    const unsub = listenOnMembersCollection();
+    return () => unsub();
+  }, [listenOnMembersCollection]);
 
   const onSend = useCallback(
     (callBackMessages = []) => {

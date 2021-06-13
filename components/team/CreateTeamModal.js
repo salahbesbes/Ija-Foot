@@ -8,6 +8,7 @@ import {
   Alert,
   TextInput,
   Modal,
+  Image,
 } from 'react-native';
 import {useCreateTeam} from '../../hooks/useCreateTeam';
 import {actionCreators} from '../../stateManager/actions/auth-A';
@@ -36,7 +37,12 @@ const CreateTeamModal = () => {
         </View>
       </Modal>
       <Pressable style={styles.openModal} onPress={() => setModalVisible(true)}>
-        <Text>{team.teamName ? 'My Team' : 'Create Team'}</Text>
+        <View>
+          <Image
+            style={styles.image}
+            source={require('../../assets/icons/icons8-football-team-100.png')}
+          />
+        </View>
       </Pressable>
     </View>
   );
@@ -65,9 +71,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  openModal: {
-    backgroundColor: 'orange',
-    width: 100,
-    height: 50,
+  image:{
+    top: -27,
+    width: 80,
+    height: 80,
+    backgroundColor: '#ffffee',
+    borderRadius: 36,
   },
+  openModal: {elevation: 5},
 });

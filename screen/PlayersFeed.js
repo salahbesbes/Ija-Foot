@@ -1,8 +1,9 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {StyleSheet, FlatList, View} from 'react-native';
+import {StyleSheet, FlatList, View, Text, ActivityIndicator} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
 import PlayerItem from '../components/PlayerCard';
+import Filters, {filterData} from '../components/PlayerCard/filters';
 
 const PAGINATION_LIMIT = 4;
 
@@ -15,7 +16,7 @@ const getLast = arr => {
 const getPaginated = (after, limit) => {
   const queryRef = db()
     .collection('players')
-    .where('isAvailable', '==', true)
+    //.where('isAvailable', '==', true)
     .limit(limit);
 
   return (after ? queryRef.startAfter(after) : queryRef).get();
@@ -25,6 +26,7 @@ const PlayersFeed = () => {
   const [snapshots, setSnapshots] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isListComplete, setIsListComplete] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const fetchPlayers = (after, limit) => {
     console.log('fetchPlayers called');
@@ -61,12 +63,16 @@ const PlayersFeed = () => {
   return (
     <View style={styles.flatList}>
       <FlatList
-        renderItem={PlayerItem}
-        data={snapshots}
+        renderItem={({item}) => <PlayerItem item={item} />}
+        data={filterData(snapshots)}
         onEndReachedThreshold={0}
         onEndReached={() => fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)}
         onRefresh={onRefresh}
         refreshing={refreshing}
+        keyExtractor={item => item.id}
+        ListHeaderComponent={<Filters setFilter={setFilter} />}
+        ListFooterComponent={<ActivityIndicator />}
+        extraData={filter}
       />
     </View>
   );

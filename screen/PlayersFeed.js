@@ -11,6 +11,7 @@ import db from '@react-native-firebase/firestore';
 
 import PlayerItem from '../components/PlayerCard';
 import {useAdmin} from '../hooks/useAdmin';
+import {useInvitaion} from '../hooks/useInvitation';
 
 const PAGINATION_LIMIT = 4;
 
@@ -82,13 +83,20 @@ const PlayersFeed = () => {
   // useEffect(() => {
   //   getplayers();
   // }, [getplayers]);
-  const {kickPlayer, givePrivilege, team} = useAdmin();
-  console.log('team.id :>> ', team.uid);
+  const useAdminData = useAdmin();
+  // console.log('team.id :>> ', team.uid);
+  const useInviData = useInvitaion();
   return (
     <>
       {/* <View style={styles.flatList}> */}
       <FlatList
-        renderItem={({item}) => <PlayerItem item={item} />}
+        renderItem={({item}) => (
+          <PlayerItem
+            item={item}
+            useInviData={useInviData}
+            useAdminData={useAdminData}
+          />
+        )}
         data={snapshots}
         onEndReachedThreshold={0}
         onEndReached={() => fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)}

@@ -53,6 +53,8 @@ export const useChatRoom = () => {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'added') {
             console.log('TEAM DOC ==> listning on ADD action: ');
+            const {createdAt, ...detailTeam} = change.doc.data();
+            teamDispatch(teamActions.setTeam({...team, ...detailTeam}));
           }
           if (change.type === 'modified') {
             console.log('TEAM DOC ==> listning on modified action: ');
@@ -114,43 +116,35 @@ export const useChatRoom = () => {
         // console.log('snapshot.docChanges()', snapshot.docChanges().length);
         // cteate new list of members --> update local state
 
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'added') {
-            const docChanged = {...change.doc.data(), uid: change.doc.id};
-
-            // if the player is not already in the team
-            const playerIsMember = team.members // true or false
-              .map(player => player.uid)
-              .includes(docChanged.uid);
-
-            if (!playerIsMember) {
-              teamDispatch(
-                teamActions.setTeam({
-                  ...team,
-                  members: [...team.members, docChanged],
-                }),
-              );
-            }
-          }
-          if (change.type === 'modified') {
-            console.log('listning on member  modified ');
-          }
-          if (change.type === 'removed') {
-            const removedPlayer = {...change.doc.data(), uid: change.doc.id};
-            console.log(team.members.length);
-
-            const newList = team.members.filter(
-              player => player.uid !== removedPlayer.uid,
-            );
-            console.log(newList.length);
-            teamDispatch(
-              teamActions.setTeam({
-                ...team,
-                members: newList,
-              }),
-            );
-          }
+        const membersIdDb = snapshot.forEach(doc => {
+          return {...doc.data(), uid: doc.id};
         });
+        teamDispatch(
+          teamActions.setTeam({
+            ...team,
+            members: membersIdDb,
+          }),
+        );
+        // snapshot.docs.forEach(async change => {
+        //   console.log('change :>> ', change);
+        // const docChanged = {...change.doc.data(), uid: change.doc.id}; // {uid:"dqsdq"}
+
+        // // if the player is not already in the team
+        // const playerIsMember = team.members // true or false
+        //   .map(player => player.uid)
+        //   .includes(docChanged.uid);
+        // console.log('playerIsMember', change.doc.data());
+        // if (!playerIsMember) {
+        //   // { uid:'dsqdsqd', teamName:'dqsdqs'.. }
+        //   const teamDoc = await change.doc.ref.parent.parent.get();
+        //   const newTeam = teamDoc.data();
+        //   teamDispatch(
+        //     teamActions.setTeam({
+        //       ...newTeam,
+        //       members: [...membersIdDb, docChanged],
+        //     }),
+        //   );
+        // });
       });
     return unsub;
   }, []);

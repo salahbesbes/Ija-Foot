@@ -31,7 +31,7 @@ export const useInvitaion = () => {
         console.log('useInvitaion ERROR =>>', error.message);
       }
     },
-    [teamDispatch],
+    [teamDispatch, team],
   );
   return {addFriend, ...authState, ...teamState};
 };

@@ -30,14 +30,10 @@ export function ChatRoom({navigation}) {
   }, [ListenOnTeamDoc]);
 
   useEffect(() => {
-    const unsub = ListenOnTeamDoc();
-    return () => unsub();
-  }, [ListenOnTeamDoc]);
-
-  useEffect(() => {
     const unsub = ListenOnChatRoomDoc();
     return () => unsub();
   }, [ListenOnChatRoomDoc]);
+
   useEffect(() => {
     const unsub = listenOnMembersCollection();
     return () => unsub();

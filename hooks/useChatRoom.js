@@ -43,47 +43,23 @@ export const useChatRoom = () => {
   }, []);
 
   const ListenOnChatRoomDoc = useCallback(() => {
-    const unsub = db()
-      .doc(`teams/${team.uid}`)
-      .collection('chatRoom')
-      .onSnapshot(snapshot => {
-        console.log('the chatRoom doc has changed');
-        const chatRoom = snapshot.docs[0];
-        teamDispatch(
-          teamActions.setTeam({
-            ...team,
-            admins: chatRoom.data().admins,
-          }),
-        );
-
-        // snapshot.docChanges().forEach(change => {
-        //   if (change.type === 'added') {
-        //     const chatRoom = change.doc.data();
-        //     teamDispatch(
-        //       teamActions.setTeam({
-        //         ...team,
-        //         admins: chatRoom.admins,
-        //         chatRoomId: change.doc.id,
-        //       }),
-        //     );
-
-        //     console.log('ChatRoom -->listning on ADD action: ');
-        //   }
-        //   if (change.type === 'modified') {
-        //     console.log('ChatRoom -->listning on modified action: ');
-        //     const chatRoom = change.doc.data();
-        //     teamDispatch(
-        //       teamActions.setTeam({...team, admins: chatRoom.admins}),
-        //     );
-        //   }
-        //   if (change.type === 'removed') {
-        //     console.log(
-        //       'ChatRoom -->listning on removed action: ',
-        //       change.doc.data(),
-        //     );
-        //   }
-        // });
-      });
+    let unsub;
+    // only if teamid exist
+    if (team.uid) {
+      unsub = db()
+        .doc(`teams/${team.uid}`)
+        .collection('chatRoom')
+        .onSnapshot(snapshot => {
+          console.log('the chatRoom doc has changed');
+          const chatRoom = snapshot.docs[0];
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              admins: chatRoom.data().admins,
+            }),
+          );
+        });
+    }
     return unsub;
   }, []);
 
@@ -106,26 +82,6 @@ export const useChatRoom = () => {
             members: membersDb,
           }),
         );
-        // snapshot.docs.forEach(async change => {
-        //   console.log('change :>> ', change);
-        // const docChanged = {...change.doc.data(), uid: change.doc.id}; // {uid:"dqsdq"}
-
-        // // if the player is not already in the team
-        // const playerIsMember = team.members // true or false
-        //   .map(player => player.uid)
-        //   .includes(docChanged.uid);
-        // console.log('playerIsMember', change.doc.data());
-        // if (!playerIsMember) {
-        //   // { uid:'dsqdsqd', teamName:'dqsdqs'.. }
-        //   const teamDoc = await change.doc.ref.parent.parent.get();
-        //   const newTeam = teamDoc.data();
-        //   teamDispatch(
-        //     teamActions.setTeam({
-        //       ...newTeam,
-        //       members: [...membersIdDb, docChanged],
-        //     }),
-        //   );
-        // });
       });
     return unsub;
   }, []);

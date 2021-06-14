@@ -21,20 +21,24 @@ export function ChatRoom({navigation}) {
   } = useChatRoom(setRoomMessages);
 
   useEffect(() => {
-    const asynchrone = async () => {
-      const unsubteam = await ListenOnTeamDoc();
-      const unsubMembers = await listenOnMembersCollection();
-      const unsubchaRoom = await ListenOnChatRoomDoc();
-      const unsubMessage = await ListenOnMessages(setRoomMessages);
-      return [unsubteam, unsubMembers, unsubchaRoom, unsubMessage];
-    };
-    return asynchrone();
-  }, [
-    ListenOnTeamDoc,
-    listenOnMembersCollection,
-    ListenOnChatRoomDoc,
-    ListenOnMessages,
-  ]);
+    const unsub = ListenOnTeamDoc();
+    return () => unsub();
+  }, [ListenOnTeamDoc]);
+
+  useEffect(() => {
+    const unsub = ListenOnChatRoomDoc();
+    return () => unsub();
+  }, [ListenOnChatRoomDoc]);
+
+  useEffect(() => {
+    const unsub = listenOnMembersCollection();
+    return () => unsub();
+  }, [listenOnMembersCollection]);
+
+  useEffect(() => {
+    const unsub = ListenOnMessages(setRoomMessages);
+    return () => unsub();
+  }, [ListenOnMessages]);
 
   const onSend = useCallback(
     (callBackMessages = []) => {

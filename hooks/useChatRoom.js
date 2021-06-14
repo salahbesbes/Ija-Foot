@@ -73,6 +73,7 @@ export const useChatRoom = () => {
 
   const ListenOnChatRoomDoc = useCallback(() => {
     let unsub;
+    console.log('team :>> ', team);
     // only if teamid exist
     if (team.uid) {
       unsub = db()

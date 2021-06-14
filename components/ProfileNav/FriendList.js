@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useContext} from 'react';
 import {Text, useTheme, Button} from 'react-native-paper';
 import {
   FlatList,
@@ -10,8 +10,9 @@ import {
 } from 'react-native';
 import {Modal, Portal, Surface} from 'react-native-paper';
 import {useFriends} from '../../hooks/useFriends';
+import {AppStateContext} from '../../stateProvider';
 
-const FriendCard = ({friend, size}) => {
+const FriendCard = ({friend, size, isMember}) => {
   const [visible, setVisible] = React.useState(false);
 
   const showModal = () => setVisible(true);
@@ -19,7 +20,7 @@ const FriendCard = ({friend, size}) => {
   const containerStyle = {backgroundColor: 'white', padding: 20};
 
   const {submitButton, mv, colors} = useTheme();
-  const {deletFriend, loading, error} = useFriends();
+  const {deletFriend, loading, error, team, user} = useFriends();
 
   return (
     <>
@@ -36,32 +37,41 @@ const FriendCard = ({friend, size}) => {
                 uppercase
                 mode="contained"
                 loading={loading}
-                labelStyle={{fontWeight: 'bold', fontSize: 17}}
+                labelStyle={{fontWeight: 'bold', fontSize: 13}}
                 icon="person-add"
                 onPress={() => {
+                  isMember
+                    ? console.log('this is a member of the team')
+                    : console.log('we need to add him to Friend List');
                   // addFriend(friend.uid);
                 }}>
-                invite
+                {isMember ? 'add Friend' : 'invite'}
               </Button>
-              <Button
-                style={[
-                  mv,
-                  submitButton,
-                  {marginHorizontal: 5, flex: 1, backgroundColor: colors.error},
-                ]}
-                uppercase
-                mode="contained"
-                loading={loading}
-                labelStyle={{
-                  fontWeight: 'bold',
-                  fontSize: 17,
-                }}
-                icon="person-remove"
-                onPress={() => {
-                  deletFriend(friend.uid);
-                }}>
-                remove
-              </Button>
+              {team.admins.map(el => el.uid).includes(user.uid) && (
+                <Button
+                  style={[
+                    mv,
+                    submitButton,
+                    {
+                      marginHorizontal: 5,
+                      flex: 1,
+                      backgroundColor: colors.error,
+                    },
+                  ]}
+                  uppercase
+                  mode="contained"
+                  loading={loading}
+                  labelStyle={{
+                    fontWeight: 'bold',
+                    fontSize: 17,
+                  }}
+                  icon="person-remove"
+                  onPress={() => {
+                    deletFriend(friend.uid);
+                  }}>
+                  remove
+                </Button>
+              )}
             </View>
           </Surface>
         </Modal>
@@ -81,15 +91,27 @@ const FriendCard = ({friend, size}) => {
   );
 };
 
-const FriendList = ({nbColumn, horizental, size = 100, listToRender = []}) => {
+const FriendList = ({
+  nbColumn,
+  horizental,
+  size = 100,
+  listToRender = [],
+  isMember,
+}) => {
+  const {authContext} = useContext(AppStateContext);
+  const [authState] = authContext;
+  const {user} = authState;
+  const listExceptMe = listToRender.filter(el => el.uid !== user.uid);
   return (
-    <View style={{justifyContent: 'center', alignItems: 'center', height: 80}}>
-      {listToRender.length ? (
+    <View style={{justifyContent: 'center', alignItems: 'center', height: 100}}>
+      {listExceptMe.length ? (
         <FlatList
           horizontal={horizental}
           numColumns={nbColumn}
-          data={listToRender}
-          renderItem={({item}) => <FriendCard friend={item} size={size} />}
+          data={listExceptMe}
+          renderItem={({item}) => (
+            <FriendCard isMember friend={item} size={size} />
+          )}
           keyExtractor={item => item.uid}
         />
       ) : (

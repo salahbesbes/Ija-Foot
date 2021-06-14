@@ -16,7 +16,9 @@ export const useInvitaion = () => {
         console.log('team is ', team);
         if (team.uid) {
           await db().doc(`teams/${team.uid}/members/${playerId}`).set({});
-          await db().doc(`players/${playerId}`).update({teamId: team.uid});
+          await db()
+            .doc(`players/${playerId}`)
+            .update({teamId: team.uid, chatRoomId: team.chatRoomId});
           teamDispatch(
             teamActions.setTeam({
               ...team,

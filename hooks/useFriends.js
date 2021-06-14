@@ -9,9 +9,11 @@ import {AppStateContext} from '../stateProvider';
 
 export const useFriends = () => {
   // we are using the reducer here so we returning its value
-  const {authContext} = useContext(AppStateContext);
-  const [state, dispatch] = authContext;
-  const {user, userFriends} = state;
+  const {authContext, teamContext} = useContext(AppStateContext);
+  const [authState, userDispatch] = authContext;
+  const [teamState, teamDispatch] = teamContext;
+  const {team} = teamState;
+  const {user, userFriends} = authState;
 
   // we fetch all friends doc => [ {playerRef: 'players/123456987456', uid: '123456987456'} ...]
   const fetchFriendList = useCallback(async () => {
@@ -28,11 +30,11 @@ export const useFriends = () => {
         tempList.push({uid: friendDoc.id, ...friendData});
       });
       // setFriendsList(tempList);
-      dispatch(actionCreators.setFriends(tempList));
+      userDispatch(actionCreators.setFriends(tempList));
     } catch (error) {
       console.log('useFriends ERROR :>> ', error);
     }
-  }, [dispatch, user.uid]);
+  }, [userDispatch, user.uid]);
   /// create new doc in the friends coolection containing only the player Reference
   // if a player already exist we overwrite him
   // this logic need the player uid
@@ -57,7 +59,7 @@ export const useFriends = () => {
 
   const deletFriend = useCallback(
     async playerData => {
-      dispatch(actionCreators.deleteFriend(playerData.uid));
+      userDispatch(actionCreators.deleteFriend(playerData.uid));
       try {
         await db()
           .collection('players')
@@ -70,14 +72,16 @@ export const useFriends = () => {
         console.log('useFriends ERROR :>> ', error);
       }
     },
-    [user.uid, dispatch],
+    [user.uid, userDispatch],
   );
   return {
     userFriends,
     addFriend,
     fetchFriendList,
     deletFriend,
-    dispatch,
-    ...state,
+    userDispatch,
+    teamDispatch,
+    ...teamState,
+    ...authState,
   };
 };

@@ -58,7 +58,7 @@ export function ChatRoom({navigation}) {
   }, [navigation]);
   return (
     <>
-      <FriendList horizental size={50} listToRender={team.members} />
+      <FriendList isMember horizental size={50} listToRender={team.members} />
       <Divider />
       <GiftedChat
         messages={roomMessages}

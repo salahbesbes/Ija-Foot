@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Text, View, Pressable} from 'react-native';
+import {useTheme} from '@react-navigation/native';
 
 const DatePicker = ({formDate, setFormDate}) => {
   const [mode, setMode] = useState('date');
@@ -31,15 +32,18 @@ const DatePicker = ({formDate, setFormDate}) => {
   const showDatepicker = () => {
     showMode('date');
   };
-
+  const {raisedInput, mv} = useTheme();
   return (
-    <View>
-      <Pressable style={{}} onPress={showDatepicker}>
+    <View style={[{marginVertical: 10, width: '50%'}]}>
+      <Pressable onPress={showDatepicker}>
         <Text
           style={{
+            borderRadius: 10,
+            textAlign: 'center',
             backgroundColor: 'orange',
-            paddingHorizontal: 30,
-            height: 30,
+            padding: 10,
+            fontSize: 15,
+            fontWeight: 'bold',
           }}>
           {formDate ? formDate?.toLocaleString() : 'pick a Date'}
         </Text>

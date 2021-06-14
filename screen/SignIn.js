@@ -1,74 +1,97 @@
-import React, {useState} from 'react';
-import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Pressable, ScrollView, Text, View, SafeAreaView} from 'react-native';
+import {
+  Avatar,
+  Button,
+  Caption,
+  Headline,
+  Subheading,
+  TextInput,
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper';
 import GoogleButton from '../components/GoogleButton';
 import SignOutButton from '../components/SignOutButton';
 import useSignIn from '../hooks/useSignIn';
 import {actionCreators} from '../stateManager/actions/auth-A';
-import {styles} from '../styles/default';
 
 const SignIn = ({navigation}) => {
+  const {mv, bigTitle, raisedInput, textButton, row, firstElement} = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {loading, user, error, dispatch, signIn} = useSignIn();
+  const [visible, setVisible] = useState(false);
+
   return (
     <SafeAreaView>
-      {!user ? (
-        <View>
+      <ScrollView style={{}}>
+        <View style={{alignItems: 'center'}}>
+          <Avatar.Text size={200} label="XD" />
+          <Headline style={[bigTitle]}>Welcome To " Ija-Foot "</Headline>
+          <Subheading style={{color: 'grey'}}> SignIn to Continue </Subheading>
           <TextInput
-            style={styles.input}
-            onChangeText={setEmail}
+            style={[raisedInput, mv, firstElement]}
+            onFocus={() => {
+              dispatch(actionCreators.reset());
+            }}
+            label={error ? 'some Error occured' : 'Email'}
             value={email}
-            placeholder="email "
+            mode="flat"
+            error={error}
+            onChangeText={setEmail}
+            left={<TextInput.Icon name="email" disabled />}
           />
           <TextInput
-            style={styles.input}
+            left={<TextInput.Icon name="lock" disabled />}
+            style={[raisedInput, mv]}
+            onFocus={() => {
+              dispatch(actionCreators.reset());
+            }}
             onChangeText={setPassword}
             value={password}
-            placeholder="password"
+            secureTextEntry
+            passwordRules='required: upper; required: lower; required: digit; minlength: 6;"'
+            textContentType="password"
+            mode="flat"
+            error={error}
+            label={error ? 'some Error occured' : 'password'}
+            right={
+              password && (
+                <TextInput.Icon
+                  name="eye"
+                  onPress={() => setVisible(!visible)}
+                />
+              )
+            }
           />
           <Button
-            title="Login"
+            style={[mv]}
+            uppercase
+            mode="contained"
+            loading={loading}
+            labelStyle={[textButton]}
+            icon="login"
             onPress={async () => {
               await signIn({email, password});
-            }}
-          />
-          <GoogleButton nav={navigation} />
-          <Button
-            title="Go Sign Up"
-            color="grey"
-            onPress={() => {
-              navigation.navigate('SignUp');
-            }}
-          />
-          {loading ? (
-            <>
-              <Text style={{backgroundColor: 'yellow', marginTop: 30}}>
-                Loading .................
-              </Text>
-              <Button
-                title="reset state"
-                color="orange"
-                onPress={() => {
-                  dispatch(actionCreators.failure());
-                }}
-              />
-            </>
-          ) : null}
+            }}>
+            LogIn
+          </Button>
+          <GoogleButton />
+          <View style={[row]}>
+            <Caption style={{fontSize: 15, color: 'grey'}}>
+              dont have Account?{' '}
+            </Caption>
+            <Pressable
+              onPress={() => {
+                navigation.navigate('SignUp');
+              }}>
+              <Caption style={{fontSize: 15, color: '#2192A8'}}>
+                create New Account
+              </Caption>
+            </Pressable>
+          </View>
         </View>
-      ) : (
-        <>
-          <Button
-            title="delete user from state"
-            onPress={() => dispatch(actionCreators.logOut())}
-          />
-          <SignOutButton nav={navigation} />
-        </>
-      )}
-      {error && (
-        <Text style={{backgroundColor: 'red', margin: 50, height: 80}}>
-          {error}
-        </Text>
-      )}
+      </ScrollView>
     </SafeAreaView>
   );
 };

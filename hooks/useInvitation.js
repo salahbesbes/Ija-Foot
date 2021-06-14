@@ -16,9 +16,7 @@ export const useInvitaion = () => {
         console.log('team is ', team);
         if (team.uid) {
           await db().doc(`teams/${team.uid}/members/${playerId}`).set({});
-          await db()
-            .doc(`players/${playerId}`)
-            .update({teamId: team.uid, chatRoomId: team.chatRoomId});
+          await db().doc(`players/${playerId}`).update({teamId: team.uid});
           teamDispatch(
             teamActions.setTeam({
               ...team,
@@ -33,7 +31,7 @@ export const useInvitaion = () => {
         console.log('useInvitaion ERROR =>>', error.message);
       }
     },
-    [teamDispatch, team],
+    [teamDispatch],
   );
   return {addFriend, ...authState, ...teamState};
 };

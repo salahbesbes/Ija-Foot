@@ -8,7 +8,7 @@ import Match from '../screen/Match';
 import Profile from '../screen/Profile';
 import InviteFriend from '../components/InviteFriend';
 import {ChatRoom} from '../components/chat/chatRoom';
-
+import ProfileNavigation from '../screen/ProfileNavigation';
 const MainStack = createStackNavigator();
 
 const MainNavigator = () => {
@@ -19,7 +19,10 @@ const MainNavigator = () => {
       <MainStack.Screen name="MyTeam" component={MyTeam} />
       <MainStack.Screen name="LookingForMatch" component={FindMatch} />
       <MainStack.Screen name="Match" component={Match} />
-      <MainStack.Screen name="Profile" component={Profile} />
+      <MainStack.Screen
+        name="ProfileNavigation"
+        component={ProfileNavigation}
+      />
       <MainStack.Screen name="Chat" component={ChatRoom} />
     </MainStack.Navigator>
   );

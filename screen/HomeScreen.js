@@ -1,7 +1,6 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {Button, View} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import db from '@react-native-firebase/firestore';
 
 import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
@@ -13,6 +12,7 @@ import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {teamActions} from '../stateManager/actions/team-A';
+import CreateTeam from '../components/team/createTeam';
 
 const FeedTab = createMaterialTopTabNavigator();
 
@@ -20,23 +20,7 @@ const HomeScreen = ({navigation}) => {
   const {authContext, teamContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
   const [teamState, teamDispatch] = teamContext;
-  const {user} = authState;
-  const {team} = teamState;
-  useEffect(() => {
-    const unsubProfile = db()
-      .doc(`players/${user.uid}`)
-      .onSnapshot(snapchot => {
-        console.log('snapchot :>> ', snapchot);
-        teamDispatch(
-          teamActions.setTeam({
-            ...team,
-            uid: snapchot.data()?.teamId,
-            chatRoomId: snapchot.data()?.chatRoomId,
-          }),
-        );
-      });
-    return unsubProfile;
-  }, []);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => <Avatar navigation={navigation} />,
@@ -54,7 +38,7 @@ const HomeScreen = ({navigation}) => {
         <Button
           title="go to Profile"
           onPress={() => {
-            navigation.navigate('Profile');
+            navigation.navigate('ProfileNavigation', {nbColumn: 2});
           }}
         />
         <GoogleButton />
@@ -90,7 +74,7 @@ const HomeScreen = ({navigation}) => {
           padding: 5,
         }}>
         <FindMatchModal />
-        <CreateTeamModal />
+        <CreateTeam />
         <Button
           title="chat Room"
           onPress={() => navigation.navigate('MyTeam')}

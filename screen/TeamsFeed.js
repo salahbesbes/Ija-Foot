@@ -1,9 +1,9 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {StyleSheet, FlatList, View} from 'react-native';
+import {StyleSheet, FlatList, View, ActivityIndicator} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
 import TeamItem from '../components/TeamFeedCard';
-import Filters, { filterData } from '../components/TeamFeedCard/filters';
+import Filters, {filterData} from '../components/TeamFeedCard/filters';
 
 const PAGINATION_LIMIT = 4;
 
@@ -67,6 +67,7 @@ const TeamssFeed = () => {
         refreshing={refreshing}
         keyExtractor={item => item.id}
         ListHeaderComponent={<Filters setFilter={setFilter} />}
+        ListFooterComponent={<ActivityIndicator />}
         extraData={filter}
       />
     </View>

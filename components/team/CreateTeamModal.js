@@ -1,15 +1,5 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {
-  Switch,
-  StyleSheet,
-  Text,
-  Pressable,
-  View,
-  Alert,
-  TextInput,
-  Modal,
-  Image,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Pressable, View, Modal, Image} from 'react-native';
 
 import {useCreateTeam} from '../../hooks/useCreateTeam';
 import {teamActions} from '../../stateManager/actions/team-A';
@@ -25,7 +15,7 @@ const CreateTeamModal = ({navigation}) => {
     <View>
       <Modal
         animationType="slide"
-        transparent={true}
+        transparent={false}
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(false);
@@ -40,7 +30,6 @@ const CreateTeamModal = ({navigation}) => {
       <Pressable
         style={styles.openModal}
         onPress={() => {
-          //console.log('pressed team button, user: ' + JSON.stringify(user));
           if (user.teamId) {
             navigation.navigate('MyTeam');
           } else {

@@ -1,21 +1,15 @@
 import React, {useContext, useEffect} from 'react';
-import {Button, Image, StyleSheet, View} from 'react-native';
+import {Button, Image, StyleSheet, View, Pressable} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import db from '@react-native-firebase/firestore';
 
 import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
-import SignOutButton from '../components/SignOutButton';
-import GoogleButton from '../components/GoogleButton';
-import Avatar from '../components/Avatar';
 import {AppStateContext} from '../stateProvider';
 import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
-import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
-
-import {actionCreators} from '../stateManager/actions/auth-A';
+import {Avatar, IconButton} from 'react-native-paper';
 import {teamActions} from '../stateManager/actions/team-A';
-import CreateTeam from '../components/team/createTeam';
 
 const FeedTab = createMaterialTopTabNavigator();
 
@@ -41,12 +35,22 @@ const HomeScreen = ({navigation}) => {
       });
     return unsubProfile;
   }, []);
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Avatar navigation={navigation} />,
+      headerRight: () => (
+        <Pressable
+          onPress={() =>
+            navigation.navigate('ProfileNavigation', {nbColum: 2})
+          }>
+          <Avatar.Image
+            style={{marginRight: 5}}
+            source={{uri: user.avatar}}
+            size={50}
+          />
+        </Pressable>
+      ),
     });
-  }, [navigation]);
+  }, [navigation, user.avatar]);
   return (
     <>
       {/* <View
@@ -91,8 +95,8 @@ const HomeScreen = ({navigation}) => {
       </FeedTab.Navigator>
       <View style={styles.bottomBar}>
         <FindMatchModal />
-        {/* <CreateTeamModal navigation={navigation} /> */}
-        <CreateTeam navigation={navigation} />
+        <CreateTeamModal navigation={navigation} />
+        {/* <CreateTeam navigation={navigation} /> */}
         <Pressable
           style={styles.button}
           onPress={() => navigation.navigate('Match')}>

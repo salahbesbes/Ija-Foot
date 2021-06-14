@@ -15,6 +15,7 @@ const FindMatchModal = () => {
   return (
     <View>
       <Modal
+        onDismiss={() => setModalVisible(!modalVisible)}
         animationType="slide"
         transparent={true}
         visible={modalVisible}

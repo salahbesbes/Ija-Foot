@@ -1,16 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {
-  Switch,
-  StyleSheet,
-  Text,
-  Pressable,
-  View,
-  TextInput,
-} from 'react-native';
+import {StyleSheet, Pressable, View} from 'react-native';
 import useAvailableForMatch from '../hooks/useAvailableForMatch';
-
+import {Switch, Checkbox, TextInput, Text, Button} from 'react-native-paper';
 import LocationPicker from './LocationPicker';
 import ToggleButton from './ToggleButton';
+import {useTheme} from '@react-navigation/native';
 
 const FindMatchForm = ({modalState, setModalState}) => {
   const {user, updateAvailability} = useAvailableForMatch();
@@ -21,7 +15,7 @@ const FindMatchForm = ({modalState, setModalState}) => {
   const [descriptionText, setDescriptionText] = useState('');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const toggleMotorized = () => setIsMotorized(prevState => !prevState);
-
+  //todo: fetech status of user from db
   useEffect(() => {
     if (user) {
       const data = user.availabilityData || {};
@@ -41,55 +35,47 @@ const FindMatchForm = ({modalState, setModalState}) => {
     updateAvailability(isEnabled, data);
     setModalState(!modalState);
   };
-
+  const {mv, raisedInput} = useTheme();
   return (
     <View>
       <View style={styles.header}>
         <Text style={styles.headerText}>
           Make yourself available for teams to invite you
         </Text>
-        <Switch
-          trackColor={{false: '#767577', true: '#81b0ff'}}
-          thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleSwitch}
-          value={isEnabled}
-          style={styles.switch}
-        />
+        <Switch value={isEnabled} onValueChange={toggleSwitch} />
       </View>
       <View style={styles.body}>
-        <View style={{flexDirection: 'row'}}>
-          <LocationPicker
-            location={location}
-            onLocationChange={setLocation}
+        <LocationPicker
+          location={location}
+          onLocationChange={setLocation}
+          disabled={!isEnabled}
+        />
+
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Checkbox
+            status={isMotorized ? 'checked' : 'unchecked'}
+            onPress={() => {
+              setIsMotorized(!isMotorized);
+            }}
             disabled={!isEnabled}
           />
-          <ToggleButton
-            displayText="Motorized"
-            isEnabled={isMotorized}
-            setIsEnabled={toggleMotorized}
-            disabled={!isEnabled}
-          />
+          <Text> Motorized ? </Text>
         </View>
         <TextInput
-          style={styles.input}
-          placeholder="Description"
+          style={[raisedInput, {width: '100%'}, mv]}
+          onFocus={() => {}}
+          label={'Description'}
           value={descriptionText}
+          mode="outlined"
           onChangeText={setDescriptionText}
           editable={isEnabled}
         />
       </View>
       <View style={styles.buttonsView}>
-        <Pressable
-          style={[styles.button, styles.buttonCancel]}
-          onPress={() => setModalState(!modalState)}>
-          <Text style={styles.textStyle}>Cancel</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.button, styles.buttonSave]}
-          onPress={saveAvailability}>
-          <Text style={styles.textStyle}>Save</Text>
-        </Pressable>
+        <Button mode="outlined" onPress={() => setModalState(!modalState)}>
+          cancel
+        </Button>
+        <Button mode="contained">save</Button>
       </View>
     </View>
   );

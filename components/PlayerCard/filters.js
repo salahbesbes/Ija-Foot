@@ -37,9 +37,10 @@ export const filterData = data => {
 
 const styles = StyleSheet.create({
   filterBar: {
+    marginVertical: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    width: 150,
+    flex: 1,
   },
 });
 

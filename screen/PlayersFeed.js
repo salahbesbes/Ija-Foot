@@ -1,11 +1,5 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {
-  StyleSheet,
-  FlatList,
-  View,
-  Text,
-  ActivityIndicator,
-} from 'react-native';
+import {StyleSheet, FlatList, View, ActivityIndicator} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
 import PlayerItem from '../components/PlayerCard';
@@ -67,31 +61,8 @@ const PlayersFeed = () => {
     fetchPlayers(null, PAGINATION_LIMIT);
   }, []);
 
-  const [playerss, setPlayers] = useState([]);
-
-  const getplayers = useCallback(async () => {
-    try {
-      const playersDoc = await db().collection('players').get();
-      setPlayers(
-        playersDoc.docs.map(el => {
-          return {
-            ...el.data(),
-            uid: el.id,
-          };
-        }),
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-  // useEffect(() => {
-  //   getplayers();
-  // }, [getplayers]);
-  const {kickPlayer, givePrivilege, team} = useAdmin();
   const useAdminData = useAdmin();
-  // console.log('team.id :>> ', team.uid);
   const useInviData = useInvitaion();
-  console.log('team.id :>> ', team.uid);
   return (
     <View style={styles.flatList}>
       <FlatList

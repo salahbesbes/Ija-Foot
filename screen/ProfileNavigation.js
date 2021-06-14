@@ -3,6 +3,7 @@ import {BottomNavigation, useTheme, Button} from 'react-native-paper';
 import {} from 'react-native';
 import FriendList from '../components/ProfileNav/FriendList';
 import Profile from '../components/ProfileNav/Profile';
+import {useFriends} from '../hooks/useFriends';
 const ProfileNavigation = ({navigation, route}) => {
   // this route take argument 'nbColumn'
   console.log(route.params);
@@ -10,15 +11,20 @@ const ProfileNavigation = ({navigation, route}) => {
   const {colors, size, horizental} = useTheme();
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: 'Friends', title: 'Friends', icon: 'groups'},
     {key: 'Profile', title: 'Profile', icon: 'face'},
+    {key: 'Friends', title: 'Friends', icon: 'groups'},
   ]);
-
+  const {userFriends} = useFriends();
   const renderScene = BottomNavigation.SceneMap({
-    Friends: () => (
-      <FriendList nbColumn={nbColumn} horizental={horizental} size={size} />
-    ),
     Profile: () => <Profile navigation={navigation} />,
+    Friends: () => (
+      <FriendList
+        nbColumn={nbColumn}
+        horizental={horizental}
+        size={size}
+        listToRender={userFriends}
+      />
+    ),
   });
 
   return (

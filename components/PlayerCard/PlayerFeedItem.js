@@ -4,14 +4,15 @@ import {useInvitaion} from '../../hooks/useInvitation';
 import Card from '../Card';
 import CardContent from './PlayerCardContent';
 
-const PlayerItem = ({item}) => {
+const PlayerItem = ({item, useInviData}) => {
   const player = {...item.data(), uid: item.id};
-  const {addFriend} = useInvitaion();
-
+  const {inviteplayer} = useInviData;
   return (
-    <Card>
-      <CardContent player={player} addFriend={addFriend} />
-    </Card>
+    <>
+      <Card>
+        <CardContent player={player} inviteplayer={inviteplayer} />
+      </Card>
+    </>
   );
 };
 

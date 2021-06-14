@@ -10,31 +10,57 @@ import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
 import {Avatar, IconButton} from 'react-native-paper';
 import {teamActions} from '../stateManager/actions/team-A';
+import {useCreateMatch} from '../hooks/useCreateMatch';
+import {matchActions} from '../stateManager/actions/match-A';
 
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
-  const {authContext, teamContext} = useContext(AppStateContext);
+  const {authContext, teamContext, matchContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
   const [teamState, teamDispatch] = teamContext;
+  const [matchState, matchDispatch] = matchContext;
 
   const {user} = authState;
+  const {match} = matchState;
   const {team} = teamState;
   useEffect(() => {
     const unsubProfile = db()
       .doc(`players/${user.uid}`)
-      .onSnapshot(snapchot => {
-        console.log('snapchot :>> ', snapchot);
+      .onSnapshot(snapshot => {
+        // console.log('snapshot :>> ', snapshot);
+
         teamDispatch(
           teamActions.setTeam({
             ...team,
-            uid: snapchot.data()?.teamId,
-            chatRoomId: snapchot.data()?.chatRoomId,
+            uid: snapshot.data()?.teamId,
+            chatRoomId: snapshot.data()?.chatRoomId,
           }),
         );
       });
+    console.log('unsubProfile');
     return unsubProfile;
-  }, []);
+  }, [teamDispatch]);
+
+  useEffect(() => {
+    const unsubChatRoomMembers = db()
+      .doc(`matchs/${match.uid}`)
+      .collection('members')
+      .onSnapshot(snapshot => {
+        const newMembers = snapshot.docs.map(member => {
+          return {uid: member.id, ...member.data()};
+        });
+        matchDispatch(
+          matchActions.setMatch({
+            ...match,
+            members: newMembers,
+          }),
+        );
+        console.log('new member added to the match');
+      });
+    return unsubChatRoomMembers;
+  }, [matchDispatch]);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -50,45 +76,12 @@ const HomeScreen = ({navigation}) => {
         </Pressable>
       ),
     });
-  }, [navigation, user.avatar]);
+  }, []);
+
+  // const {createMatch} = useCreateMatch();
+  console.log('home match.members', match.members.length);
   return (
     <>
-      {/* <View
-        style={{
-          flexDirection: 'row',
-          height: 60,
-          backgroundColor: 'magenta',
-        }}>
-        <SignOutButton />
-        <Button
-          title="go to Profile"
-          onPress={() => {
-            navigation.navigate('ProfileNavigation', {nbColumn: 2});
-          }}
-        />
-        <GoogleButton />
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          height: 60,
-          backgroundColor: 'magenta',
-        }}>
-        <Button
-          title="InviteFriend"
-          onPress={() => {
-            navigation.navigate('InviteFriend');
-          }}
-        />
-        <Button
-          title="reset State"
-          onPress={() => {
-            userDispatch(actionCreators.reset());
-            teamDispatch(teamActions.logOut());
-          }}
-        />
-      </View> */}
-
       <FeedTab.Navigator>
         <FeedTab.Screen name="PlayersFeed" component={PlayersFeed} />
         <FeedTab.Screen name="TeamsFeed" component={TeamsFeed} />
@@ -99,7 +92,9 @@ const HomeScreen = ({navigation}) => {
         {/* <CreateTeam navigation={navigation} /> */}
         <Pressable
           style={styles.button}
-          onPress={() => navigation.navigate('Match')}>
+          onPress={() => {
+            navigation.navigate('Match');
+          }}>
           <View>
             <Image
               resizeMode="contain"

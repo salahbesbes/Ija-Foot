@@ -9,15 +9,20 @@ import auth from '@react-native-firebase/auth';
 import db from '@react-native-firebase/firestore';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {teamActions} from '../stateManager/actions/team-A';
+import {useGetMatchInfo} from '../hooks/useGetMatchInfo';
+import {matchActions} from '../stateManager/actions/match-A';
 
 const Stack = createStackNavigator();
 
 const RootNavigator = () => {
-  const {authContext, teamContext} = useContext(AppStateContext);
+  const {authContext, teamContext, matchContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
   const [teamState, teamDispatch] = teamContext;
+  const [matchState, matchDispatch] = matchContext;
   const {team} = teamState;
   const {user} = authState;
+  const {match} = matchState;
+  const {getMatch} = useGetMatchInfo();
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async userChanged => {
       console.log('on auth changed is executed');
@@ -51,7 +56,8 @@ const RootNavigator = () => {
 
           userDispatch(actionCreators.setFriends(playerFriends));
 
-          console.log('team of the player is ', loggedUser.teamId);
+          console.log('team of the player is ', loggedUser.teamId, '\v');
+          console.log('match of the player is ', loggedUser.matchId);
           //* fetch team if exist
           if (loggedUser.teamId) {
             let teamDoc = await db()
@@ -82,9 +88,7 @@ const RootNavigator = () => {
             const chatRooms = chatRoomsDocs.docs.map(charRoomDoc => {
               return {...charRoomDoc.data(), uid: charRoomDoc.id};
             });
-            console.log('chatRooms :>> ', chatRooms);
             const chatRoom = chatRooms[0]; // always available
-            console.log('we set new Team in the root screen');
             teamDispatch(
               teamActions.setTeam({
                 ...playerTeam,
@@ -94,11 +98,15 @@ const RootNavigator = () => {
                 members: teamMembers,
               }),
             );
+            console.log('we set new Team in the local State');
+
+            getMatch(loggedUser);
           }
         } else {
           /// no one connected userChanged === null
           userDispatch(actionCreators.logOut());
           teamDispatch(teamActions.logOut());
+          matchDispatch(matchActions.logOut());
         }
       } catch (error) {
         console.log('routNav ERROR :>> ', error.message);
@@ -107,7 +115,8 @@ const RootNavigator = () => {
       }
     });
     return () => subscriber(); // unsubscribe on unmount
-  }, [userDispatch, teamDispatch]);
+  }, []);
+  useGetMatchInfo(user);
   return (
     <NavigationContainer>
       {user ? (

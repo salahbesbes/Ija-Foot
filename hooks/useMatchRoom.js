@@ -1,21 +1,26 @@
 import db from '@react-native-firebase/firestore';
 import {useCallback, useContext} from 'react';
-import {teamActions} from '../stateManager/actions/team-A';
+import {matchActions} from '../stateManager/actions/match-A';
 import {AppStateContext} from '../stateProvider';
 
-export const useChatRoom = () => {
-  const {authContext, teamContext} = useContext(AppStateContext);
+export const useMatchRoom = () => {
+  const {authContext, matchContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
-  const [teamState, teamDispatch] = teamContext;
-  const {team} = teamState;
+  const [matchState, matchDispatch] = matchContext;
+  const {match} = matchState;
   const {user} = authState;
 
   const ListenOnMessages = useCallback(setRoomMessages => {
-    // console.log('teamid =>', team.uid, '||||  chatroom id =>', team.chatRoomId);
-    if (team.uid) {
+    console.log(
+      'matchid =>',
+      match.uid,
+      '||||  chatroom id =>',
+      match.matchRoomId,
+    );
+    if (match.uid) {
       try {
         const listenMessage = db()
-          .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
+          .doc(`matchs/${match.uid}/chatRoom/${match.matchRoomId}`) // matchRoomIdd
           .collection('messages')
           .orderBy('createdAt', 'desc')
           .onSnapshot(snapshot => {
@@ -40,26 +45,27 @@ export const useChatRoom = () => {
       }
     } else {
       console.log('you are not be able to log to chat Room');
-      console.log('members Now', team.members.length, team.members);
+      console.log('members Now', match.members.length, match.members);
       return () => {};
     }
   }, []);
 
-  const ListenOnTeamDoc = useCallback(() => {
+  const ListenOnMatchDoc = useCallback(() => {
     const unsub = db()
-      .collection('teams')
+      .collection('matchs')
       .onSnapshot(snapshot => {
+        console.log('the match doc has changed');
         snapshot.docChanges().forEach(change => {
           if (change.type === 'added') {
-            console.log('TEAM DOC ==> listning on ADD action: ');
+            console.log('match DOC ==> listning on ADD action: ');
           }
           if (change.type === 'modified') {
-            console.log('TEAM DOC ==> listning on modified action: ');
-            const {createdAt, ...updatedTeam} = change.doc.data();
-            teamDispatch(teamActions.setTeam({...team, ...updatedTeam}));
+            console.log('match DOC ==> listning on modified action: ');
+            const {createdAt, ...updatedmatch} = change.doc.data();
+            matchDispatch(matchActions.setMatch({...match, ...updatedmatch}));
           }
           if (change.type === 'removed') {
-            console.log('TEAM DOC ==> listning on removed action: ');
+            console.log('match DOC ==> listning on removed action: ');
           }
         });
       });
@@ -67,32 +73,13 @@ export const useChatRoom = () => {
     return unsub;
   }, []);
 
-  const ListenOnChatRoomDoc = useCallback(() => {
-    let unsub;
-    // only if teamid exist
-    if (team.uid) {
-      unsub = db()
-        .doc(`teams/${team.uid}`)
-        .collection('chatRoom')
-        .onSnapshot(snapshot => {
-          console.log('the chatRoom doc has changed');
-          const chatRoom = snapshot.docs[0];
-          teamDispatch(
-            teamActions.setTeam({
-              ...team,
-              admins: chatRoom.data().admins,
-            }),
-          );
-        });
-    }
-    return unsub;
-  }, []);
-
   const listenOnMembersCollection = useCallback(() => {
-    const unsub = db()
-      .doc(`teams/${team.uid}`)
+    let unsub = () => {};
+    unsub = db()
+      .doc(`matchs/${match.uid}`)
       .collection('members')
       .onSnapshot(snapshot => {
+        console.log('the MEMBERS collecton  has changed');
         // console.log('snapshot.docs', snapshot.docs.length);
         // console.log('snapshot.docChanges()', snapshot.docChanges().length);
         // cteate new list of members --> update local state
@@ -100,9 +87,9 @@ export const useChatRoom = () => {
         const membersDb = snapshot.docs.map(doc => {
           return {...doc.data(), uid: doc.id};
         });
-        teamDispatch(
-          teamActions.setTeam({
-            ...team,
+        matchDispatch(
+          matchActions.setMatch({
+            ...match,
             members: membersDb,
           }),
         );
@@ -125,7 +112,7 @@ export const useChatRoom = () => {
             },
           };
           db()
-            .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
+            .doc(`matchs/${match.uid}/chatRoom/${match.matchRoomId}`) // matchRoomIdd
             .collection('messages')
             .add(message);
         });
@@ -134,18 +121,17 @@ export const useChatRoom = () => {
       }
       console.log('we sent a message');
     },
-    [user, team],
+    [user, match],
   );
 
   return {
     ListenOnMessages,
     ...authState,
-    ...teamState,
+    ...matchState,
     userDispatch,
-    teamDispatch,
+    matchDispatch,
     sendMessage,
-    ListenOnChatRoomDoc,
-    ListenOnTeamDoc,
+    ListenOnMatchDoc,
     listenOnMembersCollection,
   };
 };

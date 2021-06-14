@@ -46,6 +46,8 @@ const signUpUser = async (dispatch, {email, password, nickName}) => {
       nickName: nickName || user.email.split('@')[0] + ' nickName',
       teamId: null,
       chatRoomId: null,
+      matchId: null,
+      matchRoomId: null,
     };
     // when we create new account we are creting a new doc in users collection
     await db().collection('players').doc(user.uid).set(defaultProfile);

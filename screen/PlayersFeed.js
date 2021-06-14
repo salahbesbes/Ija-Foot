@@ -31,7 +31,6 @@ const PlayersFeed = () => {
   const [filter, setFilter] = useState('');
 
   const fetchPlayers = (after, limit) => {
-    console.log('fetchPlayers called');
     if (!isListComplete) {
       // console.log('starting query');
       getPaginated(after, limit)

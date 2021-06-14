@@ -3,13 +3,14 @@ import {StyleSheet, FlatList, View, ActivityIndicator} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
 import TeamItem from '../components/TeamFeedCard';
+// import AdminCard from '../components/PlayerCard/AdminCard';
 import Filters, {filterData} from '../components/TeamFeedCard/filters';
+import {useCreateMatch} from '../hooks/useCreateMatch';
 
 const PAGINATION_LIMIT = 4;
 
 const getLast = arr => {
   const res = arr.slice(-1)[0];
-  console.log('last item: ' + res.id);
   return res;
 };
 
@@ -23,11 +24,9 @@ const TeamssFeed = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isListComplete, setIsListComplete] = useState(false);
   const [filter, setFilter] = useState('');
-
+  const {match} = useCreateMatch();
   const fetchTeams = (after, limit) => {
-    console.log('fetchTeams called');
     if (!isListComplete) {
-      console.log('starting query');
       getPaginated(after, limit)
         .then(snap => {
           if (snap.empty) {

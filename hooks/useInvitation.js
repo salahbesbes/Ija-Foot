@@ -1,24 +1,39 @@
 import db from '@react-native-firebase/firestore';
 import {useCallback, useContext} from 'react';
+import {matchActions} from '../stateManager/actions/match-A';
 import {teamActions} from '../stateManager/actions/team-A';
 import {AppStateContext} from '../stateProvider';
 
 export const useInvitaion = () => {
-  const {authContext, teamContext} = useContext(AppStateContext);
-  const [authState, userDispatch] = authContext;
+  const {matchContext, teamContext} = useContext(AppStateContext);
   const [teamState, teamDispatch] = teamContext;
+  const [matchState, matchDispatch] = matchContext;
   const {team} = teamState;
-  const {user} = authState;
+  const {match} = matchState;
 
-  const addFriend = useCallback(
+  const inviteplayer = useCallback(
     async playerId => {
       try {
-        console.log('team is ', team);
         if (team.uid) {
           await db().doc(`teams/${team.uid}/members/${playerId}`).set({});
-          await db()
-            .doc(`players/${playerId}`)
-            .update({teamId: team.uid, chatRoomId: team.chatRoomId});
+
+          let updatedProfile = {};
+
+          if (match.uid) {
+            updatedProfile = {
+              teamId: team.uid,
+              chatRoomId: team.chatRoomId,
+              matchId: match.uid,
+              matchRoomId: match.matchRoomId,
+            };
+            await db().doc(`matchs/${match.uid}/members/${playerId}`).set({});
+          } else {
+            updatedProfile = {
+              teamId: team.uid,
+              chatRoomId: team.chatRoomId,
+            };
+          }
+          await db().doc(`players/${playerId}`).update(updatedProfile);
           teamDispatch(
             teamActions.setTeam({
               ...team,
@@ -33,7 +48,8 @@ export const useInvitaion = () => {
         console.log('useInvitaion ERROR =>>', error.message);
       }
     },
-    [teamDispatch],
+    [teamDispatch, team],
   );
-  return {addFriend, ...authState, ...teamState};
+
+  return {inviteplayer, ...teamState};
 };

@@ -28,7 +28,7 @@ const SignUp = ({navigation}) => {
   } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [nickName, setNickName] = useState('');
+  const [nickName, setNickName] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [visible, setVisible] = useState(false);
   const {loading, user, error, dispatch, signUp} = useSignUp();
@@ -106,8 +106,7 @@ const SignUp = ({navigation}) => {
           labelStyle={[textButton]}
           icon="fingerprint"
           onPress={() => {
-            // signUp({email, password});
-            // navigation.nabigate('')
+            signUp({email, password, nickName});
           }}>
           SignUp
         </Button>

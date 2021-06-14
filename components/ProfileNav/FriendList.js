@@ -84,14 +84,18 @@ const FriendCard = ({friend, size}) => {
 const FriendList = ({nbColumn, horizental, size = 100}) => {
   const {userFriends} = useFriends();
   return (
-    <View style={{justifyContent: 'center', alignItems: 'center'}}>
-      <FlatList
-        horizontal={horizental}
-        numColumns={nbColumn}
-        data={userFriends}
-        renderItem={({item}) => <FriendCard friend={item} size={size} />}
-        keyExtractor={item => item.uid}
-      />
+    <View style={{justifyContent: 'center', alignItems: 'center', height: 80}}>
+      {userFriends.length ? (
+        <FlatList
+          horizontal={horizental}
+          numColumns={nbColumn}
+          data={userFriends}
+          renderItem={({item}) => <FriendCard friend={item} size={size} />}
+          keyExtractor={item => item.uid}
+        />
+      ) : (
+        <Text>Empty Friend list </Text>
+      )}
     </View>
   );
 };

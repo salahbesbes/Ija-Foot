@@ -12,6 +12,7 @@ import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {teamActions} from '../stateManager/actions/team-A';
+import CreateTeam from '../components/team/createTeam';
 
 const FeedTab = createMaterialTopTabNavigator();
 
@@ -73,7 +74,7 @@ const HomeScreen = ({navigation}) => {
           padding: 5,
         }}>
         <FindMatchModal />
-        <CreateTeamModal />
+        <CreateTeam />
         <Button
           title="chat Room"
           onPress={() => navigation.navigate('MyTeam')}

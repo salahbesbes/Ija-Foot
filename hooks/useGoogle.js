@@ -49,6 +49,7 @@ const GoogleSignUp_In = async dispatch => {
         email: user.email,
         avatar: user.photoUrl || 'defalt avatar',
         teamId: null,
+        nickName: user.displayName + ' nickName',
       };
 
       // either new account or logging in we are setting those values

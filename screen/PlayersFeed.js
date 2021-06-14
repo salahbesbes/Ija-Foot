@@ -5,11 +5,14 @@ import db from '@react-native-firebase/firestore';
 import PlayerItem from '../components/PlayerCard';
 import Filters, {filterData} from '../components/PlayerCard/filters';
 
+import PlayerItem from '../components/PlayerCard';
+import {useAdmin} from '../hooks/useAdmin';
+import {useInvitaion} from '../hooks/useInvitation';
+
 const PAGINATION_LIMIT = 4;
 
 const getLast = arr => {
   const res = arr.slice(-1)[0];
-  console.log('last item: ' + res.id);
   return res;
 };
 
@@ -31,7 +34,7 @@ const PlayersFeed = () => {
   const fetchPlayers = (after, limit) => {
     console.log('fetchPlayers called');
     if (!isListComplete) {
-      console.log('starting query');
+      // console.log('starting query');
       getPaginated(after, limit)
         .then(snap => {
           if (snap.empty) {
@@ -48,7 +51,7 @@ const PlayersFeed = () => {
   };
 
   const onRefresh = useCallback(() => {
-    console.log('onRefresh called');
+    // console.log('onRefresh called');
     setRefreshing(true);
     setSnapshots([]);
     setIsListComplete(false);
@@ -57,14 +60,23 @@ const PlayersFeed = () => {
 
   useEffect(() => {
     fetchPlayers(null, PAGINATION_LIMIT);
-    //    console.log('snapshots[0]: ' + snapshots[0]?.email);
   }, []);
 
+  const useAdminData = useAdmin();
+  // console.log('team.id :>> ', team.uid);
+  const useInviData = useInvitaion();
   return (
-    <View style={styles.flatList}>
+    <>
+      {/* <View style={styles.flatList}> */}
       <FlatList
-        renderItem={({item}) => <PlayerItem item={item} />}
-        data={filterData(snapshots)}
+        renderItem={({item}) => (
+          <PlayerItem
+            item={item}
+            useInviData={useInviData}
+            useAdminData={useAdminData}
+          />
+        )}
+        data={snapshots}
         onEndReachedThreshold={0}
         onEndReached={() => fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)}
         onRefresh={onRefresh}
@@ -74,7 +86,20 @@ const PlayersFeed = () => {
         ListFooterComponent={<ActivityIndicator />}
         extraData={filter}
       />
-    </View>
+      {/* </View> */}
+      {/* <FlatList
+        renderItem={({item}) => (
+          <TouchableOpacity onPress={() => givePrivilege(item.uid)}>
+            <View style={{marginVertical: 10}}>
+              <Text> {item.uid} </Text>
+              <Text> {item.nickName} </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        data={playerss}
+        keyExtractor={item => item.uid}
+      /> */}
+    </>
   );
 };
 

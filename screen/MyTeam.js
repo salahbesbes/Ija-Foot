@@ -1,11 +1,22 @@
-import React from 'react';
-import {Text, SafeAreaView} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {Text, SafeAreaView, View} from 'react-native';
+import {ChatRoom} from '../components/chat/chatRoom';
+import {AppStateContext} from '../stateProvider';
 
-const MyTeam = () => {
+const MyTeam = ({navigation}) => {
+  const {authContext, teamContext} = useContext(AppStateContext);
+  const [authState, userDispatch] = authContext;
+  const [teamState, teamDispatch] = teamContext;
+  const {team} = teamState;
+  const {user} = authState;
+  const [members, setmembers] = useState([]);
+  useEffect(() => {
+    setmembers(team.members);
+  }, [team]);
   return (
-    <SafeAreaView>
-      <Text> this is My team screen with chat </Text>
-    </SafeAreaView>
+    <>
+      <ChatRoom navigation={navigation} />
+    </>
   );
 };
 

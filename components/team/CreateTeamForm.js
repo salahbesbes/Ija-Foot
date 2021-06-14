@@ -10,13 +10,14 @@ import {
 import {useCreateTeam} from '../../hooks/useCreateTeam';
 import {teamActions} from '../../stateManager/actions/team-A';
 import DatePicker from './DatePicker';
+import LocationPicker from '../LocationPicker';
 
 const CreateTeamForm = ({setModalVisible}) => {
   const [teamName, setTeamName] = useState('');
   const [stadium, setStadium] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [formDate, setFormDate] = useState(undefined);
+  const [formDate, setFormDate] = useState(null);
   const {teamDispatch, createTeam, teamError} = useCreateTeam();
   const submitCreateTeam = () => {
     if (teamName === '') {
@@ -28,7 +29,7 @@ const CreateTeamForm = ({setModalVisible}) => {
       stadium,
       location,
       description,
-      formDate,
+      date: formDate,
     };
     createTeam(teamData);
     setModalVisible(false);
@@ -62,12 +63,7 @@ const CreateTeamForm = ({setModalVisible}) => {
           onChangeText={setDescription}
         />
         <DatePicker formDate={formDate} setFormDate={setFormDate} />
-        <TextInput
-          style={styles.input}
-          placeholder="Location"
-          value={location}
-          onChangeText={setLocation}
-        />
+        <LocationPicker location={location} onLocationChange={setLocation} />
       </ScrollView>
     </View>
   );

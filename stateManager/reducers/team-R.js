@@ -1,18 +1,25 @@
-import {LOADING, SUCCESS, FAILURE, RESET, CREATETEAM} from '../actions/team-A';
+import {
+  LOADING,
+  SUCCESS,
+  FAILURE,
+  RESET,
+  CREATETEAM,
+  LOGOUT,
+} from '../actions/team-A';
 
 export const teamInitialState = {
   teamLoading: false,
   teamError: false,
   team: {
-    uid: undefined,
+    uid: null,
     members: [],
-    admin: undefined,
-    createdAt: undefined,
-    teamName: undefined,
-    location: undefined,
-    description: undefined,
-    date: undefined,
-    chatRoomId: undefined,
+    admins: [],
+    createdAt: null,
+    teamName: null,
+    location: null,
+    description: null,
+    date: null,
+    chatRoomId: null,
   },
 };
 
@@ -24,6 +31,9 @@ export function teamReducer(state, {type, payload}) {
       return {...state, teamLoading: false, teamError: false};
     case FAILURE:
       return {...state, teamLoading: false, teamError: payload};
+    case LOGOUT:
+      return teamInitialState;
+
     case CREATETEAM:
       return {...state, teamLoading: false, teamError: false, team: payload};
     default:

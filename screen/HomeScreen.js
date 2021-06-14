@@ -1,6 +1,7 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Button, Image, StyleSheet, View} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import db from '@react-native-firebase/firestore';
 
 import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
@@ -12,12 +13,32 @@ import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 
+import {actionCreators} from '../stateManager/actions/auth-A';
+import {teamActions} from '../stateManager/actions/team-A';
+
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
-  const {authContext} = useContext(AppStateContext);
-  const [state, dispatch] = authContext;
-  const {user, userFriends} = state;
+  const {authContext, teamContext} = useContext(AppStateContext);
+  const [authState, userDispatch] = authContext;
+  const [teamState, teamDispatch] = teamContext;
+  const {user} = authState;
+  const {team} = teamState;
+  useEffect(() => {
+    const unsubProfile = db()
+      .doc(`players/${user.uid}`)
+      .onSnapshot(snapchot => {
+        console.log('snapchot :>> ', snapchot);
+        teamDispatch(
+          teamActions.setTeam({
+            ...team,
+            uid: snapchot.data()?.teamId,
+            chatRoomId: snapchot.data()?.chatRoomId,
+          }),
+        );
+      });
+    return unsubProfile;
+  }, []);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -53,7 +74,15 @@ const HomeScreen = ({navigation}) => {
             navigation.navigate('InviteFriend');
           }}
         />
+        <Button
+          title="reset State"
+          onPress={() => {
+            userDispatch(actionCreators.reset());
+            teamDispatch(teamActions.logOut());
+          }}
+        />
       </View> */}
+
       <FeedTab.Navigator>
         <FeedTab.Screen name="PlayersFeed" component={PlayersFeed} />
         <FeedTab.Screen name="TeamsFeed" component={TeamsFeed} />

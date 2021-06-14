@@ -105,6 +105,7 @@ const useProfile = () => {
   const ListningToChanges = useCallback(
     async newProfile => {
       try {
+        console.log('from Frofile => we are listnig');
         db()
           .collection('players')
           .doc(user.uid)
@@ -151,7 +152,13 @@ const useProfile = () => {
     },
     [team, user, userDispatch],
   );
-  return {...authState, userDispatch, updateProfile, team};
+  return {
+    ...authState,
+    userDispatch,
+    updateProfile,
+    ...teamState,
+    teamDispatch,
+  };
 };
 
 export default useProfile;

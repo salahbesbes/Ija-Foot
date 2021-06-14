@@ -46,8 +46,7 @@ const FindMatchForm = ({modalState, setModalState}) => {
     <View>
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          {' '}
-          Make yourself available for teams to invite you{' '}
+          Make yourself available for teams to invite you
         </Text>
         <Switch
           trackColor={{false: '#767577', true: '#81b0ff'}}

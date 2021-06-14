@@ -10,15 +10,14 @@ import {
   Modal,
   Image,
 } from 'react-native';
+
 import {useCreateTeam} from '../../hooks/useCreateTeam';
-import {actionCreators} from '../../stateManager/actions/auth-A';
 import {teamActions} from '../../stateManager/actions/team-A';
-import {AppStateContext} from '../../stateProvider';
 import CreateTeamForm from './CreateTeamForm';
 const CreateTeamModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
-
-  const {team, user, userDispatch, teamDispatch} = useCreateTeam();
+  const {team, teamDispatch, user} = useCreateTeam();
+  // console.log('team :>> ', team.admins, team.admins.includes(user.uid));
 
   return (
     <View>
@@ -36,7 +35,15 @@ const CreateTeamModal = () => {
           </View>
         </View>
       </Modal>
-      <Pressable style={styles.openModal} onPress={() => setModalVisible(true)}>
+{/*team?.admins?.includes(user.uid) ?*/} 
+      <Pressable style={styles.openModal} onPress={() => {
+        if (team?.members?.includes(user.uid))
+        {
+          setModalVisible(true);
+        } else {
+          navigation.navigate('MyTeam');
+        }
+      }}>
         <View>
           <Image
             style={styles.image}

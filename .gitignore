@@ -4,6 +4,7 @@
 package-lock.json
 # Xcode
 #
+.vscode
 build/
 *.pbxuser
 !default.pbxuser

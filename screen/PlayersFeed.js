@@ -1,15 +1,10 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {
-  StyleSheet,
-  FlatList,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, FlatList, View, ActivityIndicator} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
 import PlayerItem from '../components/PlayerCard';
+import Filters, {filterData} from '../components/PlayerCard/filters';
+
 import {useAdmin} from '../hooks/useAdmin';
 import {useInvitaion} from '../hooks/useInvitation';
 
@@ -23,7 +18,7 @@ const getLast = arr => {
 const getPaginated = (after, limit) => {
   const queryRef = db()
     .collection('players')
-    // .where('isAvailable', '==', true)
+    //.where('isAvailable', '==', true)
     .limit(limit);
 
   return (after ? queryRef.startAfter(after) : queryRef).get();
@@ -33,6 +28,7 @@ const PlayersFeed = () => {
   const [snapshots, setSnapshots] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isListComplete, setIsListComplete] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const fetchPlayers = (after, limit) => {
     console.log('fetchPlayers called');
@@ -66,11 +62,9 @@ const PlayersFeed = () => {
   }, []);
 
   const useAdminData = useAdmin();
-  // console.log('team.id :>> ', team.uid);
   const useInviData = useInvitaion();
   return (
-    <>
-      {/* <View style={styles.flatList}> */}
+    <View style={styles.flatList}>
       <FlatList
         renderItem={({item}) => (
           <PlayerItem
@@ -79,27 +73,17 @@ const PlayersFeed = () => {
             useAdminData={useAdminData}
           />
         )}
-        data={snapshots}
+        data={filterData(snapshots)}
         onEndReachedThreshold={0}
         onEndReached={() => fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        // keyExtractor={item => item.id}
+        keyExtractor={item => item.id}
+        ListHeaderComponent={<Filters setFilter={setFilter} />}
+        ListFooterComponent={<ActivityIndicator />}
+        extraData={filter}
       />
-      {/* </View> */}
-      {/* <FlatList
-        renderItem={({item}) => (
-          <TouchableOpacity onPress={() => givePrivilege(item.uid)}>
-            <View style={{marginVertical: 10}}>
-              <Text> {item.uid} </Text>
-              <Text> {item.nickName} </Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        data={playerss}
-        keyExtractor={item => item.uid}
-      /> */}
-    </>
+    </View>
   );
 };
 

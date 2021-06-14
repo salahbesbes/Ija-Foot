@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
-import {TextInput, Button} from 'react-native-paper';
+import {IconButton, TextInput, Button} from 'react-native-paper';
 import {useTheme} from '@react-navigation/native';
-import DatePicker from './DatePicker';
+import CustumModal from '../CustomModal';
+import DatePicker from '../team/DatePicker';
 import LocationPicker from '../LocationPicker';
 import {ScrollView} from 'react-native';
+import {useAdmin} from '../../hooks/useAdmin';
 import {teamActions} from '../../stateManager/actions/team-A';
-import {useCreateTeam} from '../../hooks/useCreateTeam';
 
-const CreateForm = props => {
+const UpdateForm = props => {
   const [teamName, setTeamName] = useState('');
   const [stadium, setStadium] = useState('');
   const [location, setLocation] = useState('');
@@ -16,9 +17,10 @@ const CreateForm = props => {
   const {mv, raisedInput, firstElement, textButton} = useTheme();
 
   const [formDate, setFormDate] = useState(null);
-  const {teamDispatch, loading, error, createTeam} = useCreateTeam();
 
-  const submitCreateTeam = () => {
+  const {error, loading, teamDispatch, updateDeatails} = useAdmin();
+
+  const submitUpdateTeam = () => {
     if (teamName === '') {
       teamDispatch(teamActions.failure('pls set a name'));
       return;
@@ -30,7 +32,7 @@ const CreateForm = props => {
       description,
       date: formDate,
     };
-    createTeam(teamData);
+    updateDeatails(teamData);
     props?.hideModal();
   };
 
@@ -74,11 +76,34 @@ const CreateForm = props => {
         labelStyle={[textButton]}
         icon="update"
         onPress={() => {
-          submitCreateTeam();
+          submitUpdateTeam();
         }}>
-        Create Team
+        Update Details
       </Button>
     </ScrollView>
   );
 };
-export default CreateForm;
+
+const renderForm = props => <UpdateForm {...props} />;
+
+const UpdateChatRoom = () => {
+  const {colors, widthSc} = useTheme();
+  const trigerButton = props => (
+    <IconButton
+      style={{position: 'absolute', right: 10, top: 5}}
+      icon="info"
+      size={20}
+      color={colors.accent}
+      {...props}
+    />
+  );
+
+  return (
+    <CustumModal
+      renderForm={renderForm}
+      trigerButton={props => trigerButton(props)}
+    />
+  );
+};
+
+export default UpdateChatRoom;

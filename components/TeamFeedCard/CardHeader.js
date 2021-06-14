@@ -1,13 +1,11 @@
 import React from 'react';
-import {StyleSheet, View, Text, Button} from 'react-native';
-import {useInvitaion} from '../../hooks/useInvitation';
+import {StyleSheet, View, Text} from 'react-native';
 
-export default function CardHeader({player, addFriend}) {
+export default function CardHeader() {
   return (
     <View style={styles.container}>
       <View style={styles.avatar} />
-      <Text>{player?.nickName}</Text>
-      <Button title="  + " onPress={() => addFriend(player.uid)} />
+      <Text>loreum sample text</Text>
     </View>
   );
 }

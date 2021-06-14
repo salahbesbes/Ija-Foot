@@ -1,11 +1,14 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import CreateTeamModal from '../team/CreateTeamModal';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {useChatRoom} from '../../hooks/useChatRoom';
+import {Divider} from 'react-native-paper';
+import FriendList from '../ProfileNav/FriendList';
+import UpdateChatRoom from '../team/UpdateChatRoom';
+
 export function ChatRoom({navigation}) {
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <CreateTeamModal />,
+      headerRight: () => <UpdateChatRoom />,
     });
   }, [navigation]);
   const [roomMessages, setRoomMessages] = useState([]);
@@ -29,7 +32,6 @@ export function ChatRoom({navigation}) {
     const unsub = ListenOnChatRoomDoc();
     return () => unsub();
   }, [ListenOnChatRoomDoc]);
-
   useEffect(() => {
     const unsub = listenOnMembersCollection();
     return () => unsub();
@@ -49,28 +51,37 @@ export function ChatRoom({navigation}) {
     },
     [sendMessage],
   );
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <UpdateChatRoom />,
+    });
+  }, [navigation]);
   return (
-    <GiftedChat
-      messages={roomMessages}
-      onSend={onSend}
-      user={{
-        _id: user.uid,
-        name: user.fullName,
-        avatar: user.avatar,
-      }}
-      isTyping
-      onLongPress={() => {
-        console.log('long Press on message');
-      }}
-      showUserAvatar
-      alwaysShowSend
-      scrollToBottom
-      onLongPressAvatar={() => {
-        console.log('long press on avatar  ');
-      }}
-      onQuickReply={rep => {
-        console.log(rep, 'quick reply pressed');
-      }}
-    />
+    <>
+      <FriendList horizental size={50} listToRender={team.members} />
+      <Divider />
+      <GiftedChat
+        messages={roomMessages}
+        onSend={onSend}
+        user={{
+          _id: user.uid,
+          name: user.fullName,
+          avatar: user.avatar,
+        }}
+        isTyping
+        onLongPress={() => {
+          console.log('long Press on message');
+        }}
+        showUserAvatar
+        alwaysShowSend
+        scrollToBottom
+        onLongPressAvatar={() => {
+          console.log('long press on avatar  ');
+        }}
+        onQuickReply={rep => {
+          console.log(rep, 'quick reply pressed');
+        }}
+      />
+    </>
   );
 }

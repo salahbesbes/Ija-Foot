@@ -31,7 +31,13 @@ const locations = [
 
 const LocationPicker = ({location, onLocationChange, disabled}) => {
   return (
-    <View style={{width: 200}}>
+    <View
+      style={{
+        marginVertical: 10,
+        width: '80%',
+        borderRadius: 10,
+        borderWidth: 1,
+      }}>
       <RNPickerSelect
         items={locations}
         onValueChange={value => {

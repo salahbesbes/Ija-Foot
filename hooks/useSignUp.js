@@ -25,7 +25,7 @@ const useSignUp = () => {
 export default useSignUp;
 
 // handle logic of sign in with fire base and at the same time the state management
-const signUpUser = async (dispatch, {email, password}) => {
+const signUpUser = async (dispatch, {email, password, nickName}) => {
   dispatch(actionCreators.loading());
   if (!email || email === '') {
     dispatch(actionCreators.failure('email must not be empty'));
@@ -43,8 +43,9 @@ const signUpUser = async (dispatch, {email, password}) => {
       email: user.email,
       avatar: 'gs://ija-foot-a1c03.appspot.com/images/avatar/default.png',
       //todo: remove or not this attribute
-      nickName: user.email.split('@')[0] + ' nickName',
+      nickName: nickName || user.email.split('@')[0] + ' nickName',
       teamId: null,
+      chatRoomId: null,
     };
     // when we create new account we are creting a new doc in users collection
     await db().collection('players').doc(user.uid).set(defaultProfile);

@@ -10,6 +10,41 @@ export const useChatRoom = () => {
   const {team} = teamState;
   const {user} = authState;
 
+  const ListenOnMessages = useCallback(setRoomMessages => {
+    console.log('teamid =>', team.uid, '||||  chatroom id =>', team.chatRoomId);
+    if (team.uid) {
+      try {
+        const listenMessage = db()
+          .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
+          .collection('messages')
+          .orderBy('createdAt', 'desc')
+          .onSnapshot(snapshot => {
+            let chatMessages = snapshot.docs.map(doc => {
+              const msg = doc.data();
+              // const time = msg.createdAt;
+              return {
+                _id: doc.id,
+                text: msg?.text,
+                createdAt: msg?.createdAt,
+                user: msg?.user,
+              };
+            });
+
+            console.log('chatMessages :>> ', chatMessages.length);
+            if (setRoomMessages) setRoomMessages(chatMessages);
+          });
+
+        return listenMessage;
+      } catch (error) {
+        console.log('listnng to message and RoomDoc ERROR =>> ', error.message);
+      }
+    } else {
+      console.log('you are not be able to log to chat Room');
+      console.log('members Now', team.members.length, team.members);
+      return () => {};
+    }
+  }, []);
+
   const ListenOnTeamDoc = useCallback(() => {
     const unsub = db()
       .collection('teams')
@@ -18,18 +53,11 @@ export const useChatRoom = () => {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'added') {
             console.log('TEAM DOC ==> listning on ADD action: ');
-            const {createdAt, ...detailTeam} = change.doc.data();
-            teamDispatch(teamActions.setTeam({...team, ...detailTeam}));
           }
           if (change.type === 'modified') {
             console.log('TEAM DOC ==> listning on modified action: ');
             const {createdAt, ...updatedTeam} = change.doc.data();
-            teamDispatch(
-              teamActions.setTeam({
-                ...team,
-                ...updatedTeam,
-              }),
-            );
+            teamDispatch(teamActions.setTeam({...team, ...updatedTeam}));
           }
           if (change.type === 'removed') {
             console.log(
@@ -39,6 +67,7 @@ export const useChatRoom = () => {
           }
         });
       });
+
     return unsub;
   }, []);
 
@@ -85,7 +114,6 @@ export const useChatRoom = () => {
       });
     return unsub;
   }, []);
-
   const sendMessage = useCallback(
     async callBackMessages => {
       try {
@@ -113,41 +141,6 @@ export const useChatRoom = () => {
     },
     [user, team],
   );
-
-  const ListenOnMessages = useCallback(setRoomMessages => {
-    console.log('teamid =>', team.uid, '||||  chatroom id =>', team.chatRoomId);
-    if (team.uid) {
-      try {
-        const listenMessage = db()
-          .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
-          .collection('messages')
-          .orderBy('createdAt', 'desc')
-          .onSnapshot(snapshot => {
-            let chatMessages = snapshot.docs.map(doc => {
-              const msg = doc.data();
-              // const time = msg.createdAt;
-              return {
-                _id: doc.id,
-                text: msg?.text,
-                createdAt: msg?.createdAt,
-                user: msg?.user,
-              };
-            });
-
-            console.log('chatMessages :>> ', chatMessages.length);
-            if (setRoomMessages) setRoomMessages(chatMessages);
-          });
-
-        return listenMessage;
-      } catch (error) {
-        console.log('listnng to message and RoomDoc ERROR =>> ', error.message);
-      }
-    } else {
-      console.log('you are not be able to log to chat Room');
-      console.log('members Now', team.members.length, team.members);
-      return () => {};
-    }
-  }, []);
 
   return {
     ListenOnMessages,

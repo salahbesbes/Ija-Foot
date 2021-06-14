@@ -6,13 +6,7 @@ import {
   View,
   Dimensions,
 } from 'react-native';
-import {
-  Avatar,
-  Button,
-  TextInput,
-  useTheme,
-  IconButton,
-} from 'react-native-paper';
+import {Avatar, Button, TextInput, useTheme} from 'react-native-paper';
 import useProfile from '../../hooks/useProfile';
 import {actionCreators} from '../../stateManager/actions/auth-A';
 import SignOutButton from '../SignOutButton';

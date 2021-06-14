@@ -31,7 +31,7 @@ const CreateForm = props => {
       date: formDate,
     };
     createTeam(teamData);
-    props?.hideModal();
+    props?.setModalVisible(false);
   };
 
   return (

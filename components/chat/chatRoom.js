@@ -24,16 +24,6 @@ export function ChatRoom({navigation}) {
   } = useChatRoom(setRoomMessages);
 
   useEffect(() => {
-    const unsub = ListenOnMessages(setRoomMessages);
-    return () => unsub();
-  }, [ListenOnMessages]);
-
-  useEffect(() => {
-    const unsub = ListenOnTeamDoc();
-    return () => unsub();
-  }, [ListenOnTeamDoc]);
-
-  useEffect(() => {
     const unsub = ListenOnTeamDoc();
     return () => unsub();
   }, [ListenOnTeamDoc]);
@@ -46,6 +36,11 @@ export function ChatRoom({navigation}) {
     const unsub = listenOnMembersCollection();
     return () => unsub();
   }, [listenOnMembersCollection]);
+
+  useEffect(() => {
+    const unsub = ListenOnMessages(setRoomMessages);
+    return () => unsub();
+  }, [ListenOnMessages]);
 
   const onSend = useCallback(
     (callBackMessages = []) => {
@@ -63,7 +58,7 @@ export function ChatRoom({navigation}) {
   }, [navigation]);
   return (
     <>
-      <FriendList horizental size={50} listToRender={team.members} />
+      <FriendList isMember horizental size={50} listToRender={team.members} />
       <Divider />
       <GiftedChat
         messages={roomMessages}

@@ -72,35 +72,24 @@ export const useChatRoom = () => {
   }, []);
 
   const ListenOnChatRoomDoc = useCallback(() => {
-    const unsub = db()
-      .doc(`teams/${team.uid}`)
-      .collection('chatRoom')
-      .onSnapshot(snapshot => {
-        console.log('the chatRoom doc has changed');
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'added') {
-            const chatRoom = change.doc.data();
-            teamDispatch(
-              teamActions.setTeam({...team, admins: chatRoom.admins}),
-            );
-
-            console.log('ChatRoom -->listning on ADD action: ');
-          }
-          if (change.type === 'modified') {
-            console.log('ChatRoom -->listning on modified action: ');
-            const chatRoom = change.doc.data();
-            teamDispatch(
-              teamActions.setTeam({...team, admins: chatRoom.admins}),
-            );
-          }
-          if (change.type === 'removed') {
-            console.log(
-              'ChatRoom -->listning on removed action: ',
-              change.doc.data(),
-            );
-          }
+    let unsub;
+    console.log('team :>> ', team);
+    // only if teamid exist
+    if (team.uid) {
+      unsub = db()
+        .doc(`teams/${team.uid}`)
+        .collection('chatRoom')
+        .onSnapshot(snapshot => {
+          console.log('the chatRoom doc has changed');
+          const chatRoom = snapshot.docs[0];
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              admins: chatRoom.data().admins,
+            }),
+          );
         });
-      });
+    }
     return unsub;
   }, []);
 
@@ -114,43 +103,15 @@ export const useChatRoom = () => {
         // console.log('snapshot.docChanges()', snapshot.docChanges().length);
         // cteate new list of members --> update local state
 
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'added') {
-            const docChanged = {...change.doc.data(), uid: change.doc.id};
-
-            // if the player is not already in the team
-            const playerIsMember = team.members // true or false
-              .map(player => player.uid)
-              .includes(docChanged.uid);
-
-            if (!playerIsMember) {
-              teamDispatch(
-                teamActions.setTeam({
-                  ...team,
-                  members: [...team.members, docChanged],
-                }),
-              );
-            }
-          }
-          if (change.type === 'modified') {
-            console.log('listning on member  modified ');
-          }
-          if (change.type === 'removed') {
-            const removedPlayer = {...change.doc.data(), uid: change.doc.id};
-            console.log(team.members.length);
-
-            const newList = team.members.filter(
-              player => player.uid !== removedPlayer.uid,
-            );
-            console.log(newList.length);
-            teamDispatch(
-              teamActions.setTeam({
-                ...team,
-                members: newList,
-              }),
-            );
-          }
+        const membersDb = snapshot.docs.map(doc => {
+          return {...doc.data(), uid: doc.id};
         });
+        teamDispatch(
+          teamActions.setTeam({
+            ...team,
+            members: membersDb,
+          }),
+        );
       });
     return unsub;
   }, []);

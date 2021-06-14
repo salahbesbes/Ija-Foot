@@ -82,6 +82,7 @@ const RootNavigator = () => {
             const chatRooms = chatRoomsDocs.docs.map(charRoomDoc => {
               return {...charRoomDoc.data(), uid: charRoomDoc.id};
             });
+            console.log('chatRooms :>> ', chatRooms);
             const chatRoom = chatRooms[0]; // always available
             console.log('we set new Team in the root screen');
             teamDispatch(

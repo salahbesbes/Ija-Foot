@@ -14,10 +14,12 @@ import {
 import {useCreateTeam} from '../../hooks/useCreateTeam';
 import {teamActions} from '../../stateManager/actions/team-A';
 import CreateTeamForm from './CreateTeamForm';
-const CreateTeamModal = () => {
+
+const CreateTeamModal = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const {team, teamDispatch, user} = useCreateTeam();
   // console.log('team :>> ', team.admins, team.admins.includes(user.uid));
+  //const isInTeam = () => {user}
 
   return (
     <View>
@@ -35,15 +37,16 @@ const CreateTeamModal = () => {
           </View>
         </View>
       </Modal>
-{/*team?.admins?.includes(user.uid) ?*/} 
-      <Pressable style={styles.openModal} onPress={() => {
-        if (team?.members?.includes(user.uid))
-        {
-          setModalVisible(true);
-        } else {
-          navigation.navigate('MyTeam');
-        }
-      }}>
+      <Pressable
+        style={styles.openModal}
+        onPress={() => {
+          //console.log('pressed team button, user: ' + JSON.stringify(user));
+          if (user.teamId) {
+            navigation.navigate('MyTeam');
+          } else {
+            setModalVisible(true);
+          }
+        }}>
         <View>
           <Image
             style={styles.image}

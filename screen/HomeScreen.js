@@ -89,7 +89,7 @@ const HomeScreen = ({navigation}) => {
       </FeedTab.Navigator>
       <View style={styles.bottomBar}>
         <FindMatchModal />
-        <CreateTeamModal />
+        <CreateTeamModal navigation={navigation} />
         <Pressable
           style={styles.button}
           onPress={() => navigation.navigate('Match')}>

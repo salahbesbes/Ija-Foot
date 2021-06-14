@@ -19,6 +19,7 @@ const CreateTeamForm = ({setModalVisible}) => {
   const [description, setDescription] = useState('');
   const [formDate, setFormDate] = useState(null);
   const {teamDispatch, createTeam, teamError} = useCreateTeam();
+
   const submitCreateTeam = () => {
     if (teamName === '') {
       teamDispatch(teamActions.failure('pls set a name'));

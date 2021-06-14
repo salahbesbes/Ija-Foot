@@ -1,11 +1,16 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {StyleSheet, FlatList, View, Text, ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  View,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
 import PlayerItem from '../components/PlayerCard';
 import Filters, {filterData} from '../components/PlayerCard/filters';
 
-import PlayerItem from '../components/PlayerCard';
 import {useAdmin} from '../hooks/useAdmin';
 import {useInvitaion} from '../hooks/useInvitation';
 
@@ -67,26 +72,28 @@ const PlayersFeed = () => {
   const useInviData = useInvitaion();
   return (
     <>
-      {/* <View style={styles.flatList}> */}
-      <FlatList
-        renderItem={({item}) => (
-          <PlayerItem
-            item={item}
-            useInviData={useInviData}
-            useAdminData={useAdminData}
-          />
-        )}
-        data={snapshots}
-        onEndReachedThreshold={0}
-        onEndReached={() => fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
-        keyExtractor={item => item.id}
-        ListHeaderComponent={<Filters setFilter={setFilter} />}
-        ListFooterComponent={<ActivityIndicator />}
-        extraData={filter}
-      />
-      {/* </View> */}
+      <View style={styles.flatList}>
+        <FlatList
+          renderItem={({item}) => (
+            <PlayerItem
+              item={item}
+              useInviData={useInviData}
+              useAdminData={useAdminData}
+            />
+          )}
+          data={filterData(snapshots)}
+          onEndReachedThreshold={0}
+          onEndReached={() =>
+            fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)
+          }
+          onRefresh={onRefresh}
+          refreshing={refreshing}
+          keyExtractor={item => item.id}
+          ListHeaderComponent={<Filters setFilter={setFilter} />}
+          ListFooterComponent={<ActivityIndicator />}
+          extraData={filter}
+        />
+      </View>
       {/* <FlatList
         renderItem={({item}) => (
           <TouchableOpacity onPress={() => givePrivilege(item.uid)}>

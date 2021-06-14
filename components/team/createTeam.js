@@ -4,7 +4,7 @@ import {useTheme} from '@react-navigation/native';
 import CustumModal from '../CustomModal';
 import DatePicker from './DatePicker';
 import LocationPicker from '../LocationPicker';
-import {ScrollView} from 'react-native';
+import {ScrollView, Pressable, View, Image, StyleSheet} from 'react-native';
 import {useAdmin} from '../../hooks/useAdmin';
 import {teamActions} from '../../stateManager/actions/team-A';
 import {useCreateTeam} from '../../hooks/useCreateTeam';
@@ -18,7 +18,6 @@ const CreateForm = props => {
   const {mv, raisedInput, firstElement, textButton} = useTheme();
 
   const [formDate, setFormDate] = useState(null);
-
   const {teamDispatch, loading, error, createTeam} = useCreateTeam();
 
   const submitCreateTeam = () => {
@@ -87,10 +86,27 @@ const CreateForm = props => {
 
 const renderForm = props => <CreateForm {...props} />;
 
-const CreateTeam = () => {
+const CreateTeam = ({navigation}) => {
   const {colors, widthSc, heightSc} = useTheme();
   const trigerButton = props => (
-    <Button
+    <Pressable
+      {...props}
+      style={styles.openModal}
+      onPress={() => {
+        //console.log('pressed team button, user: ' + JSON.stringify(user));
+        if (user.teamId) {
+          navigation.navigate('MyTeam');
+        } else {
+          setModalVisible(true);
+        }
+      }}>
+      <View>
+        <Image
+          style={styles.image}
+          source={require('../../assets/icons/icons8-football-team-100.png')}
+        />
+      </View>
+      {/* <Button
       style={{position: 'absolute', bottom: 0, right: 100}}
       icon="info"
       size={20}
@@ -98,7 +114,8 @@ const CreateTeam = () => {
       color={colors.accent}
       {...props}>
       create Team
-    </Button>
+    </Button> */}
+    </Pressable>
   );
 
   return (
@@ -108,5 +125,23 @@ const CreateTeam = () => {
     />
   );
 };
+
+const styles = StyleSheet.create({
+  image: {
+    //top: -27,
+    width: 80,
+    height: 80,
+    //backgroundColor: '#ffffee',
+    borderRadius: 36,
+  },
+  openModal: {
+    elevation: 5,
+    backgroundColor: '#F0A73E',
+    top: -27,
+    width: 80,
+    height: 80,
+    borderRadius: 36,
+  },
+});
 
 export default CreateTeam;

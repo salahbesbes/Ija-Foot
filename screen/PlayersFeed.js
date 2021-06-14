@@ -12,6 +12,7 @@ import PlayerItem from '../components/PlayerCard';
 import Filters, {filterData} from '../components/PlayerCard/filters';
 
 import {useAdmin} from '../hooks/useAdmin';
+import {useInvitaion} from '../hooks/useInvitation';
 
 const PAGINATION_LIMIT = 4;
 
@@ -65,7 +66,9 @@ const PlayersFeed = () => {
   useEffect(() => {
     fetchPlayers(null, PAGINATION_LIMIT);
   }, []);
+
   const [playerss, setPlayers] = useState([]);
+
   const getplayers = useCallback(async () => {
     try {
       const playersDoc = await db().collection('players').get();
@@ -85,42 +88,31 @@ const PlayersFeed = () => {
   //   getplayers();
   // }, [getplayers]);
   const {kickPlayer, givePrivilege, team} = useAdmin();
+  const useAdminData = useAdmin();
+  // console.log('team.id :>> ', team.uid);
+  const useInviData = useInvitaion();
   console.log('team.id :>> ', team.uid);
   return (
-      <View style={styles.flatList}>
-        <FlatList
-          renderItem={({item}) => (
-            <PlayerItem
-              item={item}
-              useInviData={useInviData}
-              useAdminData={useAdminData}
-            />
-          )}
-          data={filterData(snapshots)}
-          onEndReachedThreshold={0}
-          onEndReached={() =>
-            fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)
-          }
-          onRefresh={onRefresh}
-          refreshing={refreshing}
-          keyExtractor={item => item.id}
-          ListHeaderComponent={<Filters setFilter={setFilter} />}
-          ListFooterComponent={<ActivityIndicator />}
-          extraData={filter}
-        />
-      </View>
-      {/* <FlatList
+    <View style={styles.flatList}>
+      <FlatList
         renderItem={({item}) => (
-          <TouchableOpacity onPress={() => givePrivilege(item.uid)}>
-            <View style={{marginVertical: 10}}>
-              <Text> {item.uid} </Text>
-              <Text> {item.nickName} </Text>
-            </View>
-          </TouchableOpacity>
+          <PlayerItem
+            item={item}
+            useInviData={useInviData}
+            useAdminData={useAdminData}
+          />
         )}
-        data={playerss}
-        keyExtractor={item => item.uid}
-      /> */}
+        data={filterData(snapshots)}
+        onEndReachedThreshold={0}
+        onEndReached={() => fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+        keyExtractor={item => item.id}
+        ListHeaderComponent={<Filters setFilter={setFilter} />}
+        ListFooterComponent={<ActivityIndicator />}
+        extraData={filter}
+      />
+    </View>
   );
 };
 

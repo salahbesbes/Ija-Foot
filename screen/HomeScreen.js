@@ -1,6 +1,7 @@
 import React, {useContext, useEffect} from 'react';
 import {Button, Image, StyleSheet, View} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import db from '@react-native-firebase/firestore';
 
 import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
@@ -90,8 +91,8 @@ const HomeScreen = ({navigation}) => {
       </FeedTab.Navigator>
       <View style={styles.bottomBar}>
         <FindMatchModal />
-        //<CreateTeamModal navigation={navigation} />
-        <CreateTeam />
+        {/* <CreateTeamModal navigation={navigation} /> */}
+        <CreateTeam navigation={navigation} />
         <Pressable
           style={styles.button}
           onPress={() => navigation.navigate('Match')}>
@@ -103,7 +104,6 @@ const HomeScreen = ({navigation}) => {
             />
           </View>
         </Pressable>
-        
       </View>
     </>
   );

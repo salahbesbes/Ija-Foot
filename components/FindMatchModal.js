@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
+import {
+  Alert,
+  Modal,
+  StyleSheet,
+  Text,
+  Pressable,
+  View,
+  Image,
+} from 'react-native';
 import FindMatchForm from './FindMatchForm';
 
 const FindMatchModal = () => {
@@ -7,13 +15,11 @@ const FindMatchModal = () => {
   return (
     <View>
       <Modal
+        onDismiss={() => setModalVisible(!modalVisible)}
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
+        onRequestClose={() => setModalVisible(!modalVisible)}>
         <View style={{justifyContent: 'center', marginTop: 10, flex: 1}}>
           <View style={styles.modalView}>
             <FindMatchForm
@@ -23,8 +29,14 @@ const FindMatchModal = () => {
           </View>
         </View>
       </Modal>
-      <Pressable onPress={() => setModalVisible(true)}>
-        <Text>Show Modal</Text>
+      <Pressable style={styles.button} onPress={() => setModalVisible(true)}>
+        <View>
+          <Image
+            resizeMode="contain"
+            style={styles.image}
+            source={require('../assets/icons/icons8-soccer-100.png')}
+          />
+        </View>
       </Pressable>
     </View>
   );
@@ -54,9 +66,10 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 20,
-    padding: 10,
-    elevation: 2,
+    backgroundColor: '#23A727',
+    elevation: 5,
   },
+  image: {width: 60, height: 60},
   buttonOpen: {
     backgroundColor: '#F194FF',
   },

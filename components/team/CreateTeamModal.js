@@ -1,18 +1,21 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, Pressable, View, Modal, Button} from 'react-native';
+import {StyleSheet, Pressable, View, Modal, Image} from 'react-native';
+
 import {useCreateTeam} from '../../hooks/useCreateTeam';
 import {teamActions} from '../../stateManager/actions/team-A';
 import CreateTeamForm from './CreateTeamForm';
-const CreateTeamModal = () => {
+
+const CreateTeamModal = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const {team, teamDispatch, user} = useCreateTeam();
   // console.log('team :>> ', team.admins, team.admins.includes(user.uid));
+  //const isInTeam = () => {user}
 
   return (
     <View>
       <Modal
         animationType="slide"
-        transparent={true}
+        transparent={false}
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(false);
@@ -24,19 +27,22 @@ const CreateTeamModal = () => {
           </View>
         </View>
       </Modal>
-      {team?.admins?.includes(user.uid) ? (
-        <Button
-          title="open"
-          disabled={false}
-          onPress={() => setModalVisible(true)}
-        />
-      ) : (
-        <Pressable
-          style={styles.openModal}
-          onPress={() => setModalVisible(true)}>
-          <Text> u can Create Team </Text>
-        </Pressable>
-      )}
+      <Pressable
+        style={styles.openModal}
+        onPress={() => {
+          if (user.teamId) {
+            navigation.navigate('MyTeam');
+          } else {
+            setModalVisible(true);
+          }
+        }}>
+        <View>
+          <Image
+            style={styles.image}
+            source={require('../../assets/icons/icons8-football-team-100.png')}
+          />
+        </View>
+      </Pressable>
     </View>
   );
 };
@@ -64,9 +70,19 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  image: {
+    //top: -27,
+    width: 80,
+    height: 80,
+    //backgroundColor: '#ffffee',
+    borderRadius: 36,
+  },
   openModal: {
-    backgroundColor: 'orange',
-    width: 100,
-    height: 50,
+    elevation: 5,
+    backgroundColor: '#F0A73E',
+    top: -27,
+    width: 80,
+    height: 80,
+    borderRadius: 36,
   },
 });

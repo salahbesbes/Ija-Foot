@@ -20,6 +20,7 @@ export function ChatRoom({navigation}) {
     ListenOnChatRoomDoc,
     ListenOnTeamDoc,
     listenOnMembersCollection,
+    team,
   } = useChatRoom(setRoomMessages);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export function ChatRoom({navigation}) {
   }, [navigation]);
   return (
     <>
-      <FriendList horizental size={50} />
+      <FriendList horizental size={50} listToRender={team.members} />
       <Divider />
       <GiftedChat
         messages={roomMessages}

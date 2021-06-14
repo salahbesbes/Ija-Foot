@@ -3,6 +3,7 @@ import {useEffect} from 'react';
 
 import {useCallback, useContext} from 'react';
 import {teamActions} from '../stateManager/actions/team-A';
+import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
 const timeStump = db.FieldValue.serverTimestamp();
 
@@ -40,6 +41,14 @@ export const useCreateTeam = () => {
                 teamId: snap.id,
               });
 
+              userDispatch(
+                actionCreators.loadUser({
+                  ...user,
+                  isAvailable: false,
+                  teamId: snap.id,
+                }),
+              );
+
               // we dont save all user info
               const {availabilityData, isAvailable, uid, ...restProps} = user;
 
@@ -60,7 +69,7 @@ export const useCreateTeam = () => {
         console.log('failed to create team ERROR =>> ', error.message);
       }
     },
-    [team, teamDispatch, user],
+    [team, teamDispatch, user, userDispatch],
   );
 
   return {createTeam, userDispatch, teamDispatch, ...authState, ...teamState};

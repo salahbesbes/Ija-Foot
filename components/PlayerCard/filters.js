@@ -25,7 +25,6 @@ const Filters = ({setFilter}) => {
 };
 
 export const filterData = data => {
-  console.log('started filtering data, filter: ' + filtredLocations);
   if (filtredLocations) {
     return data.filter(
       item => filtredLocations === item.data().availabilityData?.location,

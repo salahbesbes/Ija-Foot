@@ -49,6 +49,9 @@ const GoogleSignUp_In = async dispatch => {
         email: user.email,
         avatar: user.photoUrl || 'defalt avatar',
         teamId: null,
+        chatRoomId: null,
+        matchId: null,
+        matchRoomId: null,
         nickName: user.displayName + ' nickName',
       };
 

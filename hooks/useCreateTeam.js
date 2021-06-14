@@ -33,12 +33,13 @@ export const useCreateTeam = () => {
                   createdAt: timeStump,
                   admins: [user.uid],
                 });
-              console.log('from create team');
+              // console.log('from create team');
 
               // update profile
               db().doc(`players/${user.uid}`).update({
                 isAvailable: false,
                 teamId: snap.id,
+                chatRoomId: chatRoom.id,
               });
 
               userDispatch(
@@ -46,6 +47,7 @@ export const useCreateTeam = () => {
                   ...user,
                   isAvailable: false,
                   teamId: snap.id,
+                  chatRoomId: chatRoom.id,
                 }),
               );
 

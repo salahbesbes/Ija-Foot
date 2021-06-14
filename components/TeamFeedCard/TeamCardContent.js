@@ -4,14 +4,14 @@ import {View} from 'react-native';
 import CardHeader from './CardHeader';
 import CardBody from './CardBody';
 
-export default function CardContent({playerData}) {
+export default function CardContent({teamCard, useCreateDAta}) {
   return (
     <View>
-      <CardHeader />
+      <CardHeader teamCard={teamCard} useCreateDAta={useCreateDAta} />
       <CardBody
-        location={playerData?.location}
-        isMotorized={playerData?.isMotorized}
-        description={playerData?.description}
+        location={teamCard?.playerData?.location}
+        isMotorized={teamCard?.playerData?.isMotorized}
+        description={teamCard?.playerData?.description}
       />
     </View>
   );

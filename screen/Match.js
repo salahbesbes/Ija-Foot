@@ -1,12 +1,10 @@
 import React from 'react';
 import {Text, SafeAreaView} from 'react-native';
+import {ChatRoom} from '../components/chat/chatRoom';
+import {MatchRoom} from '../components/chat/MatchRoom';
 
-const Match = () => {
-  return (
-    <SafeAreaView>
-      <Text> this is Match screen with chat </Text>
-    </SafeAreaView>
-  );
+const Match = ({navigation}) => {
+  return <MatchRoom navigation={navigation} />;
 };
 
 export default Match;

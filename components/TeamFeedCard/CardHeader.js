@@ -1,11 +1,20 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
+import {Button} from 'react-native-paper';
 
-export default function CardHeader() {
+export default function CardHeader({teamCard, useCreateDAta}) {
+  const {createMatch, team} = useCreateDAta;
   return (
     <View style={styles.container}>
       <View style={styles.avatar} />
       <Text>loreum sample text</Text>
+      <Button
+        mode="outlined"
+        onPress={() => {
+          createMatch({teamA: team.uid, teamB: teamCard.uid});
+        }}>
+        invite team
+      </Button>
     </View>
   );
 }

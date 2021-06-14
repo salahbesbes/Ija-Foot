@@ -7,11 +7,9 @@ import {
   Headline,
   Subheading,
   TextInput,
-  TouchableRipple,
   useTheme,
 } from 'react-native-paper';
 import GoogleButton from '../components/GoogleButton';
-import SignOutButton from '../components/SignOutButton';
 import useSignIn from '../hooks/useSignIn';
 import {actionCreators} from '../stateManager/actions/auth-A';
 
@@ -20,7 +18,6 @@ const SignIn = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {loading, user, error, dispatch, signIn} = useSignIn();
-  const [visible, setVisible] = useState(false);
 
   return (
     <SafeAreaView>
@@ -55,14 +52,6 @@ const SignIn = ({navigation}) => {
             mode="flat"
             error={error}
             label={error ? 'some Error occured' : 'password'}
-            right={
-              password && (
-                <TextInput.Icon
-                  name="eye"
-                  onPress={() => setVisible(!visible)}
-                />
-              )
-            }
           />
           <Button
             style={[mv]}

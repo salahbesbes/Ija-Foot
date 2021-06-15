@@ -1,20 +1,14 @@
 import db from '@react-native-firebase/firestore';
 
-import {useCallback, useContext} from 'react';
+import {useCallback} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
-import {AppStateContext} from '../stateProvider';
 
 /// since we cant use useSignIn and useSignUp on the same component
 /// we create this hooks so that we can use it any where
 
-export const useFriends = () => {
+export const useFriends = ({userState, userDispatch}) => {
   // we are using the reducer here so we returning its value
-  const {authContext, teamContext} = useContext(AppStateContext);
-  const [authState, userDispatch] = authContext;
-  const [teamState, teamDispatch] = teamContext;
-  const {team} = teamState;
-  const {user, userFriends} = authState;
-
+  const {user, userFriends} = userState;
   // we fetch all friends doc => [ {playerRef: 'players/123456987456', uid: '123456987456'} ...]
   const fetchFriendList = useCallback(async () => {
     try {
@@ -49,30 +43,47 @@ export const useFriends = () => {
           .collection('friends')
           .doc(playerData.uid)
           .set(other);
-        fetchFriendList();
+        // apdate the new friend he is ur friend
+        await db()
+          .collection('players')
+          .doc(playerData.uid)
+          .collection('friends')
+          .doc(user.uid)
+          .set(user);
+        // check if the player already exist
+        const playerAlreadyExist = userFriends
+          .map(el => el.uid)
+          .includes(playerData.uid);
+        !playerAlreadyExist &&
+          userDispatch(actionCreators.setFriends([...userFriends, playerData]));
       } catch (error) {
         console.log('useFriends ERROR :>> ', error);
       }
     },
-    [user.uid, fetchFriendList],
+    [userDispatch, user.uid, userFriends],
   );
 
   const deletFriend = useCallback(
-    async playerData => {
-      userDispatch(actionCreators.deleteFriend(playerData.uid));
+    async playerId => {
+      userDispatch(actionCreators.deleteFriend(playerId.uid));
       try {
         await db()
           .collection('players')
           .doc(user.uid)
           .collection('friends')
-          .doc(playerData.uid)
+          .doc(playerId)
           .delete();
+        userDispatch(
+          actionCreators.setFriends(
+            userFriends.filter(el => el.uid !== playerId && el),
+          ),
+        );
         // fetchFriendList();
       } catch (error) {
         console.log('useFriends ERROR :>> ', error);
       }
     },
-    [user.uid, userDispatch],
+    [user.uid, userDispatch, userFriends],
   );
   return {
     userFriends,
@@ -80,8 +91,6 @@ export const useFriends = () => {
     fetchFriendList,
     deletFriend,
     userDispatch,
-    teamDispatch,
-    ...teamState,
-    ...authState,
+    ...userState,
   };
 };

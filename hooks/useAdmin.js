@@ -1,17 +1,10 @@
 import db from '@react-native-firebase/firestore';
-import {useEffect, useReducer} from 'react';
-import {useState} from 'react';
 
-import {useCallback, useContext} from 'react';
+import {useCallback} from 'react';
 import {teamActions} from '../stateManager/actions/team-A';
-import {AppStateContext} from '../stateProvider';
 
-export const useAdmin = () => {
-  const {authContext, teamContext} = useContext(AppStateContext);
-  const [authState, userDispatch] = authContext;
-  const [teamState, teamDispatch] = teamContext;
+export const useAdmin = ({teamState, teamDispatch}) => {
   const {team} = teamState;
-  const {user} = authState;
 
   //   teamDispatch(teamActions.setTeam({...team, members}));
   const kickPlayer = useCallback(
@@ -144,7 +137,6 @@ export const useAdmin = () => {
     kickPlayer,
     givePrivilege,
     getAllMembers,
-    ...authState,
     ...teamState,
   };
 };

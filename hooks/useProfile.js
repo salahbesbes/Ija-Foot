@@ -155,20 +155,24 @@ const useProfile = () => {
     [team, user, userDispatch],
   );
 
-  const selectFile = useCallback(async () => {
-    // Opening Document Picker to select one file
-    try {
-      const fileObj = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
-      });
-      userDispatch(actionCreators.loadUser({...user, avatar: fileObj.uri}));
-      return fileObj;
-    } catch (err) {
-      if (DocumentPicker.isCancel) {
+  const selectFile = useCallback(
+    async setFile => {
+      // Opening Document Picker to select one file
+      try {
+        const fileObj = await DocumentPicker.pick({
+          type: [DocumentPicker.types.images],
+        });
+        setFile(fileObj);
+        userDispatch(actionCreators.loadUser({...user, avatar: fileObj.uri}));
+        return fileObj;
+      } catch (err) {
+        if (DocumentPicker.isCancel) {
+        }
+        console.log('DocPicker ERROR =>> ', err);
       }
-      console.log('DocPicker ERROR =>> ', err);
-    }
-  }, [user, userDispatch]);
+    },
+    [user, userDispatch],
+  );
 
   const uploadFileToStorage = useCallback(
     async fileObj => {

@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
+import React, {useContext, useState} from 'react';
 import {
   Button,
   Card,
@@ -10,27 +9,56 @@ import {
   Dialog,
   useTheme,
 } from 'react-native-paper';
+import {useAdmin} from '../../hooks/useAdmin';
+import {useFriends} from '../../hooks/useFriends';
+import {useInvitaion} from '../../hooks/useInvitation';
+import {AppStateContext} from '../../stateProvider';
+import {TouchableOpacity, Image} from 'react-native';
 
-const PlayerCard = ({item, useInvitaionData, useFriendData}) => {
+const Avatar = ({playerCard}) => {
+  return (
+    <TouchableOpacity
+      style={{marginVertical: 5, padding: 10, alignItems: 'center'}}>
+      <Image
+        style={{height: 50, width: 50, borderRadius: 50}}
+        source={{uri: playerCard?.avatar}}
+      />
+    </TouchableOpacity>
+  );
+};
+const PlayerCard = ({item}) => {
   const playerCard = {uid: item.id, ...item.data()};
-  const {team, user, match, inviteplayer} = useInvitaionData;
-  const {addFriend} = useFriendData;
+
+  const {matchContext, teamContext, authContext} = useContext(AppStateContext);
+  const [teamState, teamDispatch] = teamContext;
+  const [matchState, matchDispatch] = matchContext;
+  const [userState, userDispatch] = authContext;
+
+  const {team, inviteplayer} = useInvitaion({
+    teamState,
+    teamDispatch,
+    matchState,
+    matchDispatch,
+  });
+  const {addFriend, user} = useFriends({userState, userDispatch});
+  const {kickPlayer, givePrivilege} = useAdmin({teamState, teamDispatch});
 
   const [visible, setVisible] = useState(false);
-
   const showDialog = () => setVisible(true);
-
   const hideDialog = () => setVisible(false);
+
   const {mv, colors} = useTheme();
+
   return (
     <>
-      <Card style={{marginVertical: 10}}>
+      <Card style={[mv]}>
         <Card.Title
           title={`${playerCard?.nickName}`}
           subtitle={playerCard?.age}
           right={props => (
             <IconButton {...props} icon="more-vert" onPress={showDialog} />
           )}
+          left={() => <Avatar playerCard={playerCard} />}
         />
         {playerCard?.availabilityData && (
           <Card.Content>
@@ -42,32 +70,19 @@ const PlayerCard = ({item, useInvitaionData, useFriendData}) => {
       <Portal>
         <Dialog visible={visible} onDismiss={hideDialog}>
           <Dialog.Content>
-            <Button style={[mv]} mode="outlined" onPress={() => {}}>
-              invite Friend
+            <Button
+              style={[mv]}
+              mode="outlined"
+              onPress={() => addFriend(playerCard)}>
+              add Friend
             </Button>
             {team.uid && (
-              <Button style={[mv]} mode="outlined" onPress={() => {}}>
+              <Button
+                style={[mv]}
+                mode="outlined"
+                onPress={() => inviteplayer(playerCard)}>
                 invite to My Team
               </Button>
-            )}
-
-            {team.admins.includes(user.uid) && (
-              <>
-                <Button
-                  color={colors.backdrop}
-                  style={[mv]}
-                  mode="outlined"
-                  onPress={() => {}}>
-                  Give Privileges
-                </Button>
-                <Button
-                  color={colors.notification}
-                  style={[mv]}
-                  mode="outlined"
-                  onPress={() => {}}>
-                  kickPlayer
-                </Button>
-              </>
             )}
           </Dialog.Content>
         </Dialog>
@@ -75,5 +90,5 @@ const PlayerCard = ({item, useInvitaionData, useFriendData}) => {
     </>
   );
 };
-const styles = StyleSheet.create({});
+
 export default PlayerCard;

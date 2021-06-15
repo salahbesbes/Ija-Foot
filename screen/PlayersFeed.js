@@ -4,10 +4,7 @@ import db from '@react-native-firebase/firestore';
 
 import Filters, {filterData} from '../components/PlayerCard/filters';
 
-import {useAdmin} from '../hooks/useAdmin';
-import {useInvitaion} from '../hooks/useInvitation';
 import PlayerCard from '../components/PlayerCard/PlayerCard';
-import {useFriends} from '../hooks/useFriends';
 
 const PAGINATION_LIMIT = 4;
 
@@ -61,19 +58,10 @@ const PlayersFeed = () => {
     fetchPlayers(null, PAGINATION_LIMIT);
   }, []);
 
-  const useAdminData = useAdmin();
-  const useInvitaionData = useInvitaion();
-  const useFriendData = useFriends();
   return (
     <View style={styles.flatList}>
       <FlatList
-        renderItem={({item}) => (
-          <PlayerCard
-            item={item}
-            useInvitaionData={useInvitaionData}
-            useFriendData={useFriendData}
-          />
-        )}
+        renderItem={({item}) => <PlayerCard item={item} />}
         data={filterData(snapshots)}
         onEndReachedThreshold={0}
         onEndReached={() => fetchPlayers(getLast(snapshots), PAGINATION_LIMIT)}

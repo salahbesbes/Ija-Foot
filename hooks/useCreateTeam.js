@@ -5,6 +5,7 @@ import {useCallback, useContext} from 'react';
 import {teamActions} from '../stateManager/actions/team-A';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
+
 const timeStump = db.FieldValue.serverTimestamp();
 
 export const useCreateTeam = () => {

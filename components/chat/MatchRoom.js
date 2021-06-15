@@ -5,11 +5,6 @@ import {Divider, Text} from 'react-native-paper';
 import FriendList from '../ProfileNav/FriendList';
 
 export function MatchRoom({navigation}) {
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <Text> nothing </Text>,
-    });
-  }, [navigation]);
   const [matchMessages, setMatchMessages] = useState([]);
 
   const {
@@ -45,29 +40,32 @@ export function MatchRoom({navigation}) {
     },
     [sendMessage],
   );
-  console.log(match.uid);
   return (
-    <GiftedChat
-      messages={matchMessages}
-      onSend={onSend}
-      user={{
-        _id: user.uid,
-        name: user.fullName,
-        avatar: user.avatar,
-      }}
-      isTyping
-      onLongPress={() => {
-        console.log('long Press on message');
-      }}
-      showUserAvatar
-      alwaysShowSend
-      scrollToBottom
-      onLongPressAvatar={() => {
-        console.log('long press on avatar  ');
-      }}
-      onQuickReply={rep => {
-        console.log(rep, 'quick reply pressed');
-      }}
-    />
+    <>
+      <FriendList isMember horizental size={50} listToRender={match.members} />
+      <Divider />
+      <GiftedChat
+        messages={matchMessages}
+        onSend={onSend}
+        user={{
+          _id: user.uid,
+          name: user.fullName,
+          avatar: user.avatar,
+        }}
+        isTyping
+        onLongPress={() => {
+          console.log('long Press on message');
+        }}
+        showUserAvatar
+        alwaysShowSend
+        scrollToBottom
+        onLongPressAvatar={() => {
+          console.log('long press on avatar  ');
+        }}
+        onQuickReply={rep => {
+          console.log(rep, 'quick reply pressed');
+        }}
+      />
+    </>
   );
 }

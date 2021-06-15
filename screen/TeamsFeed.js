@@ -5,8 +5,6 @@ import db from '@react-native-firebase/firestore';
 import TeamCard from '../components/TeamFeedCard/TeamCard';
 import Filters, {filterData} from '../components/TeamFeedCard/filters';
 import {useCreateMatch} from '../hooks/useCreateMatch';
-import {useAdmin} from '../hooks/useAdmin';
-import {useInvitaion} from '../hooks/useInvitation';
 
 const PAGINATION_LIMIT = 4;
 

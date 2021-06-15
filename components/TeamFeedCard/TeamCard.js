@@ -1,9 +1,11 @@
 import React from 'react';
 import {Button, Card, Title, Paragraph} from 'react-native-paper';
-
-const TeamCard = ({item, useCreateData}) => {
+import {useCreateMatch} from '../../hooks/useCreateMatch';
+const TeamCard = ({item}) => {
   const teamCard = {uid: item.id, ...item.data()};
-  const {createMatch, team} = useCreateData;
+
+  const {createMatch, team} = useCreateMatch();
+
   return (
     <Card style={{marginVertical: 10}}>
       <Card.Title

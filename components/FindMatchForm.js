@@ -15,7 +15,6 @@ const FindMatchForm = ({modalState, setModalState}) => {
   const [descriptionText, setDescriptionText] = useState('');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const toggleMotorized = () => setIsMotorized(prevState => !prevState);
-  //todo: fetech status of user from db
   useEffect(() => {
     if (user) {
       const data = user.availabilityData || {};

@@ -12,6 +12,11 @@ import {actionCreators} from '../../stateManager/actions/auth-A';
 import SignOutButton from '../SignOutButton';
 
 const Profile = ({navigation}) => {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <SignOutButton />,
+    });
+  }, [navigation]);
   const {submitButton, textButton, mv, raisedInput} = useTheme();
   const [age, setAge] = useState(null);
   const [fullName, setFullName] = useState(null);
@@ -19,19 +24,15 @@ const Profile = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState(null);
   const {user, loading, error, updateProfile, userDispatch, selectFile} =
     useProfile();
-  const [fileObj, setFileObj] = useState(null);
 
-  useEffect(() => {
-    setAge(user.age);
-    setFullName(user.fullName);
-    setNickName(user.nickName);
-    setPhoneNumber(user.phoneNumber);
-  }, [user]);
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <SignOutButton />,
-    });
-  }, [navigation]);
+  // useEffect(() => {
+  //   setAge(user.age);
+  //   setFullName(user.fullName);
+  //   setNickName(user.nickName);
+  //   setPhoneNumber(user.phoneNumber);
+  //   return true;
+  // }, [user.age, user.fullName, user.nickName, user.phoneNumber, selectFile]);
+  const [file, setFile] = useState(null);
   return (
     <ScrollView style={{}}>
       <View style={{height: 110}} />
@@ -43,9 +44,8 @@ const Profile = ({navigation}) => {
         />
 
         <TouchableOpacity
-          onPress={async () => {
-            const file = await selectFile();
-            setFileObj(file);
+          onPress={() => {
+            selectFile(setFile);
           }}
           style={styles.pressable}
         />
@@ -110,20 +110,19 @@ const Profile = ({navigation}) => {
             labelStyle={textButton}
             mode="contained"
             icon="send"
-            onPress={async () => {
-              async () => {
-                updateProfile(
-                  {
-                    age: age || '',
-                    fullName: fullName || '',
-                    nickName: nickName || '',
-                    phoneNumber: phoneNumber || '',
-                    avatar: user?.avatar,
-                  },
-                  fileObj,
-                );
-                setFileObj(null);
-              };
+            onPress={() => {
+              console.log('file :>> ', file);
+              updateProfile(
+                {
+                  age: age || '',
+                  fullName: fullName || '',
+                  nickName: nickName || '',
+                  phoneNumber: phoneNumber || '',
+                  avatar: user?.avatar,
+                },
+                file,
+              );
+              // setFileObj(null);
             }}>
             update Profile
           </Button>

@@ -25,7 +25,7 @@ const HomeScreen = ({navigation}) => {
       headerRight: () => (
         <Pressable
           onPress={() =>
-            navigation.navigate('ProfileNavigation', {nbColum: 2})
+            navigation.navigate('ProfileNavigation', {nbColumn: 2})
           }>
           <Avatar.Image
             style={{marginRight: 5}}

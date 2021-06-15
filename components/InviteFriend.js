@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Button,
   FlatList,
@@ -10,9 +10,12 @@ import {Alert, Modal, Pressable, View} from 'react-native';
 import SignOutButton from './SignOutButton';
 import {useFriends} from '../hooks/useFriends';
 import {actionCreators} from '../stateManager/actions/auth-A';
+import {AppStateContext} from '../stateProvider';
 
 const Friend = ({friend, backgroundColor, textColor, setSelectedId}) => {
-  const {addFriend, deletFriend} = useFriends();
+  const {authContext} = useContext(AppStateContext);
+  const [userState, userDispatch] = authContext;
+  const {addFriend, deletFriend} = useFriends({userState, userDispatch});
 
   return (
     <View style={{flexDirection: 'row'}}>

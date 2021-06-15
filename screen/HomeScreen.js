@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useLayoutEffect} from 'react';
 import {Button, Image, StyleSheet, View, Pressable} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import db from '@react-native-firebase/firestore';
@@ -12,56 +12,15 @@ import {Avatar, IconButton} from 'react-native-paper';
 import {teamActions} from '../stateManager/actions/team-A';
 import {useCreateMatch} from '../hooks/useCreateMatch';
 import {matchActions} from '../stateManager/actions/match-A';
+import {actionCreators} from '../stateManager/actions/auth-A';
+import {useHomeListner} from '../hooks/useHomeListners';
 
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
-  const {authContext, teamContext, matchContext} = useContext(AppStateContext);
-  const [authState, userDispatch] = authContext;
-  const [teamState, teamDispatch] = teamContext;
-  const [matchState, matchDispatch] = matchContext;
+  const {match, user} = useHomeListner();
 
-  const {user} = authState;
-  const {match} = matchState;
-  const {team} = teamState;
-  useEffect(() => {
-    const unsubProfile = db()
-      .doc(`players/${user.uid}`)
-      .onSnapshot(snapshot => {
-        // console.log('snapshot :>> ', snapshot);
-
-        teamDispatch(
-          teamActions.setTeam({
-            ...team,
-            uid: snapshot.data()?.teamId,
-            chatRoomId: snapshot.data()?.chatRoomId,
-          }),
-        );
-      });
-    console.log('unsubProfile');
-    return unsubProfile;
-  }, [teamDispatch]);
-
-  useEffect(() => {
-    const unsubChatRoomMembers = db()
-      .doc(`matchs/${match.uid}`)
-      .collection('members')
-      .onSnapshot(snapshot => {
-        const newMembers = snapshot.docs.map(member => {
-          return {uid: member.id, ...member.data()};
-        });
-        matchDispatch(
-          matchActions.setMatch({
-            ...match,
-            members: newMembers,
-          }),
-        );
-        console.log('new member added to the match');
-      });
-    return unsubChatRoomMembers;
-  }, [matchDispatch]);
-
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
@@ -77,7 +36,8 @@ const HomeScreen = ({navigation}) => {
       ),
     });
   }, []);
-
+  // console.log('team :>> ', team);
+  // console.log('user :>> ', user);
   // const {createMatch} = useCreateMatch();
   console.log('home match.members', match.members.length);
   return (

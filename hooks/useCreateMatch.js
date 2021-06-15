@@ -31,7 +31,6 @@ export const useCreateMatch = () => {
                 .collection('chatRoom')
                 .add({
                   createdAt: timeStump,
-                  admins: [user.uid],
                 });
               console.log('from create match');
               // update profile
@@ -51,7 +50,6 @@ export const useCreateMatch = () => {
               );
 
               // we dont save all user info
-              const {availabilityData, isAvailable, uid, ...restProps} = user;
               let batch = db().batch();
 
               // save all current members
@@ -65,17 +63,26 @@ export const useCreateMatch = () => {
 
               // save opposit memebers
               const membersDocs = await db()
-                .doc(`chats/${teamB}`)
+                .doc(`teams/${teamB}`)
                 .collection('members')
                 .get();
-
+              // update all oppsit team profile
+              membersDocs.docs.map(member => {
+                const docRef = db().doc(`teams/${teamB}/members/${member.id}`);
+                batch.update(docRef, {
+                  matchId: snap.id,
+                  matchRoomId: chatRoom.id,
+                });
+              });
               const teamBmembers = membersDocs.docs.map(doc => {
                 const docRef = db().doc(`matchs/${snap.id}/members/${doc.id}`);
                 batch.set(docRef, doc);
                 return {...doc.data(), uid: doc.id};
               });
 
-              batch.commit();
+              await batch.commit();
+              console.log('teamBmembers :>> ', teamBmembers);
+              console.log('team.members :>> ', team.members);
 
               newmatch.matchRoomId = chatRoom.id;
               newmatch.uid = snap.id;
@@ -94,7 +101,7 @@ export const useCreateMatch = () => {
         console.log('failed to create match ERROR =>> ', error.message);
       }
     },
-    [match, matchDispatch, user, userDispatch],
+    [match, team, matchDispatch, user, userDispatch],
   );
 
   return {

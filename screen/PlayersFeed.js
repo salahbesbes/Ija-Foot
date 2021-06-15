@@ -2,11 +2,12 @@ import React, {useEffect, useState, useCallback} from 'react';
 import {StyleSheet, FlatList, View, ActivityIndicator} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
-import PlayerItem from '../components/PlayerCard';
 import Filters, {filterData} from '../components/PlayerCard/filters';
 
 import {useAdmin} from '../hooks/useAdmin';
 import {useInvitaion} from '../hooks/useInvitation';
+import PlayerCard from '../components/PlayerCard/PlayerCard';
+import {useFriends} from '../hooks/useFriends';
 
 const PAGINATION_LIMIT = 4;
 
@@ -61,15 +62,16 @@ const PlayersFeed = () => {
   }, []);
 
   const useAdminData = useAdmin();
-  const useInviData = useInvitaion();
+  const useInvitaionData = useInvitaion();
+  const useFriendData = useFriends();
   return (
     <View style={styles.flatList}>
       <FlatList
         renderItem={({item}) => (
-          <PlayerItem
+          <PlayerCard
             item={item}
-            useInviData={useInviData}
-            useAdminData={useAdminData}
+            useInvitaionData={useInvitaionData}
+            useFriendData={useFriendData}
           />
         )}
         data={filterData(snapshots)}

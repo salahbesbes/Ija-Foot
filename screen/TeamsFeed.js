@@ -2,10 +2,11 @@ import React, {useEffect, useState, useCallback} from 'react';
 import {StyleSheet, FlatList, View, ActivityIndicator} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
-import TeamItem from '../components/TeamFeedCard';
-// import AdminCard from '../components/PlayerCard/AdminCard';
+import TeamCard from '../components/TeamFeedCard/TeamCard';
 import Filters, {filterData} from '../components/TeamFeedCard/filters';
 import {useCreateMatch} from '../hooks/useCreateMatch';
+import {useAdmin} from '../hooks/useAdmin';
+import {useInvitaion} from '../hooks/useInvitation';
 
 const PAGINATION_LIMIT = 4;
 
@@ -54,11 +55,13 @@ const TeamssFeed = () => {
     fetchTeams(null, PAGINATION_LIMIT);
     //    console.log('snapshots[0]: ' + snapshots[0]?.email);
   }, []);
-
+  const useCreateData = useCreateMatch();
   return (
     <View style={styles.flatList}>
       <FlatList
-        renderItem={({item}) => <TeamItem item={item} />}
+        renderItem={({item}) => (
+          <TeamCard item={item} useCreateData={useCreateData} />
+        )}
         data={filterData(snapshots)}
         onEndReachedThreshold={0}
         onEndReached={() => fetchTeams(getLast(snapshots), PAGINATION_LIMIT)}

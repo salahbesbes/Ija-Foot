@@ -14,7 +14,6 @@ export const useCreateTeam = () => {
   const {team} = teamState;
   const {user} = authState;
 
-  useEffect(() => {}, []);
   const createTeam = useCallback(
     async teamData => {
       try {
@@ -34,7 +33,7 @@ export const useCreateTeam = () => {
                   admins: [user.uid],
                 });
               // console.log('from create team');
-
+              console.log(chatRoom.id);
               // update profile
               db().doc(`players/${user.uid}`).update({
                 isAvailable: false,
@@ -53,7 +52,7 @@ export const useCreateTeam = () => {
 
               // we dont save all user info
               const {availabilityData, isAvailable, uid, ...restProps} = user;
-
+              console.log('restProps :>> ', restProps);
               await db()
                 .doc(`teams/${snap.id}/members/${user.uid}`)
                 .set(restProps);
@@ -62,6 +61,7 @@ export const useCreateTeam = () => {
               newTeam.uid = snap.id;
               newTeam.members = [{...restProps, uid: user.uid}];
               teamDispatch(teamActions.setTeam(newTeam));
+              console.log('create team success');
             } catch (error) {
               console.log(error);
               console.log('create collections Team ERROR =>> ', error.message);

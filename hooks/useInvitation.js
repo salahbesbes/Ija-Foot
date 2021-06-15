@@ -1,12 +1,12 @@
 import db from '@react-native-firebase/firestore';
 import {useCallback, useContext} from 'react';
-import {matchActions} from '../stateManager/actions/match-A';
 import {teamActions} from '../stateManager/actions/team-A';
 import {AppStateContext} from '../stateProvider';
 
 export const useInvitaion = () => {
-  const {matchContext, teamContext} = useContext(AppStateContext);
-  const [teamState, teamDispatch] = teamContext;
+  const {matchContext, teamContext, authContext} = useContext(AppStateContext);
+  const [teamState, teamDispatch] = authContext;
+  const [userState, userDispatch] = teamContext;
   const [matchState, matchDispatch] = matchContext;
   const {team} = teamState;
   const {match} = matchState;
@@ -51,5 +51,5 @@ export const useInvitaion = () => {
     [teamDispatch, team],
   );
 
-  return {inviteplayer, ...teamState};
+  return {inviteplayer, ...teamState, ...matchState, ...userState};
 };

@@ -32,6 +32,7 @@ export function ChatRoom({navigation}) {
     const unsub = ListenOnChatRoomDoc();
     return () => unsub();
   }, [ListenOnChatRoomDoc]);
+
   useEffect(() => {
     const unsub = listenOnMembersCollection();
     return () => unsub();

@@ -30,7 +30,7 @@ const CreateTeamModal = ({navigation}) => {
       <Pressable
         style={styles.openModal}
         onPress={() => {
-          if (user.teamId) {
+          if (team.uid) {
             navigation.navigate('MyTeam');
           } else {
             setModalVisible(true);

@@ -4,9 +4,10 @@ import {teamActions} from '../stateManager/actions/team-A';
 import {AppStateContext} from '../stateProvider';
 
 export const useChatRoom = () => {
-  const {authContext, teamContext} = useContext(AppStateContext);
+  const {authContext, teamContext, matchContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
   const [teamState, teamDispatch] = teamContext;
+  const [matchState, matchDispatch] = matchContext;
   const {team} = teamState;
   const {user} = authState;
 
@@ -100,6 +101,7 @@ export const useChatRoom = () => {
         const membersDb = snapshot.docs.map(doc => {
           return {...doc.data(), uid: doc.id};
         });
+        console.log('membersDb :>> ', membersDb);
         teamDispatch(
           teamActions.setTeam({
             ...team,
@@ -141,6 +143,8 @@ export const useChatRoom = () => {
     ListenOnMessages,
     ...authState,
     ...teamState,
+    ...matchState,
+    matchDispatch,
     userDispatch,
     teamDispatch,
     sendMessage,

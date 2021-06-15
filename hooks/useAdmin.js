@@ -26,6 +26,7 @@ export const useAdmin = () => {
           // update plyer profile to delete chatRoomId
           await db().doc(`players/${playerId}`).update({
             teamId: null,
+            chatRoomId: null,
           });
 
           // if player is admin -> update chatRoom kick Admin
@@ -141,8 +142,8 @@ export const useAdmin = () => {
   return {
     updateDeatails,
     kickPlayer,
-    getAllMembers,
     givePrivilege,
+    getAllMembers,
     ...authState,
     ...teamState,
   };

@@ -13,6 +13,7 @@ export const useInvitaion = ({
 
   const inviteplayer = useCallback(
     async playerData => {
+      console.log('playerData :>> ', playerData);
       try {
         if (team.uid) {
           await db().doc(`teams/${team.uid}/members/${playerData.uid}`).set({

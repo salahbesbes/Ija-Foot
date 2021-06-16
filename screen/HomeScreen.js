@@ -14,7 +14,7 @@ import {useCreateMatch} from '../hooks/useCreateMatch';
 import {matchActions} from '../stateManager/actions/match-A';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {useHomeListner} from '../hooks/useHomeListners';
-
+import SignOutButton from '../components/SignOutButton';
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
@@ -32,10 +32,11 @@ const HomeScreen = ({navigation}) => {
             source={{uri: user.avatar}}
             size={50}
           />
+          {/* <SignOutButton /> */}
         </Pressable>
       ),
     });
-  }, []);
+  }, [user.avatar, navigation]);
   // console.log('team :>> ', team);
   // console.log('user :>> ', user);
   // const {createMatch} = useCreateMatch();

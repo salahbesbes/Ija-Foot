@@ -104,10 +104,30 @@ export const useCreateMatch = () => {
     [match, team, matchDispatch, user, userDispatch],
   );
 
+  const exitFromRoom = useCallback(async () => {
+    await db().doc(`players/${user.uid}`).update({
+      teamId: null,
+      chatRoomId: null,
+      matchId: null,
+      matchRoomId: null,
+    });
+    await db().doc(`teams/${team.uid}/members/${user.uid}`).delete();
+    userDispatch(
+      actionCreators.loadUser({
+        ...user,
+        teamId: null,
+        chatRoomId: null,
+        matchId: null,
+        matchRoomId: null,
+      }),
+    );
+  }, [userDispatch]);
+
   return {
     createMatch,
     userDispatch,
     matchDispatch,
+    exitFromRoom,
     ...authState,
     ...matchState,
     ...teamState,

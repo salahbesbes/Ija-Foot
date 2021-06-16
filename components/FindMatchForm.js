@@ -74,7 +74,9 @@ const FindMatchForm = ({modalState, setModalState}) => {
         <Button mode="outlined" onPress={() => setModalState(!modalState)}>
           cancel
         </Button>
-        <Button mode="contained">save</Button>
+        <Button mode="contained" onPress={saveAvailability}>
+          save
+        </Button>
       </View>
     </View>
   );

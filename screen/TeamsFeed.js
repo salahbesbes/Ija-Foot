@@ -23,7 +23,7 @@ const TeamssFeed = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isListComplete, setIsListComplete] = useState(false);
   const [filter, setFilter] = useState('');
-  const {match} = useCreateMatch();
+  const {match, team} = useCreateMatch();
   const fetchTeams = (after, limit) => {
     if (!isListComplete) {
       getPaginated(after, limit)
@@ -54,6 +54,7 @@ const TeamssFeed = () => {
     //    console.log('snapshots[0]: ' + snapshots[0]?.email);
   }, []);
   const useCreateData = useCreateMatch();
+  console.log(team);
   return (
     <View style={styles.flatList}>
       <FlatList

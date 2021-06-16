@@ -20,6 +20,7 @@ const useProfile = () => {
   // since we need sinIn to call it on Click events we returning it with the reducer state modified
   const updateProfile = useCallback(
     async (newProfile, fileObj) => {
+      console.log(newProfile, fileObj);
       userDispatch(actionCreators.loading());
       if (!fileObj) {
         await UpdateOnlyFieldText(newProfile);
@@ -63,6 +64,7 @@ const useProfile = () => {
           console.log('we download the url from storage');
           // we add the avatar url from the storage to the user localy first then
           // when the user press submit the update the db with the new profile
+          console.log('after dowload ', user);
           try {
             await db()
               .collection('players')
@@ -79,7 +81,10 @@ const useProfile = () => {
               }),
             );
           } catch (error) {
-            console.log('UpdateOnlyFieldText ERROR => ', error.message);
+            console.log(
+              'updateProfileAndUploadAvatar ERROR => ',
+              error.message,
+            );
           }
         });
       }

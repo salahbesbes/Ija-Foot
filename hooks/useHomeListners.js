@@ -1,20 +1,18 @@
-import {useEffect} from 'react';
-import {useChatRoom} from './useChatRoom';
+import {useContext, useEffect} from 'react';
 import db from '@react-native-firebase/firestore';
 import {matchActions} from '../stateManager/actions/match-A';
 import {teamActions} from '../stateManager/actions/team-A';
 import {actionCreators} from '../stateManager/actions/auth-A';
+import {AppStateContext} from '../stateProvider';
 
 export const useHomeListner = () => {
-  const {
-    listenOnMembersCollection,
-    match,
-    team,
-    user,
-    userDispatch,
-    teamDispatch,
-    matchDispatch,
-  } = useChatRoom();
+  const {authContext, teamContext, matchContext} = useContext(AppStateContext);
+  const [authState, userDispatch] = authContext;
+  const [teamState, teamDispatch] = teamContext;
+  const [matchState, matchDispatch] = matchContext;
+  const {team} = teamState;
+  const {user} = authState;
+  const {match} = matchState;
 
   useEffect(() => {
     const unsubChatRoomMembers = db()
@@ -33,7 +31,7 @@ export const useHomeListner = () => {
         console.log('new member added to the match');
       });
     return unsubChatRoomMembers;
-  }, [matchDispatch]);
+  }, []);
 
   useEffect(() => {
     const unsubProfile = db()
@@ -50,7 +48,8 @@ export const useHomeListner = () => {
         );
         userDispatch(
           actionCreators.loadUser({
-            ...user,
+            ...snapshot.data(),
+            uid: snapshot.id,
             teamId: snapshot.data()?.teamId,
             chatRoomId: snapshot.data()?.chatRoomId,
           }),
@@ -58,13 +57,31 @@ export const useHomeListner = () => {
       });
     console.log('unsubProfile');
     return unsubProfile;
-  }, [teamDispatch]);
+  }, []);
 
   //listning on members changes in homescreen
   useEffect(() => {
-    const unsub = listenOnMembersCollection();
-    return () => unsub();
-  }, [listenOnMembersCollection]);
+    const unsub = db()
+      .doc(`teams/${team.uid}`)
+      .collection('members')
+      .onSnapshot(snapshot => {
+        // console.log('snapshot.docs', snapshot.docs.length);
+        // console.log('snapshot.docChanges()', snapshot.docChanges().length);
+        // cteate new list of members --> update local state
 
+        const membersDb = snapshot.docs.map(doc => {
+          return {...doc.data(), uid: doc.id};
+        });
+        console.log('membersDb :>> ', membersDb);
+        teamDispatch(
+          teamActions.setTeam({
+            ...team,
+            members: membersDb,
+          }),
+        );
+      });
+    return unsub;
+  }, []);
+  console.log(user);
   return {user, match, team, userDispatch, teamDispatch, matchDispatch};
 };

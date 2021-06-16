@@ -3,12 +3,15 @@ import {
   Button,
   Card,
   Title,
+  Checkbox,
   Paragraph,
   IconButton,
   Portal,
   Dialog,
   useTheme,
+  Text,
 } from 'react-native-paper';
+import {View} from 'react-native';
 import {useAdmin} from '../../hooks/useAdmin';
 import {useFriends} from '../../hooks/useFriends';
 import {useInvitaion} from '../../hooks/useInvitation';
@@ -60,12 +63,34 @@ const PlayerCard = ({item}) => {
           )}
           left={() => <Avatar playerCard={playerCard} />}
         />
-        {playerCard?.availabilityData && (
-          <Card.Content>
-            <Title>{playerCard?.availabilityData?.location}</Title>
-            <Paragraph>{playerCard?.description}</Paragraph>
-          </Card.Content>
-        )}
+
+        <Card.Content>
+          <Paragraph>
+            {`location : ${
+              playerCard?.availabilityData?.location
+                ? playerCard?.availabilityData?.location
+                : '...'
+            }`}
+          </Paragraph>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text>motorized:</Text>
+            <Checkbox
+              disabled
+              status={
+                playerCard?.availabilityData?.motorized
+                  ? 'checked'
+                  : 'unchecked'
+              }
+            />
+          </View>
+          <Text>
+            {`description : ${
+              playerCard?.availabilityData?.description
+                ? playerCard?.availabilityData?.description
+                : '...'
+            }`}
+          </Text>
+        </Card.Content>
       </Card>
       <Portal>
         <Dialog visible={visible} onDismiss={hideDialog}>

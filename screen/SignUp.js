@@ -77,27 +77,8 @@ const SignUp = ({navigation}) => {
           mode="flat"
           error={error}
           label={error ? 'some Error occured' : 'password'}
-          right={
-            password && (
-              <TextInput.Icon name="eye" onPress={() => setVisible(!visible)} />
-            )
-          }
         />
-        <TextInput
-          left={<TextInput.Icon name="lock" disabled />}
-          style={[raisedInput, mv]}
-          onFocus={() => {
-            dispatch(actionCreators.reset());
-          }}
-          onChangeText={setConfirmPassword}
-          value={confirmPassword}
-          secureTextEntry
-          confirmPasswordRules='required: upper; required: lower; required: digit; minlength: 6;"'
-          textContentType="password"
-          mode="flat"
-          error={error}
-          label={error ? 'some Error occured' : 'confirm Password'}
-        />
+
         <Button
           style={[mv]}
           uppercase

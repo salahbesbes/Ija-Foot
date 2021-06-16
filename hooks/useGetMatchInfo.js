@@ -7,38 +7,35 @@ export const useGetMatchInfo = () => {
   const {matchContext} = useContext(AppStateContext);
   const [matchState, matchDispatch] = matchContext;
 
-  const getMatch = useCallback(
-    async loggedUser => {
-      let matchDoc = await db()
-        .collection('matchs')
-        .doc(loggedUser.matchId)
-        .get();
-      const playermatch = matchDoc.data();
+  const getMatch = useCallback(async loggedUser => {
+    let matchDoc = await db()
+      .collection('matchs')
+      .doc(loggedUser.matchId)
+      .get();
+    const playermatch = matchDoc.data();
 
-      //* get members
+    //* get members
 
-      let membersDocs = await db()
-        .collection('matchs')
-        .doc(loggedUser.matchId)
-        .collection('members')
-        .get();
+    let membersDocs = await db()
+      .collection('matchs')
+      .doc(loggedUser.matchId)
+      .collection('members')
+      .get();
 
-      const matchMembers = membersDocs.docs.map(memberDoc => {
-        return {...memberDoc.data(), uid: memberDoc.id};
-      });
+    const matchMembers = membersDocs.docs.map(memberDoc => {
+      return {...memberDoc.data(), uid: memberDoc.id};
+    });
 
-      matchDispatch(
-        matchActions.setMatch({
-          ...playermatch,
-          uid: matchDoc.id,
-          matchRoomId: loggedUser.matchRoomId,
-          members: matchMembers,
-        }),
-      );
-      console.log('we set new match in the local State');
-    },
-    [matchDispatch],
-  );
+    matchDispatch(
+      matchActions.setMatch({
+        ...playermatch,
+        uid: matchDoc.id,
+        matchRoomId: loggedUser.matchRoomId,
+        members: matchMembers,
+      }),
+    );
+    console.log('we set new match in the local State');
+  }, []);
 
   return {getMatch};
 };

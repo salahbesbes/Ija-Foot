@@ -43,13 +43,7 @@ export const useFriends = ({userState, userDispatch}) => {
           .collection('friends')
           .doc(playerData.uid)
           .set(other);
-        // apdate the new friend he is ur friend
-        await db()
-          .collection('players')
-          .doc(playerData.uid)
-          .collection('friends')
-          .doc(user.uid)
-          .set(user);
+
         // check if the player already exist
         const playerAlreadyExist = userFriends
           .map(el => el.uid)

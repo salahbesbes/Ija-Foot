@@ -12,11 +12,6 @@ import {actionCreators} from '../../stateManager/actions/auth-A';
 import SignOutButton from '../SignOutButton';
 
 const Profile = ({navigation}) => {
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <SignOutButton />,
-    });
-  }, [navigation]);
   const {submitButton, textButton, mv, raisedInput} = useTheme();
   const [age, setAge] = useState(null);
   const [fullName, setFullName] = useState(null);
@@ -24,14 +19,13 @@ const Profile = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState(null);
   const {user, loading, error, updateProfile, userDispatch, selectFile} =
     useProfile();
-
-  // useEffect(() => {
-  //   setAge(user.age);
-  //   setFullName(user.fullName);
-  //   setNickName(user.nickName);
-  //   setPhoneNumber(user.phoneNumber);
-  //   return true;
-  // }, [user.age, user.fullName, user.nickName, user.phoneNumber, selectFile]);
+  console.log(user);
+  useEffect(() => {
+    setAge(user.age);
+    setFullName(user.fullName);
+    setNickName(user.nickName);
+    setPhoneNumber(user.phoneNumber);
+  }, [user.age, user.fullName, user.nickName, user.phoneNumber, selectFile]);
   const [file, setFile] = useState(null);
   return (
     <ScrollView style={{}}>

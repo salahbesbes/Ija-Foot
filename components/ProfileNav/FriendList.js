@@ -16,7 +16,6 @@ const FriendCard = ({friend, size, isMember}) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-
   return (
     <>
       <Portal>
@@ -28,8 +27,13 @@ const FriendCard = ({friend, size, isMember}) => {
         style={{marginVertical: 5, padding: 10, alignItems: 'center'}}
         onPress={showModal}>
         <Image
-          style={{height: size, width: size, borderRadius: size}}
-          source={{uri: 'https://picsum.photos/700'}}
+          style={{
+            height: size,
+            width: size,
+            borderRadius: size,
+            backgroundColor: 'grey',
+          }}
+          source={{uri: friend.avatar}}
         />
         <Text style={{fontSize: 15, fontWeight: 'bold'}}>
           {friend?.nickName}

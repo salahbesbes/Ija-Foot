@@ -33,7 +33,7 @@ const UpdateForm = props => {
     teamState,
     teamDispatch,
   });
-  const {createMatch, user} = useCreateMatch();
+  const {createMatch, exitFromRoom, user} = useCreateMatch();
 
   useEffect(() => {
     if (team.uid) {
@@ -59,6 +59,11 @@ const UpdateForm = props => {
     updateDeatails(teamData);
     props?.hideModal();
   };
+
+  //todo: listeng on update change
+  // todo: update local state when player is ckiked from team
+  //  profile + card + name of the shcreens
+
   return (
     <ScrollView contentContainerStyle={{alignItems: 'center'}}>
       {team.admins.includes(user.uid) ? (
@@ -104,6 +109,20 @@ const UpdateForm = props => {
               submitUpdateTeam();
             }}>
             Update Details
+          </Button>
+          <Button
+            style={[mv]}
+            color="red"
+            uppercase
+            mode="outlined"
+            loading={loading}
+            labelStyle={[textButton]}
+            icon="logout"
+            onPress={() => {
+              exitFromRoom();
+              props?.hideModal();
+            }}>
+            exist
           </Button>
         </>
       ) : (

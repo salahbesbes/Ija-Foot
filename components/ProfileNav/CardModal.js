@@ -27,6 +27,7 @@ const CardModal = ({friend, isMember}) => {
     matchState,
     matchDispatch,
   });
+
   return (
     <Card style={[mv]}>
       <Card.Title
@@ -86,7 +87,7 @@ const CardModal = ({friend, isMember}) => {
         ) : (
           !isMember && (
             <Button
-              style={[mv, {backgroundColor: colors.notification}]}
+              style={[mv]}
               uppercase
               mode="outlined"
               loading={loading}

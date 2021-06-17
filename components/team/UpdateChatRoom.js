@@ -17,7 +17,7 @@ import {teamActions} from '../../stateManager/actions/team-A';
 import {AppStateContext} from '../../stateProvider';
 import {useCreateMatch} from '../../hooks/useCreateMatch';
 
-const UpdateForm = props => {
+const UpdateForm = ({navigation, hideModal}) => {
   const [teamName, setTeamName] = useState('');
   const [stadium, setStadium] = useState('');
   const [location, setLocation] = useState('');
@@ -29,7 +29,7 @@ const UpdateForm = props => {
   const {teamContext} = useContext(AppStateContext);
   const [teamState, teamDispatch] = teamContext;
   // const {team} = teamState;
-  const {error, loading, updateDeatails, team} = useAdmin({
+  const {loading, updateDeatails, team} = useAdmin({
     teamState,
     teamDispatch,
   });
@@ -57,7 +57,8 @@ const UpdateForm = props => {
       date: formDate,
     };
     updateDeatails(teamData);
-    props?.hideModal();
+    hideModal();
+    navigation.navigate('Home');
   };
 
   //todo: listeng on update change
@@ -65,25 +66,23 @@ const UpdateForm = props => {
   //  profile + card + name of the shcreens
 
   return (
-    <ScrollView contentContainerStyle={{alignItems: 'center'}}>
+    <>
       {team.admins.includes(user.uid) ? (
-        <>
+        <ScrollView>
           <TextInput
             style={[raisedInput, {width: '100%'}, mv, firstElement]}
             onFocus={() => {}}
-            label={error ? 'some Error occured' : 'team Name'}
+            label={'team Name'}
             value={teamName}
             mode="outlined"
-            error={error}
             onChangeText={setTeamName}
           />
           <TextInput
             style={[raisedInput, {width: '100%'}, mv]}
             onFocus={() => {}}
-            label={error ? 'some Error occured' : 'Stadium'}
+            label={'Stadium'}
             value={stadium}
             mode="outlined"
-            error={error}
             onChangeText={setStadium}
           />
           <TextInput
@@ -92,8 +91,7 @@ const UpdateForm = props => {
             onChangeText={setDescription}
             value={description}
             mode="outlined"
-            error={error}
-            label={error ? 'some Error occured' : 'Description'}
+            label={'Description'}
           />
 
           <DatePicker formDate={formDate} setFormDate={setFormDate} />
@@ -111,7 +109,7 @@ const UpdateForm = props => {
             Update Details
           </Button>
           <Button
-            style={[mv]}
+            style={[mv, {marginTop: 30}]}
             color="red"
             uppercase
             mode="outlined"
@@ -120,11 +118,12 @@ const UpdateForm = props => {
             icon="logout"
             onPress={() => {
               exitFromRoom();
-              props?.hideModal();
+              hideModal();
+              navigation.navigate('Home');
             }}>
             exist
           </Button>
-        </>
+        </ScrollView>
       ) : (
         <Card style={{marginVertical: 10}}>
           <Card.Title title={`${team?.teamName}`} subtitle={team.location} />
@@ -132,17 +131,31 @@ const UpdateForm = props => {
             <Card.Content>
               <Title>{team?.date?.toDate()?.toLocaleString()}</Title>
               <Paragraph>{team?.description}</Paragraph>
+              <Button
+                style={[mv, {marginTop: 30}]}
+                color="red"
+                uppercase
+                mode="outlined"
+                loading={loading}
+                labelStyle={[textButton]}
+                icon="logout"
+                onPress={() => {
+                  exitFromRoom();
+                  hideModal();
+                  navigation.navigate('Home');
+                }}>
+                exist
+              </Button>
             </Card.Content>
           )}
         </Card>
       )}
-    </ScrollView>
+    </>
   );
 };
 
-const renderForm = props => <UpdateForm {...props} />;
-
-const UpdateChatRoom = () => {
+const UpdateChatRoom = ({navigation}) => {
+  const renderForm = props => <UpdateForm navigation={navigation} {...props} />;
   const {colors, widthSc} = useTheme();
   const trigerButton = props => (
     <IconButton

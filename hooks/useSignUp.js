@@ -41,7 +41,10 @@ const signUpUser = async (dispatch, {email, password, nickName}) => {
 
     let defaultProfile = {
       email: user.email,
-      avatar: 'gs://ija-foot-a1c03.appspot.com/images/avatar/default.png',
+      isAvailable: false,
+      availabilityData: {},
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/ija-foot-a1c03.appspot.com/o/images%2Favatar%2Fdefault.png?alt=media&token=2870a53f-f2a3-4e03-88c9-f4db592a85b6',
       //todo: remove or not this attribute
       nickName: nickName || user.email.split('@')[0] + ' nickName',
       teamId: null,

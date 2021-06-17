@@ -22,12 +22,12 @@ const SignIn = ({navigation}) => {
   return (
     <SafeAreaView>
       <ScrollView style={{}}>
-        <View style={{alignItems: 'center'}}>
+        <View style={[{alignItems: 'center'}, mv]}>
           <Avatar.Text size={200} label="XD" />
           <Headline style={[bigTitle]}>Welcome To " Ija-Foot "</Headline>
           <Subheading style={{color: 'grey'}}> SignIn to Continue </Subheading>
           <TextInput
-            style={[raisedInput, mv, firstElement]}
+            style={[raisedInput, mv]}
             onFocus={() => {
               dispatch(actionCreators.reset());
             }}

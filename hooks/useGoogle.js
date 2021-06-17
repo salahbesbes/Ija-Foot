@@ -48,6 +48,8 @@ const GoogleSignUp_In = async dispatch => {
         fullName: user.displayName || 'No Name',
         email: user.email,
         avatar: user.photoUrl || 'defalt avatar',
+        isAvailable: false,
+        availabilityData: {},
         teamId: null,
         chatRoomId: null,
         matchId: null,

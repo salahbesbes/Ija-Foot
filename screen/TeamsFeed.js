@@ -54,14 +54,13 @@ const TeamssFeed = () => {
     //    console.log('snapshots[0]: ' + snapshots[0]?.email);
   }, []);
   const useCreateData = useCreateMatch();
-  console.log(team);
   return (
     <View style={styles.flatList}>
       <FlatList
         renderItem={({item}) => (
           <TeamCard item={item} useCreateData={useCreateData} />
         )}
-        data={filterData(snapshots)}
+        data={filterData(snapshots).filter(el => el.id !== team.uid)}
         onEndReachedThreshold={0}
         onEndReached={() => fetchTeams(getLast(snapshots), PAGINATION_LIMIT)}
         onRefresh={onRefresh}

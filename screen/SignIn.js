@@ -23,7 +23,7 @@ const SignIn = ({navigation}) => {
     <SafeAreaView>
       <ScrollView style={{}}>
         <View style={[{alignItems: 'center'}, mv]}>
-          <Avatar.Text size={200} label="XD" />
+          <Avatar.Image size={200} source={require('../assets/images/logo.jpg')} />
           <Headline style={[bigTitle]}>Welcome To " Ija-Foot "</Headline>
           <Subheading style={{color: 'grey'}}> SignIn to Continue </Subheading>
           <TextInput

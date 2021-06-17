@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Pressable, ScrollView, Text, View, SafeAreaView} from 'react-native';
+import React, {useState} from 'react';
+import {Pressable, ScrollView, View, SafeAreaView} from 'react-native';
 import {
   Avatar,
   Button,
@@ -14,20 +14,24 @@ import useSignIn from '../hooks/useSignIn';
 import {actionCreators} from '../stateManager/actions/auth-A';
 
 const SignIn = ({navigation}) => {
-  const {mv, bigTitle, raisedInput, textButton, row, firstElement} = useTheme();
+  const {mv, bigTitle, raisedInput, textButton, row} = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const {loading, user, error, dispatch, signIn} = useSignIn();
+  const {loading, error, dispatch, signIn} = useSignIn();
 
   return (
     <SafeAreaView>
-      <ScrollView style={{}}>
-        <View style={{alignItems: 'center'}}>
-          <Avatar.Text size={200} label="XD" />
-          <Headline style={[bigTitle]}>Welcome To " Ija-Foot "</Headline>
+      <ScrollView>
+        <View style={{alignItems: 'center', marginTop: 10}}>
+          <Avatar.Image
+            style={{elevation: 20}}
+            size={200}
+            source={require('../assets/images/logo.jpg')}
+          />
+          <Headline style={[bigTitle, mv]}>Welcome To IJA-FOOT</Headline>
           <Subheading style={{color: 'grey'}}> SignIn to Continue </Subheading>
           <TextInput
-            style={[raisedInput, mv, firstElement]}
+            style={[raisedInput, mv]}
             onFocus={() => {
               dispatch(actionCreators.reset());
             }}

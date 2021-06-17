@@ -58,7 +58,7 @@ const signUpUser = async (dispatch, {email, password, nickName}) => {
     console.log('User  created !');
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
-      console.log('That email address is already in use!');
+      console.log('That email address is already in use! ');
     }
 
     if (error.code === 'auth/invalid-email') {

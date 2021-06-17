@@ -19,7 +19,6 @@ const Profile = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState(null);
   const {user, loading, error, updateProfile, userDispatch, selectFile} =
     useProfile();
-  console.log(user);
   useEffect(() => {
     setAge(user.age);
     setFullName(user.fullName);

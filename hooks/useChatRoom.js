@@ -101,7 +101,6 @@ export const useChatRoom = () => {
         const membersDb = snapshot.docs.map(doc => {
           return {...doc.data(), uid: doc.id};
         });
-        console.log('membersDb :>> ', membersDb);
         teamDispatch(
           teamActions.setTeam({
             ...team,
@@ -109,6 +108,7 @@ export const useChatRoom = () => {
           }),
         );
       });
+    console.log('OnMembersCollection is listning');
     return unsub;
   }, []);
 

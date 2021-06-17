@@ -21,6 +21,7 @@ const SignIn = ({navigation}) => {
 
   return (
     <SafeAreaView>
+
       <ScrollView>
         <View style={{alignItems: 'center', marginTop: 10}}>
           <Avatar.Image

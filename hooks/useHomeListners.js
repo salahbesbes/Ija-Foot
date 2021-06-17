@@ -28,7 +28,7 @@ export const useHomeListner = () => {
             members: newMembers,
           }),
         );
-        console.log('new member added to the match');
+        console.log('RoomMembers start listning from Home Screen');
       });
     return unsubChatRoomMembers;
   }, []);
@@ -55,7 +55,8 @@ export const useHomeListner = () => {
           }),
         );
       });
-    console.log('unsubProfile');
+    console.log('current User Profile start listning from Home Screen');
+
     return unsubProfile;
   }, []);
 
@@ -82,6 +83,5 @@ export const useHomeListner = () => {
       });
     return unsub;
   }, []);
-  console.log(user);
   return {user, match, team, userDispatch, teamDispatch, matchDispatch};
 };

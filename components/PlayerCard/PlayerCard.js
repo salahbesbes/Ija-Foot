@@ -75,9 +75,8 @@ const PlayerCard = ({item}) => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text>motorized:</Text>
             <Checkbox
-              disabled
               status={
-                playerCard?.availabilityData?.motorized
+                playerCard?.availabilityData?.isMotorized
                   ? 'checked'
                   : 'unchecked'
               }

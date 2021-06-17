@@ -18,7 +18,7 @@ import SignOutButton from '../components/SignOutButton';
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
-  const {match, user} = useHomeListner();
+  const {match, user, team} = useHomeListner();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -41,11 +41,20 @@ const HomeScreen = ({navigation}) => {
   // console.log('user :>> ', user);
   // const {createMatch} = useCreateMatch();
   console.log('home match.members', match.members.length);
+  console.log(team);
   return (
     <>
       <FeedTab.Navigator>
-        <FeedTab.Screen name="PlayersFeed" component={PlayersFeed} />
-        <FeedTab.Screen name="TeamsFeed" component={TeamsFeed} />
+        <FeedTab.Screen
+          options={{tabBarLabel: 'Players'}}
+          name="PlayersFeed"
+          component={PlayersFeed}
+        />
+        <FeedTab.Screen
+          options={{tabBarLabel: 'Teams'}}
+          name="TeamsFeed"
+          component={TeamsFeed}
+        />
       </FeedTab.Navigator>
       <View style={styles.bottomBar}>
         <FindMatchModal />
@@ -54,7 +63,7 @@ const HomeScreen = ({navigation}) => {
         <Pressable
           style={styles.button}
           onPress={() => {
-            navigation.navigate('Match');
+            match.uid && navigation.navigate('Match');
           }}>
           <View>
             <Image

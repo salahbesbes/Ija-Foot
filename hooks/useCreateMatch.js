@@ -5,6 +5,7 @@ import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
 import {matchActions} from '../stateManager/actions/match-A';
+import {teamActions} from '../stateManager/actions/team-A';
 const timeStump = db.FieldValue.serverTimestamp();
 
 export const useCreateMatch = () => {
@@ -121,6 +122,7 @@ export const useCreateMatch = () => {
         matchRoomId: null,
       }),
     );
+    teamDispatch(teamActions.logOut());
   }, [userDispatch]);
 
   return {

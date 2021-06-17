@@ -54,7 +54,7 @@ export function ChatRoom({navigation}) {
   );
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <UpdateChatRoom />,
+      headerRight: () => <UpdateChatRoom navigation={navigation} />,
     });
   }, [navigation]);
   return (

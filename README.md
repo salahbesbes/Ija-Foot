@@ -8,7 +8,7 @@
   <h3 align="center">Ija-Foot Mobile App</h3>
 
   <p align="center">
-    A matchmaking app for amatuer football players
+    A matchmaking app for amateur football players
     <br />
     <br />
   </p>

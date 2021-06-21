@@ -44,7 +44,7 @@ const LocationPicker = ({location, onLocationChange, disabled}) => {
           onLocationChange(value);
         }}
         value={location}
-        placeholder={{label: 'Select Location...', value: undefined}}
+        placeholder={{label: 'Show All', value: undefined}}
         disabled={disabled}
         style={{inputAndroid: {color: disabled ? '#dedede' : 'black'}}}
       />

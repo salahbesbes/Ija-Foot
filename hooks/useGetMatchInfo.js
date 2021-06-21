@@ -1,13 +1,15 @@
-import {useCallback, useContext, useEffect} from 'react';
+import {useCallback, useContext} from 'react';
+import db from '@react-native-firebase/firestore';
+
 import {matchActions} from '../stateManager/actions/match-A';
 import {AppStateContext} from '../stateProvider';
-import db from '@react-native-firebase/firestore';
 
 export const useGetMatchInfo = () => {
   const {matchContext} = useContext(AppStateContext);
   const [matchState, matchDispatch] = matchContext;
 
   const getMatch = useCallback(async loggedUser => {
+    // use the logged user to get the detail of the match
     let matchDoc = await db()
       .collection('matchs')
       .doc(loggedUser.matchId)
@@ -25,7 +27,7 @@ export const useGetMatchInfo = () => {
     const matchMembers = membersDocs.docs.map(memberDoc => {
       return {...memberDoc.data(), uid: memberDoc.id};
     });
-
+    // update locale state
     matchDispatch(
       matchActions.setMatch({
         ...playermatch,

@@ -1,13 +1,9 @@
+import {useCallback} from 'react';
 import db from '@react-native-firebase/firestore';
 
-import {useCallback} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
 
-/// since we cant use useSignIn and useSignUp on the same component
-/// we create this hooks so that we can use it any where
-
 export const useFriends = ({userState, userDispatch}) => {
-  // we are using the reducer here so we returning its value
   const {user, userFriends} = userState;
   // we fetch all friends doc => [ {playerRef: 'players/123456987456', uid: '123456987456'} ...]
   const fetchFriendList = useCallback(async () => {
@@ -23,7 +19,6 @@ export const useFriends = ({userState, userDispatch}) => {
         let friendData = friendDoc.data();
         tempList.push({uid: friendDoc.id, ...friendData});
       });
-      // setFriendsList(tempList);
       userDispatch(actionCreators.setFriends(tempList));
     } catch (error) {
       console.log('useFriends ERROR :>> ', error);
@@ -35,7 +30,8 @@ export const useFriends = ({userState, userDispatch}) => {
   const addFriend = useCallback(
     async playerData => {
       const {uid, ...other} = playerData;
-      // dispatch(actionCreators.addFriend(newFriend));
+      // adding new doc to friends collection
+      // even if the friend allready exist set() erase it
       try {
         await db()
           .collection('players')
@@ -60,6 +56,7 @@ export const useFriends = ({userState, userDispatch}) => {
   const deletFriend = useCallback(
     async playerId => {
       userDispatch(actionCreators.deleteFriend(playerId.uid));
+      // update friend collection
       try {
         await db()
           .collection('players')
@@ -67,6 +64,7 @@ export const useFriends = ({userState, userDispatch}) => {
           .collection('friends')
           .doc(playerId)
           .delete();
+        // update local state
         userDispatch(
           actionCreators.setFriends(
             userFriends.filter(el => el.uid !== playerId && el),

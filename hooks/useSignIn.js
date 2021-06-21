@@ -1,6 +1,6 @@
+import {useCallback, useContext} from 'react';
 import auth from '@react-native-firebase/auth';
 
-import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
 

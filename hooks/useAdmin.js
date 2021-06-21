@@ -1,6 +1,6 @@
+import {useCallback} from 'react';
 import db from '@react-native-firebase/firestore';
 
-import {useCallback} from 'react';
 import {teamActions} from '../stateManager/actions/team-A';
 
 export const useAdmin = ({teamState, teamDispatch}) => {
@@ -9,9 +9,9 @@ export const useAdmin = ({teamState, teamDispatch}) => {
   //   teamDispatch(teamActions.setTeam({...team, members}));
   const kickPlayer = useCallback(
     async playerId => {
-      const listOfAdminsIds = team.members.map(el => el.uid);
+      const listOfmembers = team.members.map(el => el.uid);
 
-      if (listOfAdminsIds.includes(playerId)) {
+      if (listOfmembers.includes(playerId)) {
         try {
           // delete player from chatRoom Members collection
           await db().doc(`teams/${team.uid}/members/${playerId}`).delete();
@@ -20,16 +20,21 @@ export const useAdmin = ({teamState, teamDispatch}) => {
           await db().doc(`players/${playerId}`).update({
             teamId: null,
             chatRoomId: null,
+            matchId: null,
+            matchRoomId: null,
           });
 
           // if player is admin -> update chatRoom kick Admin
           const playerIsAdmin = team.admins.includes(playerId);
 
           if (playerIsAdmin) {
+            console.log(
+              ' the player is a admin we update  memeber and admin list ',
+            );
+
             const updatedAdminsList = team.admins.filter(
               admin => admin !== playerId,
             );
-
             await db()
               .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
               .update({
@@ -47,7 +52,12 @@ export const useAdmin = ({teamState, teamDispatch}) => {
                 admins: updatedAdminsList,
               }),
             );
+            console.log('those players are admins', updatedAdminsList);
+            console.log('after kick new members are', updatedMembersList);
           } else {
+            console.log(
+              ' the player is a memeber we update only memeber list ',
+            );
             // update only members
             const updatedMembersList = team.members.filter(
               player => player.uid !== playerId,

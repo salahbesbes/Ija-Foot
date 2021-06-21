@@ -17,11 +17,7 @@ const MainNavigator = () => {
       }}
       initialRouteName="Home"
       backBehavior="initialRoute">
-      <MainStack.Screen
-        options={{headerTitle: 'Home Screen'}}
-        name="Home"
-        component={HomeScreen}
-      />
+      <MainStack.Screen name="Home" component={HomeScreen} />
       <MainStack.Screen name="InviteFriend" component={InviteFriend} />
       <MainStack.Screen name="MyTeam" component={MyTeam} />
       <MainStack.Screen name="Match" component={Match} />

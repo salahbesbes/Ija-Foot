@@ -122,7 +122,10 @@ const RootNavigator = () => {
       {user ? (
         <MainNavigator />
       ) : (
-        <Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            headerTitle: false,
+          }}>
           <Stack.Screen name="SignIn" component={SignIn} />
           <Stack.Screen name="SignUp" component={SignUp} />
         </Stack.Navigator>

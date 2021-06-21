@@ -1,5 +1,6 @@
-import db from '@react-native-firebase/firestore';
 import {useCallback, useContext} from 'react';
+import db from '@react-native-firebase/firestore';
+
 import {teamActions} from '../stateManager/actions/team-A';
 import {AppStateContext} from '../stateProvider';
 
@@ -12,7 +13,8 @@ export const useChatRoom = () => {
   const {user} = authState;
 
   const ListenOnMessages = useCallback(setRoomMessages => {
-    // console.log('teamid =>', team.uid, '||||  chatroom id =>', team.chatRoomId);
+    // every time any user send message this callback update the chatRoom Screen
+    // with new list of messages
     if (team.uid) {
       try {
         const listenMessage = db()
@@ -76,6 +78,8 @@ export const useChatRoom = () => {
         .doc(`teams/${team.uid}`)
         .collection('chatRoom')
         .onSnapshot(snapshot => {
+          // every time the admin changes the details of a team this callback should execute and updates the view
+
           console.log('the chatRoom doc has changed');
           const chatRoom = snapshot.docs[0];
           teamDispatch(
@@ -94,14 +98,11 @@ export const useChatRoom = () => {
       .doc(`teams/${team.uid}`)
       .collection('members')
       .onSnapshot(snapshot => {
-        // console.log('snapshot.docs', snapshot.docs.length);
-        // console.log('snapshot.docChanges()', snapshot.docChanges().length);
-        // cteate new list of members --> update local state
+        // every time the collection memebers is  updated (add/remove) this callback should excute
 
         const membersDb = snapshot.docs.map(doc => {
           return {...doc.data(), uid: doc.id};
         });
-        console.log('membersDb :>> ', membersDb);
         teamDispatch(
           teamActions.setTeam({
             ...team,
@@ -109,9 +110,11 @@ export const useChatRoom = () => {
           }),
         );
       });
+    console.log('OnMembersCollection is listning');
     return unsub;
   }, []);
 
+  // this function saves message to database
   const sendMessage = useCallback(
     async callBackMessages => {
       try {

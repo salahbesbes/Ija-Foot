@@ -16,7 +16,7 @@ const CreateForm = props => {
   const {mv, raisedInput, firstElement, textButton} = useTheme();
 
   const [formDate, setFormDate] = useState(null);
-  const {teamDispatch, loading, error, createTeam} = useCreateTeam();
+  const {teamDispatch, loading, createTeam} = useCreateTeam();
 
   const submitCreateTeam = () => {
     if (teamName === '') {
@@ -39,19 +39,17 @@ const CreateForm = props => {
       <TextInput
         style={[raisedInput, {width: '100%'}, mv, firstElement]}
         onFocus={() => {}}
-        label={error ? 'some Error occured' : 'team Name'}
+        label={'team Name'}
         value={teamName}
         mode="outlined"
-        error={error}
         onChangeText={setTeamName}
       />
       <TextInput
         style={[raisedInput, {width: '100%'}, mv]}
         onFocus={() => {}}
-        label={error ? 'some Error occured' : 'Stadium'}
+        label={'Stadium'}
         value={stadium}
         mode="outlined"
-        error={error}
         onChangeText={setStadium}
       />
       <TextInput
@@ -60,8 +58,7 @@ const CreateForm = props => {
         onChangeText={setDescription}
         value={description}
         mode="outlined"
-        error={error}
-        label={error ? 'some Error occured' : 'Description'}
+        label={'Description'}
       />
 
       <DatePicker formDate={formDate} setFormDate={setFormDate} />

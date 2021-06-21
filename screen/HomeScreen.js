@@ -1,24 +1,17 @@
-import React, {useContext, useEffect, useLayoutEffect} from 'react';
-import {Button, Image, StyleSheet, View, Pressable} from 'react-native';
+import React, {useLayoutEffect} from 'react';
+import {Image, StyleSheet, View, Pressable} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import db from '@react-native-firebase/firestore';
+import {Avatar} from 'react-native-paper';
 
 import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
-import {AppStateContext} from '../stateProvider';
 import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
-import {Avatar, IconButton} from 'react-native-paper';
-import {teamActions} from '../stateManager/actions/team-A';
-import {useCreateMatch} from '../hooks/useCreateMatch';
-import {matchActions} from '../stateManager/actions/match-A';
-import {actionCreators} from '../stateManager/actions/auth-A';
 import {useHomeListner} from '../hooks/useHomeListners';
-import SignOutButton from '../components/SignOutButton';
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
-  const {match, user} = useHomeListner();
+  const {match, user, team} = useHomeListner();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -41,11 +34,20 @@ const HomeScreen = ({navigation}) => {
   // console.log('user :>> ', user);
   // const {createMatch} = useCreateMatch();
   console.log('home match.members', match.members.length);
+  console.log(team);
   return (
     <>
       <FeedTab.Navigator>
-        <FeedTab.Screen name="PlayersFeed" component={PlayersFeed} />
-        <FeedTab.Screen name="TeamsFeed" component={TeamsFeed} />
+        <FeedTab.Screen
+          options={{tabBarLabel: 'Players'}}
+          name="PlayersFeed"
+          component={PlayersFeed}
+        />
+        <FeedTab.Screen
+          options={{tabBarLabel: 'Teams'}}
+          name="TeamsFeed"
+          component={TeamsFeed}
+        />
       </FeedTab.Navigator>
       <View style={styles.bottomBar}>
         <FindMatchModal />
@@ -54,7 +56,7 @@ const HomeScreen = ({navigation}) => {
         <Pressable
           style={styles.button}
           onPress={() => {
-            navigation.navigate('Match');
+            match.uid && navigation.navigate('Match');
           }}>
           <View>
             <Image

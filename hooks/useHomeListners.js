@@ -14,6 +14,7 @@ export const useHomeListner = () => {
   const {user} = authState;
   const {match} = matchState;
 
+  //listning on match members changes in homescreen
   useEffect(() => {
     const unsubChatRoomMembers = db()
       .doc(`matchs/${match.uid}`)
@@ -28,11 +29,11 @@ export const useHomeListner = () => {
             members: newMembers,
           }),
         );
-        console.log('new member added to the match');
+        console.log('RoomMembers start listning from Home Screen');
       });
     return unsubChatRoomMembers;
   }, []);
-
+  //listning on profile changes in homescreen
   useEffect(() => {
     const unsubProfile = db()
       .doc(`players/${user.uid}`)
@@ -55,11 +56,12 @@ export const useHomeListner = () => {
           }),
         );
       });
-    console.log('unsubProfile');
+    console.log('current User Profile start listning from Home Screen');
+
     return unsubProfile;
   }, []);
 
-  //listning on members changes in homescreen
+  //listning on team members changes in homescreen
   useEffect(() => {
     const unsub = db()
       .doc(`teams/${team.uid}`)
@@ -82,6 +84,5 @@ export const useHomeListner = () => {
       });
     return unsub;
   }, []);
-  console.log(user);
   return {user, match, team, userDispatch, teamDispatch, matchDispatch};
 };

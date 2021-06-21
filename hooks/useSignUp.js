@@ -1,6 +1,7 @@
+import {useCallback, useContext} from 'react';
 import auth from '@react-native-firebase/auth';
 import db from '@react-native-firebase/firestore';
-import {useCallback, useContext} from 'react';
+
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
 
@@ -41,7 +42,10 @@ const signUpUser = async (dispatch, {email, password, nickName}) => {
 
     let defaultProfile = {
       email: user.email,
-      avatar: 'gs://ija-foot-a1c03.appspot.com/images/avatar/default.png',
+      isAvailable: false,
+      availabilityData: {},
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/ija-foot-a1c03.appspot.com/o/images%2Favatar%2Fdefault.png?alt=media&token=2870a53f-f2a3-4e03-88c9-f4db592a85b6',
       //todo: remove or not this attribute
       nickName: nickName || user.email.split('@')[0] + ' nickName',
       teamId: null,
@@ -55,7 +59,7 @@ const signUpUser = async (dispatch, {email, password, nickName}) => {
     console.log('User  created !');
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
-      console.log('That email address is already in use!');
+      console.log('That email address is already in use! ');
     }
 
     if (error.code === 'auth/invalid-email') {

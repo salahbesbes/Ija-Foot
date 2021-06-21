@@ -17,9 +17,7 @@ const Profile = ({navigation}) => {
   const [fullName, setFullName] = useState(null);
   const [nickName, setNickName] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
-  const {user, loading, error, updateProfile, userDispatch, selectFile} =
-    useProfile();
-  console.log(user);
+  const {user, loading, updateProfile, userDispatch, selectFile} = useProfile();
   useEffect(() => {
     setAge(user.age);
     setFullName(user.fullName);
@@ -55,8 +53,6 @@ const Profile = ({navigation}) => {
             value={fullName}
             placeholder="full Name"
             mode="outlined"
-            label={error}
-            error={error}
           />
           <TextInput
             left={<TextInput.Icon name="portrait" disabled />}
@@ -68,8 +64,6 @@ const Profile = ({navigation}) => {
             value={nickName}
             placeholder="NickName "
             mode="outlined"
-            label={error}
-            error={error}
           />
           <TextInput
             left={<TextInput.Icon name="info" disabled />}
@@ -81,8 +75,6 @@ const Profile = ({navigation}) => {
             value={age}
             placeholder="Age "
             mode="outlined"
-            label={error}
-            error={error}
           />
           <TextInput
             left={<TextInput.Icon name="smartphone" disabled />}
@@ -94,8 +86,6 @@ const Profile = ({navigation}) => {
             value={phoneNumber}
             placeholder="PhoneNumber "
             mode="outlined"
-            label={error}
-            error={error}
           />
 
           <Button

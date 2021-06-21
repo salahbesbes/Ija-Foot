@@ -1,9 +1,11 @@
-import db from '@react-native-firebase/firestore';
 import {useCallback, useContext} from 'react';
+import db from '@react-native-firebase/firestore';
+
 import {matchActions} from '../stateManager/actions/match-A';
 import {AppStateContext} from '../stateProvider';
 
 export const useMatchRoom = () => {
+  // destructuring the global store got frim the provider
   const {authContext, matchContext} = useContext(AppStateContext);
   const [authState, userDispatch] = authContext;
   const [matchState, matchDispatch] = matchContext;
@@ -35,6 +37,8 @@ export const useMatchRoom = () => {
               };
             });
 
+            // every time any user send message this callback update the chatRoom Screen
+            // with new list of messages
             console.log('chatMessages :>> ', chatMessages.length);
             if (setRoomMessages) setRoomMessages(chatMessages);
           });
@@ -54,6 +58,7 @@ export const useMatchRoom = () => {
     const unsub = db()
       .collection('matchs')
       .onSnapshot(snapshot => {
+        // every time the admin changes the details of a team this callback should execute and updates the view
         console.log('the match doc has changed');
         snapshot.docChanges().forEach(change => {
           if (change.type === 'added') {
@@ -79,10 +84,8 @@ export const useMatchRoom = () => {
       .doc(`matchs/${match.uid}`)
       .collection('members')
       .onSnapshot(snapshot => {
+        // every time the collection memebers is  updated (add/remove) this callback should excute
         console.log('the MEMBERS collecton  has changed');
-        // console.log('snapshot.docs', snapshot.docs.length);
-        // console.log('snapshot.docChanges()', snapshot.docChanges().length);
-        // cteate new list of members --> update local state
 
         const membersDb = snapshot.docs.map(doc => {
           return {...doc.data(), uid: doc.id};
@@ -96,11 +99,14 @@ export const useMatchRoom = () => {
       });
     return unsub;
   }, []);
+
+  // this function saves message to database
   const sendMessage = useCallback(
     async callBackMessages => {
       try {
         // this line convert the time to the DateFormat that react-native-gifted-chat uses
         // https://stackoverflow.com/questions/59213581/why-react-native-gifted-chat-not-displaying-time-correctly-from-firebase-timesta/61673983#61673983
+
         callBackMessages.forEach(({text, createdAt}) => {
           const message = {
             text,

@@ -11,9 +11,6 @@ GoogleSignin.configure({
     '444195064233-krcf2bdeq47uv45u9gsg5vjqfrnl6vo0.apps.googleusercontent.com',
 });
 
-/// since we cant use useSignIn and useSignUp on the same component
-/// we create this hooks so that we can use it any where
-
 export const useGoogleService = () => {
   // we are using the reducer here so we returning its value
   const {authContext} = useContext(AppStateContext);
@@ -39,6 +36,8 @@ const GoogleSignUp_In = async dispatch => {
     // Sign-in the user with the credential
     let res = await auth().signInWithCredential(googleCredential);
     let user = res.user.toJSON();
+
+    // if the user does not exist in db create a new doc
     let alreadyExist = await db().collection('players').doc(user.uid).get()
       ._exists;
 
@@ -48,6 +47,8 @@ const GoogleSignUp_In = async dispatch => {
         fullName: user.displayName || 'No Name',
         email: user.email,
         avatar: user.photoUrl || 'defalt avatar',
+        isAvailable: false,
+        availabilityData: {},
         teamId: null,
         chatRoomId: null,
         matchId: null,

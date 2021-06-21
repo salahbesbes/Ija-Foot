@@ -1,11 +1,11 @@
-import db from '@react-native-firebase/firestore';
 import {useCallback, useContext} from 'react';
-import {actionCreators} from '../stateManager/actions/auth-A';
-import {AppStateContext} from '../stateProvider';
+import db from '@react-native-firebase/firestore';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import storage from '@react-native-firebase/storage';
-
 import DocumentPicker from 'react-native-document-picker';
+
+import {actionCreators} from '../stateManager/actions/auth-A';
+import {AppStateContext} from '../stateProvider';
 
 /// since we cant use useSignIn and useSignUp on the same component
 /// we create this hooks so that we can use it any where
@@ -94,6 +94,7 @@ const useProfile = () => {
   const UpdateOnlyFieldText = useCallback(
     async newProfile => {
       try {
+        // update profile in db
         await db()
           .collection('players')
           .doc(user.uid)
@@ -101,6 +102,7 @@ const useProfile = () => {
           .then(_ => {
             ListningToChanges(newProfile);
           });
+        // update loacal state
         userDispatch(actionCreators.loadUser({...newProfile, uid: user.uid}));
       } catch (error) {
         console.log('UpdateOnlyFieldText ERROR => ', error.message);
@@ -113,12 +115,13 @@ const useProfile = () => {
     async newProfile => {
       try {
         console.log('from Frofile => we are listnig');
+
+        // listnin on the profile changes
         db()
           .collection('players')
           .doc(user.uid)
           .onSnapshot(async _ => {
             //* update the profile inside the friends list
-
             const friendDocs = await db()
               .collection('players')
               .doc(user.uid)
@@ -167,7 +170,9 @@ const useProfile = () => {
         const fileObj = await DocumentPicker.pick({
           type: [DocumentPicker.types.images],
         });
+        // update the profile form
         setFile(fileObj);
+        // immediately after select the user can see his image
         userDispatch(actionCreators.loadUser({...user, avatar: fileObj.uri}));
         return fileObj;
       } catch (err) {

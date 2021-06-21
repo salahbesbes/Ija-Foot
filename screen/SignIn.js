@@ -22,6 +22,7 @@ const SignIn = ({navigation}) => {
   return (
     <SafeAreaView>
 
+
       <ScrollView>
         <View style={{alignItems: 'center', marginTop: 10}}>
           <Avatar.Image
@@ -30,6 +31,7 @@ const SignIn = ({navigation}) => {
             source={require('../assets/images/logo.jpg')}
           />
           <Headline style={[bigTitle, mv]}>Welcome To IJA-FOOT</Headline>
+
           <Subheading style={{color: 'grey'}}> SignIn to Continue </Subheading>
           <TextInput
             style={[raisedInput, mv]}

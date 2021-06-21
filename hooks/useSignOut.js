@@ -1,5 +1,4 @@
 import auth from '@react-native-firebase/auth';
-import db from '@react-native-firebase/firestore';
 
 import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
@@ -12,7 +11,6 @@ export const useSignOut = () => {
   // we are using the reducer here so we returning its value
   const {authContext} = useContext(AppStateContext);
   const [state, dispatch] = authContext; // distructuring
-  const {user} = state;
   const signOut = useCallback(async () => {
     return await userSignOut(dispatch);
   }, [dispatch]);

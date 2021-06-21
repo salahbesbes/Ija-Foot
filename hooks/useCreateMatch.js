@@ -1,7 +1,6 @@
+import {useCallback, useContext} from 'react';
 import db from '@react-native-firebase/firestore';
 
-import {useEffect} from 'react';
-import {useCallback, useContext} from 'react';
 import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
 import {matchActions} from '../stateManager/actions/match-A';

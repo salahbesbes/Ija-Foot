@@ -1,20 +1,13 @@
-import React, {useContext, useEffect, useLayoutEffect} from 'react';
-import {Button, Image, StyleSheet, View, Pressable} from 'react-native';
+import React, {useLayoutEffect} from 'react';
+import {Image, StyleSheet, View, Pressable} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import db from '@react-native-firebase/firestore';
+import {Avatar} from 'react-native-paper';
 
 import PlayersFeed from './PlayersFeed';
 import TeamsFeed from './TeamsFeed';
-import {AppStateContext} from '../stateProvider';
 import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
-import {Avatar, IconButton} from 'react-native-paper';
-import {teamActions} from '../stateManager/actions/team-A';
-import {useCreateMatch} from '../hooks/useCreateMatch';
-import {matchActions} from '../stateManager/actions/match-A';
-import {actionCreators} from '../stateManager/actions/auth-A';
 import {useHomeListner} from '../hooks/useHomeListners';
-import SignOutButton from '../components/SignOutButton';
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {

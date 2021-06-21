@@ -1,12 +1,12 @@
 import React, {useContext, useState} from 'react';
-import {BottomNavigation, useTheme} from 'react-native-paper';
-import {StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {useTheme} from 'react-native-paper';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+
 import FriendList from '../components/ProfileNav/FriendList';
 import Profile from '../components/ProfileNav/Profile';
 import {useFriends} from '../hooks/useFriends';
 import {AppStateContext} from '../stateProvider';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {View, Text, TouchableOpacity} from 'react-native';
 import SignOutButton from '../components/SignOutButton';
 
 const Tab = createBottomTabNavigator();

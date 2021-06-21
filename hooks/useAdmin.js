@@ -1,6 +1,6 @@
+import {useCallback} from 'react';
 import db from '@react-native-firebase/firestore';
 
-import {useCallback} from 'react';
 import {teamActions} from '../stateManager/actions/team-A';
 
 export const useAdmin = ({teamState, teamDispatch}) => {

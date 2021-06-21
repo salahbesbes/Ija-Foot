@@ -5,18 +5,20 @@ import {actionCreators} from '../stateManager/actions/auth-A';
 import {AppStateContext} from '../stateProvider';
 
 const useAvailableForMatch = () => {
-  //const {authContext} = useContext(AppStateContext);
   const [state, dispatch] = useContext(AppStateContext).authContext;
   const {user} = state;
 
   const updateAvailability = useCallback(
     async (isAvailable, data) => {
+      // loading state
       dispatch(actionCreators.loading());
       try {
+        // update profile
         await db()
           .collection('players')
           .doc(user.uid)
           .update({isAvailable: isAvailable, availabilityData: data});
+        // update local state
         dispatch(
           actionCreators.loadUser({
             ...user,
@@ -32,6 +34,7 @@ const useAvailableForMatch = () => {
     },
     [user, dispatch],
   );
+  // return state and calbackFunctions
   return {...state, dispatch, updateAvailability};
 };
 export default useAvailableForMatch;

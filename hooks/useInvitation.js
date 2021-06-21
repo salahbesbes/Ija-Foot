@@ -16,6 +16,7 @@ export const useInvitaion = ({
       console.log('playerData :>> ', playerData);
       try {
         if (team.uid) {
+          // add doc to team members
           await db().doc(`teams/${team.uid}/members/${playerData.uid}`).set({
             nickName: playerData.nickName,
             avatar: playerData.avatar,
@@ -26,25 +27,29 @@ export const useInvitaion = ({
 
           console.log(`matchs/${match.uid}/members/${playerData.uid}`);
           if (match.uid) {
+            // if player has match
             updatedProfile = {
               teamId: team.uid,
               chatRoomId: team.chatRoomId,
               matchId: match.uid,
               matchRoomId: match.matchRoomId,
             };
+            // update match memebers collction
             await db()
               .doc(`matchs/${match.uid}/members/${playerData.uid}`)
               .set({});
             console.log('add  player card  to member match');
           } else {
+            // if player has no match
             updatedProfile = {
               teamId: team.uid,
               chatRoomId: team.chatRoomId,
             };
           }
+          // update user profile
           await db().doc(`players/${playerData.uid}`).update(updatedProfile);
           console.log('updated player card  profile');
-
+          // update local state
           teamDispatch(
             teamActions.setTeam({
               ...team,

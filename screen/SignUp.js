@@ -1,37 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import {Pressable, ScrollView, Text, View, SafeAreaView} from 'react-native';
+import React, {useState} from 'react';
+import {Pressable, ScrollView, View, SafeAreaView} from 'react-native';
 import {
-  Avatar,
   Button,
   Caption,
-  FAB,
   Headline,
   Subheading,
   TextInput,
-  TouchableRipple,
   useTheme,
 } from 'react-native-paper';
 import useSignUp from '../hooks/useSignUp';
 import {actionCreators} from '../stateManager/actions/auth-A';
-import {styles} from '../styles/default';
 
 const SignUp = ({navigation}) => {
-  const {
-    width,
-    height,
-    mv,
-    bigTitle,
-    raisedInput,
-    textButton,
-    row,
-    firstElement,
-  } = useTheme();
+  const {mv, bigTitle, raisedInput, textButton, row, firstElement} = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickName, setNickName] = useState(null);
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [visible, setVisible] = useState(false);
-  const {loading, user, error, dispatch, signUp} = useSignUp();
+  const {loading, error, dispatch, signUp} = useSignUp();
   return (
     <SafeAreaView>
       <ScrollView contentContainerStyle={{alignItems: 'center'}}>

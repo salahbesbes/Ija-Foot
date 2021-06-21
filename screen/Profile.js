@@ -3,7 +3,7 @@ import {View, TextInput, Button, SafeAreaView, Text} from 'react-native';
 import Avatar from '../components/Avatar';
 import UploadFile from '../components/UploadFile';
 import useProfile from '../hooks/useProfile';
-import {useUploadFile} from '../hooks/useUpload';
+
 import {styles} from '../styles/default';
 
 const Profile = ({navigation}) => {

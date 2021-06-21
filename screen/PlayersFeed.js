@@ -3,7 +3,6 @@ import {StyleSheet, FlatList, View, ActivityIndicator} from 'react-native';
 import db from '@react-native-firebase/firestore';
 
 import Filters, {filterData} from '../components/PlayerCard/filters';
-
 import PlayerCard from '../components/PlayerCard/PlayerCard';
 import {AppStateContext} from '../stateProvider';
 

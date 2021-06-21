@@ -1,4 +1,4 @@
-import React, {useLayoutEffect} from 'react';
+import React, {useEffect, useLayoutEffect, useRef} from 'react';
 import {Image, StyleSheet, View, Pressable} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {Avatar} from 'react-native-paper';
@@ -12,7 +12,6 @@ const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
   const {match, user, team} = useHomeListner();
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -30,11 +29,15 @@ const HomeScreen = ({navigation}) => {
       ),
     });
   }, [user.avatar, navigation]);
-  // console.log('team :>> ', team);
-  // console.log('user :>> ', user);
-  // const {createMatch} = useCreateMatch();
-  console.log('home match.members', match.members.length);
-  console.log(team);
+  let homeSRender = useRef(0);
+  useEffect(() => {
+    homeSRender.current += 1;
+    console.log({homeScreenRender: homeSRender.current});
+    return () => {
+      homeSRender.current -= 1;
+      console.log({homeScreenRender: homeSRender.current});
+    };
+  }, []);
   return (
     <>
       <FeedTab.Navigator>

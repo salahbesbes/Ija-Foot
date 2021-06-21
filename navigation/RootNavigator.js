@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import MainNavigator from './MainNavigator';
@@ -22,14 +22,29 @@ const RootNavigator = () => {
   const {team} = teamState;
   const {user} = authState;
   const {match} = matchState;
-  const {getMatch} = useGetMatchInfo();
+
+  let homeSRender = useRef(0);
+  const isInitialMount = useRef(true);
+  useEffect(() => {
+    homeSRender.current += 1;
+    console.log({RootNavigatorRender: homeSRender.current});
+    if (isInitialMount.current) {
+      console.log('isInitialMount :>> ', isInitialMount);
+      isInitialMount.current = false;
+
+      return;
+    }
+
+    return console.log('root has update');
+  }, []);
+  // const {getMatch} = useGetMatchInfo();
+
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(async userChanged => {
       console.log('on auth changed is executed');
       try {
         if (userChanged) {
           //* fetch player
-
           let userDoc = await db()
             .collection('players')
             .doc(userChanged.uid)
@@ -100,7 +115,7 @@ const RootNavigator = () => {
             );
             console.log('we set new Team in the local State');
 
-            getMatch(loggedUser);
+            // getMatch(loggedUser);
           }
         } else {
           /// no one connected userChanged === null
@@ -119,7 +134,7 @@ const RootNavigator = () => {
   useGetMatchInfo(user);
   return (
     <NavigationContainer>
-      {user ? (
+      {user && team ? (
         <MainNavigator />
       ) : (
         <Stack.Navigator

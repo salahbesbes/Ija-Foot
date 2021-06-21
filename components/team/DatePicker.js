@@ -32,7 +32,6 @@ const DatePicker = ({formDate, setFormDate}) => {
   const showDatepicker = () => {
     showMode('date');
   };
-  const {raisedInput, mv} = useTheme();
   return (
     <View style={[{marginVertical: 10, width: '50%'}]}>
       <Pressable onPress={showDatepicker}>

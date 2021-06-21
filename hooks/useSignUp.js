@@ -37,6 +37,7 @@ const signUpUser = async (dispatch, {email, password, nickName}) => {
     return;
   }
   try {
+    console.log('use Sign UP ');
     let res = await auth().createUserWithEmailAndPassword(email, password);
     let user = res.user.toJSON();
 

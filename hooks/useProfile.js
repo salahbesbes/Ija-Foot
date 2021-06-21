@@ -20,17 +20,16 @@ const useProfile = () => {
   // since we need sinIn to call it on Click events we returning it with the reducer state modified
   const updateProfile = useCallback(
     async (newProfile, fileObj) => {
-      console.log(newProfile, fileObj);
       userDispatch(actionCreators.loading());
       if (!fileObj) {
         await UpdateOnlyFieldText(newProfile);
       } else {
         await updateProfileAndUploadAvatar(fileObj, newProfile);
       }
-      // ListningToChanges(newProfile);
     },
     [UpdateOnlyFieldText, updateProfileAndUploadAvatar, userDispatch],
   );
+
   const updateProfileAndUploadAvatar = useCallback(
     async (fileObj, newProfile) => {
       console.log('update Profile And Upload Avatar');
@@ -64,22 +63,19 @@ const useProfile = () => {
           console.log('we download the url from storage');
           // we add the avatar url from the storage to the user localy first then
           // when the user press submit the update the db with the new profile
-          console.log('after dowload ', user);
           try {
             await db()
               .collection('players')
               .doc(user.uid)
-              .update({...newProfile, avatar: url})
-              .then(_ => {
-                ListningToChanges({...newProfile, avatar: url});
-              });
-            userDispatch(
-              actionCreators.loadUser({
-                ...newProfile,
-                uid: user.uid,
-                avatar: url,
-              }),
-            );
+              .update({...newProfile, avatar: url});
+
+            // userDispatch(
+            //   actionCreators.loadUser({
+            //     ...newProfile,
+            //     uid: user.uid,
+            //     avatar: url,
+            //   }),
+            // );
           } catch (error) {
             console.log(
               'updateProfileAndUploadAvatar ERROR => ',
@@ -89,78 +85,21 @@ const useProfile = () => {
         });
       }
     },
-    [user, userDispatch, ListningToChanges],
+    [user],
   );
   const UpdateOnlyFieldText = useCallback(
     async newProfile => {
       try {
         // update profile in db
-        await db()
-          .collection('players')
-          .doc(user.uid)
-          .update(newProfile)
-          .then(_ => {
-            ListningToChanges(newProfile);
-          });
+        await db().collection('players').doc(user.uid).update(newProfile);
+
         // update loacal state
-        userDispatch(actionCreators.loadUser({...newProfile, uid: user.uid}));
+        // userDispatch(actionCreators.loadUser({...newProfile, uid: user.uid}));
       } catch (error) {
         console.log('UpdateOnlyFieldText ERROR => ', error.message);
       }
     },
-    [user, userDispatch, ListningToChanges],
-  );
-
-  const ListningToChanges = useCallback(
-    async newProfile => {
-      try {
-        console.log('from Frofile => we are listnig');
-
-        // listnin on the profile changes
-        db()
-          .collection('players')
-          .doc(user.uid)
-          .onSnapshot(async _ => {
-            //* update the profile inside the friends list
-            const friendDocs = await db()
-              .collection('players')
-              .doc(user.uid)
-              .collection('friends')
-              .get();
-            const lisFriends = friendDocs.docs;
-            lisFriends.forEach(async friendDoc => {
-              // friendDoc.ref.id friend id
-              try {
-                await db()
-                  .doc(
-                    `players/${friendDoc.ref.id.trim()}/friends/${user.uid.trim()}`,
-                  )
-                  .update(newProfile);
-              } catch (error) {
-                console.log(
-                  'i dont exist on my friend List of friends =>> ',
-                  error.message,
-                );
-              }
-            });
-
-            // * update user profile in the team
-            //* if the player has a team
-            if (team.uid) {
-              const {availabilityData, isAvailable, uid, ...restProps} = user;
-              await db()
-                .doc(`teams/${team.uid}/members/${user.uid}`)
-                .set(restProps);
-              console.log('you updated your doc in the members collection ');
-            }
-          });
-      } catch (error) {
-        userDispatch(actionCreators.failure(error.message));
-        console.log('updateProfile ERROR => ', error.message);
-        return;
-      }
-    },
-    [team, user, userDispatch],
+    [user.uid],
   );
 
   const selectFile = useCallback(

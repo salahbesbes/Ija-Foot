@@ -1,5 +1,6 @@
 import {useContext, useEffect} from 'react';
 import db from '@react-native-firebase/firestore';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {matchActions} from '../stateManager/actions/match-A';
 import {teamActions} from '../stateManager/actions/team-A';
 import {actionCreators} from '../stateManager/actions/auth-A';
@@ -11,7 +12,7 @@ export const useHomeListner = () => {
   const [teamState, teamDispatch] = teamContext;
   const [matchState, matchDispatch] = matchContext;
   const {team} = teamState;
-  const {user} = authState;
+  const {user, userFriends} = authState;
   const {match} = matchState;
 
   //listning on match members changes in homescreen
@@ -35,30 +36,67 @@ export const useHomeListner = () => {
   }, []);
   //listning on profile changes in homescreen
   useEffect(() => {
-    const unsubProfile = db()
-      .doc(`players/${user.uid}`)
-      .onSnapshot(snapshot => {
-        // console.log('snapshot :>> ', snapshot);
-        console.log('snap =>', snapshot.data());
-        teamDispatch(
-          teamActions.setTeam({
-            ...team,
-            uid: snapshot.data()?.teamId,
-            chatRoomId: snapshot.data()?.chatRoomId,
-          }),
-        );
-        userDispatch(
-          actionCreators.loadUser({
-            ...snapshot.data(),
-            uid: snapshot.id,
-            teamId: snapshot.data()?.teamId,
-            chatRoomId: snapshot.data()?.chatRoomId,
-          }),
-        );
-      });
-    console.log('current User Profile start listning from Home Screen');
+    try {
+      const unsubProfile = db()
+        .doc(`players/${user.uid}`)
+        .onSnapshot(snapshot => {
+          const newProfile = snapshot.data();
 
-    return unsubProfile;
+          //* update the profile inside the friends list
+          console.log('user Friends', userFriends.length);
+          userFriends.forEach(async friend => {
+            try {
+              console.log(typeof FirebaseFirestoreTypes.DocumentReference);
+
+              const test = db().doc(
+                `players/${friend.uid}/friends/${user.uid}`,
+              );
+              console.log('type', typeof test);
+            } catch (error) {
+              console.log(error.message);
+            }
+            await db()
+              .doc(`players/${friend.uid}/friends/${user.uid}`)
+              .update(newProfile);
+          });
+          console.log(
+            `we updated your profile in the doc of ${userFriends.length} of your friend`,
+          );
+          /*
+        // * update user profile in the team
+            //* if the player has a team
+            if (team.uid) {
+              const {availabilityData, isAvailable, uid, ...restProps} = user;
+              await db()
+                .doc(`teams/${team.uid}/members/${user.uid}`)
+                .set(restProps);
+              console.log('you updated your doc in the members collection ');
+            }
+        */
+          // console.log('snapshot :>> ', snapshot);
+          console.log('snap =>', snapshot.data());
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              uid: newProfile?.teamId,
+              chatRoomId: newProfile?.chatRoomId,
+            }),
+          );
+          userDispatch(
+            actionCreators.loadUser({
+              ...newProfile,
+              uid: snapshot.id,
+              teamId: newProfile?.teamId,
+              chatRoomId: newProfile?.chatRoomId,
+            }),
+          );
+        });
+      console.log('current User Profile start listning from Home Screen');
+
+      return unsubProfile;
+    } catch (error) {
+      console.log('profile changes', error.message);
+    }
   }, []);
 
   //listning on team members changes in homescreen

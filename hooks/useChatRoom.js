@@ -15,13 +15,17 @@ export const useChatRoom = () => {
   const ListenOnMessages = useCallback(setRoomMessages => {
     // every time any user send message this callback update the chatRoom Screen
     // with new list of messages
+
     if (team.uid) {
+      console.log('ListenOnMessages is listning');
       try {
         const listenMessage = db()
           .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`) // chatRoomIdd
           .collection('messages')
           .orderBy('createdAt', 'desc')
           .onSnapshot(snapshot => {
+            console.log('ListenOnMessages callback is fired');
+
             let chatMessages = snapshot.docs.map(doc => {
               const msg = doc.data();
               // const time = msg.createdAt;
@@ -41,46 +45,45 @@ export const useChatRoom = () => {
       } catch (error) {
         console.log('listnng to message and RoomDoc ERROR =>> ', error.message);
       }
-    } else {
-      console.log('you are not be able to log to chat Room');
-      console.log('members Now', team.members.length, team.members);
-      return () => {};
     }
+    return () => {};
   }, []);
 
   const ListenOnTeamDoc = useCallback(() => {
-    const unsub = db()
-      .collection('teams')
-      .onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'added') {
-            console.log('TEAM DOC ==> listning on ADD action: ');
-          }
-          if (change.type === 'modified') {
-            console.log('TEAM DOC ==> listning on modified action: ');
-            const {createdAt, ...updatedTeam} = change.doc.data();
-            teamDispatch(teamActions.setTeam({...team, ...updatedTeam}));
-          }
-          if (change.type === 'removed') {
-            console.log('TEAM DOC ==> listning on removed action: ');
-          }
-        });
-      });
+    let unsub = () => {};
+    if (team.uid) {
+      console.log('ListenOnTeamDoc is listning');
 
+      unsub = db()
+        .collection('teams')
+        .doc(team.uid)
+        .onSnapshot(snapshot => {
+          console.log('ListenOnTeamDoc callback is fired');
+          const {createdAt, ...updatedTeam} = snapshot.data();
+
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              ...updatedTeam,
+            }),
+          );
+        });
+    }
     return unsub;
   }, []);
 
   const ListenOnChatRoomDoc = useCallback(() => {
-    let unsub;
+    let unsub = () => {};
     // only if teamid exist
     if (team.uid) {
+      console.log('ListenOnChatRoomDoc is listning');
       unsub = db()
         .doc(`teams/${team.uid}`)
         .collection('chatRoom')
         .onSnapshot(snapshot => {
           // every time the admin changes the details of a team this callback should execute and updates the view
+          console.log('ListenOnChatRoomDoc callback is fired');
 
-          console.log('the chatRoom doc has changed');
           const chatRoom = snapshot.docs[0];
           teamDispatch(
             teamActions.setTeam({
@@ -94,23 +97,28 @@ export const useChatRoom = () => {
   }, []);
 
   const listenOnMembersCollection = useCallback(() => {
-    const unsub = db()
-      .doc(`teams/${team.uid}`)
-      .collection('members')
-      .onSnapshot(snapshot => {
-        // every time the collection memebers is  updated (add/remove) this callback should excute
+    let unsub = () => {};
+    if (team.uid) {
+      console.log('listenOnMembersCollection is listning');
 
-        const membersDb = snapshot.docs.map(doc => {
-          return {...doc.data(), uid: doc.id};
+      unsub = db()
+        .doc(`teams/${team.uid}`)
+        .collection('members')
+        .onSnapshot(snapshot => {
+          // every time the collection memebers is  updated (add/remove) this callback should excute
+          console.log('listenOnMembersCollection  callback is fired');
+
+          const membersDb = snapshot.docs.map(doc => {
+            return {...doc.data(), uid: doc.id};
+          });
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              members: membersDb,
+            }),
+          );
         });
-        teamDispatch(
-          teamActions.setTeam({
-            ...team,
-            members: membersDb,
-          }),
-        );
-      });
-    console.log('OnMembersCollection is listning');
+    }
     return unsub;
   }, []);
 

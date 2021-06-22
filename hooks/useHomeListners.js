@@ -1,4 +1,4 @@
-import {useContext, useEffect} from 'react';
+import {useCallback, useContext, useEffect} from 'react';
 import db from '@react-native-firebase/firestore';
 import {matchActions} from '../stateManager/actions/match-A';
 import {teamActions} from '../stateManager/actions/team-A';
@@ -43,8 +43,7 @@ export const useHomeListner = () => {
     }
   }, []);
 
-  //listning on profile changes in homescreen
-  useEffect(() => {
+  const ListenOnProfileChanges = useCallback(() => {
     try {
       const unsubProfile = db()
         .doc(`players/${user.uid}`)
@@ -71,7 +70,6 @@ export const useHomeListner = () => {
           );
 
           //* update the profile inside the friends list
-          console.log('user Friends', userFriends.length);
           userFriends.forEach(async friend => {
             try {
               await db()
@@ -103,7 +101,102 @@ export const useHomeListner = () => {
     } catch (error) {
       console.log('use Home listner error', error.message);
     }
+  }, [teamDispatch, userDispatch]);
+
+  const ListenOnTeamDoc = useCallback(() => {
+    let unsub = () => {};
+    if (team.uid) {
+      console.log('ListenOnTeamDoc is listning');
+
+      unsub = db()
+        .collection('teams')
+        .doc(team.uid)
+        .onSnapshot(snapshot => {
+          console.log('ListenOnTeamDoc callback is fired');
+          const {createdAt, ...updatedTeam} = snapshot.data();
+
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              ...updatedTeam,
+            }),
+          );
+        });
+    }
+    return unsub;
   }, []);
+
+  const ListenOnChatRoomDoc = useCallback(() => {
+    let unsub = () => {};
+    // only if teamid exist
+    if (team.uid) {
+      console.log('ListenOnChatRoomDoc is listning');
+      unsub = db()
+        .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
+        .onSnapshot(snapshot => {
+          // every time the admin changes the details of a team this callback should execute and updates the view
+          console.log('ListenOnChatRoomDoc callback is fired');
+
+          console.log('chatRoom', snapshot.data().admins);
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              admins: snapshot.data().admins,
+            }),
+          );
+        });
+    }
+    return unsub;
+  }, []);
+
+  const listenOnMembersCollection = useCallback(() => {
+    let unsub = () => {};
+    if (team.uid) {
+      console.log('listenOnMembersCollection is listning');
+
+      unsub = db()
+        .doc(`teams/${team.uid}`)
+        .collection('members')
+        .onSnapshot(snapshot => {
+          // every time the collection memebers is  updated (add/remove) this callback should excute
+          console.log('listenOnMembersCollection  callback is fired');
+
+          const membersDb = snapshot.docs.map(doc => {
+            return {...doc.data(), uid: doc.id};
+          });
+          console.log('membersDb', membersDb.length);
+
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              members: membersDb,
+            }),
+          );
+        });
+    }
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    const unsub = ListenOnProfileChanges();
+    return () => unsub();
+  }, [ListenOnProfileChanges]);
+
+  useEffect(() => {
+    const unsub = ListenOnTeamDoc();
+    return () => unsub();
+  }, [ListenOnTeamDoc]);
+
+  useEffect(() => {
+    const unsub = ListenOnChatRoomDoc();
+    return () => unsub();
+  }, [ListenOnChatRoomDoc]);
+
+  useEffect(() => {
+    const unsub = listenOnMembersCollection();
+    return () => unsub();
+  }, [listenOnMembersCollection]);
+  //listning on profile changes in homescreen
 
   //listning on team members changes in homescreen
   /* 

@@ -16,13 +16,6 @@ export const useInvitaion = ({
       console.log('playerData :>> ', playerData);
       try {
         if (team.uid) {
-          // add doc to team members
-          await db().doc(`teams/${team.uid}/members/${playerData.uid}`).set({
-            nickName: playerData.nickName,
-            avatar: playerData.avatar,
-          });
-          console.log('add  player card  to member team');
-
           let updatedProfile = {};
 
           console.log(`matchs/${match.uid}/members/${playerData.uid}`);
@@ -46,17 +39,25 @@ export const useInvitaion = ({
               chatRoomId: team.chatRoomId,
             };
           }
+
           // update user profile
           await db().doc(`players/${playerData.uid}`).update(updatedProfile);
           console.log('updated player card  profile');
-          // update local state
-          teamDispatch(
-            teamActions.setTeam({
-              ...team,
-              members: [...team.members, {uid: playerData.uid}],
-            }),
-          );
-          console.log('we add the player to the team');
+
+          // add doc to team members
+          await db().doc(`teams/${team.uid}/members/${playerData.uid}`).set({
+            nickName: playerData.nickName,
+            avatar: playerData.avatar,
+          });
+          console.log('add  player card  to member team');
+          // // update local state
+          // teamDispatch(
+          //   teamActions.setTeam({
+          //     ...team,
+          //     members: [...team.members, {uid: playerData.uid}],
+          //   }),
+          // );
+          // console.log('we add the player to the team');
         } else {
           console.log('NO Team found');
         }
@@ -65,7 +66,7 @@ export const useInvitaion = ({
         console.log('useInvitaion ERROR =>>', error.message);
       }
     },
-    [teamDispatch, team],
+    [team, match],
   );
 
   return {

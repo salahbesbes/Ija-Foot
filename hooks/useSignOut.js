@@ -11,20 +11,16 @@ export const useSignOut = () => {
   // we are using the reducer here so we returning its value
   const {authContext} = useContext(AppStateContext);
   const [state, dispatch] = authContext; // distructuring
-  const signOut = useCallback(
-    async navigation => {
-      try {
-        await auth().signOut();
-        console.log('User signed out!');
-        return;
-      } catch (error) {
-        console.log('signout => ', error);
-        dispatch(actionCreators.failure(error.message));
-        return;
-      }
-    },
-    [dispatch],
-  );
+  const signOut = useCallback(async navigation => {
+    try {
+      await auth().signOut();
+      console.log('User signed out!');
+      return;
+    } catch (error) {
+      console.log('signout => ', error);
+      return;
+    }
+  }, []);
 
   // since we need sinIn to call it on Click events we returning it with the reducer state modified
   return {signOut, ...state};

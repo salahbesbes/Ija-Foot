@@ -49,79 +49,6 @@ export const useChatRoom = () => {
     return () => {};
   }, []);
 
-  const ListenOnTeamDoc = useCallback(() => {
-    let unsub = () => {};
-    if (team.uid) {
-      console.log('ListenOnTeamDoc is listning');
-
-      unsub = db()
-        .collection('teams')
-        .doc(team.uid)
-        .onSnapshot(snapshot => {
-          console.log('ListenOnTeamDoc callback is fired');
-          const {createdAt, ...updatedTeam} = snapshot.data();
-
-          teamDispatch(
-            teamActions.setTeam({
-              ...team,
-              ...updatedTeam,
-            }),
-          );
-        });
-    }
-    return unsub;
-  }, []);
-
-  const ListenOnChatRoomDoc = useCallback(() => {
-    let unsub = () => {};
-    // only if teamid exist
-    if (team.uid) {
-      console.log('ListenOnChatRoomDoc is listning');
-      unsub = db()
-        .doc(`teams/${team.uid}`)
-        .collection('chatRoom')
-        .onSnapshot(snapshot => {
-          // every time the admin changes the details of a team this callback should execute and updates the view
-          console.log('ListenOnChatRoomDoc callback is fired');
-
-          const chatRoom = snapshot.docs[0];
-          teamDispatch(
-            teamActions.setTeam({
-              ...team,
-              admins: chatRoom.data().admins,
-            }),
-          );
-        });
-    }
-    return unsub;
-  }, []);
-
-  const listenOnMembersCollection = useCallback(() => {
-    let unsub = () => {};
-    if (team.uid) {
-      console.log('listenOnMembersCollection is listning');
-
-      unsub = db()
-        .doc(`teams/${team.uid}`)
-        .collection('members')
-        .onSnapshot(snapshot => {
-          // every time the collection memebers is  updated (add/remove) this callback should excute
-          console.log('listenOnMembersCollection  callback is fired');
-
-          const membersDb = snapshot.docs.map(doc => {
-            return {...doc.data(), uid: doc.id};
-          });
-          teamDispatch(
-            teamActions.setTeam({
-              ...team,
-              members: membersDb,
-            }),
-          );
-        });
-    }
-    return unsub;
-  }, []);
-
   // this function saves message to database
   const sendMessage = useCallback(
     async callBackMessages => {
@@ -160,8 +87,5 @@ export const useChatRoom = () => {
     userDispatch,
     teamDispatch,
     sendMessage,
-    ListenOnChatRoomDoc,
-    ListenOnTeamDoc,
-    listenOnMembersCollection,
   };
 };

@@ -13,30 +13,8 @@ export function ChatRoom({navigation}) {
   }, [navigation]);
   const [roomMessages, setRoomMessages] = useState([]);
 
-  const {
-    sendMessage,
-    ListenOnMessages,
-    user,
-    ListenOnChatRoomDoc,
-    ListenOnTeamDoc,
-    listenOnMembersCollection,
-    team,
-  } = useChatRoom(setRoomMessages);
-
-  useEffect(() => {
-    const unsub = ListenOnTeamDoc();
-    return () => unsub();
-  }, [ListenOnTeamDoc]);
-
-  useEffect(() => {
-    const unsub = ListenOnChatRoomDoc();
-    return () => unsub();
-  }, [ListenOnChatRoomDoc]);
-
-  useEffect(() => {
-    const unsub = listenOnMembersCollection();
-    return () => unsub();
-  }, [listenOnMembersCollection]);
+  const {sendMessage, ListenOnMessages, user, team} =
+    useChatRoom(setRoomMessages);
 
   useEffect(() => {
     const unsub = ListenOnMessages(setRoomMessages);

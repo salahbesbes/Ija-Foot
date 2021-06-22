@@ -80,7 +80,7 @@ const ProfileNavigation = ({navigation, route}) => {
   const {nbColumn} = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <SignOutButton />,
+      headerRight: () => <SignOutButton navigation={navigation} />,
     });
   }, [navigation]);
   const {size, horizental} = useTheme();

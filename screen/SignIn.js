@@ -15,8 +15,8 @@ import {actionCreators} from '../stateManager/actions/auth-A';
 
 const SignIn = ({navigation}) => {
   const {mv, bigTitle, raisedInput, textButton, row} = useTheme();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('salah@gmail.com');
+  const [password, setPassword] = useState('123456');
   const {loading, error, dispatch, signIn} = useSignIn();
 
   return (
@@ -66,6 +66,7 @@ const SignIn = ({navigation}) => {
             icon="login"
             onPress={async () => {
               await signIn({email, password});
+              navigation.navigate('LoadingScreen');
             }}>
             LogIn
           </Button>

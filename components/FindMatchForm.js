@@ -16,7 +16,7 @@ const FindMatchForm = ({modalState, setModalState}) => {
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const toggleMotorized = () => setIsMotorized(prevState => !prevState);
   useEffect(() => {
-    if (user) {
+    if (user.uid) {
       const data = user.availabilityData || {};
       setIsEnabled(user.isAvailable ? true : false);
       setLocation(data.location);

@@ -131,6 +131,7 @@ export const useAdmin = ({teamState, teamDispatch}) => {
     },
     [team, teamDispatch],
   );
+
   const updateDeatails = useCallback(
     async chatRoomDetails => {
       try {

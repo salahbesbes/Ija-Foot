@@ -95,7 +95,6 @@ const Profile = ({navigation}) => {
             mode="contained"
             icon="send"
             onPress={() => {
-              console.log('file :>> ', file);
               updateProfile(
                 {
                   age: age || '',

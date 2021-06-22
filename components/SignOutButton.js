@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSignOut} from '../hooks/useSignOut';
 import {IconButton, useTheme} from 'react-native-paper';
-export default function SignOutButton() {
+export default function SignOutButton({navigation}) {
   const {signOut} = useSignOut();
   const {colors} = useTheme();
   return (
@@ -11,7 +11,7 @@ export default function SignOutButton() {
         size={20}
         color={colors.accent}
         onPress={async () => {
-          await signOut();
+          await signOut(navigation);
         }}
       />
     </>

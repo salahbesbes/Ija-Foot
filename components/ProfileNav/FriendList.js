@@ -60,7 +60,6 @@ const FriendList = ({
     FriendListRender.current += 1;
     console.log({FriendListScreenRender: FriendListRender.current});
     if (isInitialMount.current) {
-      console.log('isInitialMount :>> ', isInitialMount);
       isInitialMount.current = false;
 
       return;

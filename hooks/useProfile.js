@@ -125,7 +125,6 @@ const useProfile = () => {
 
   const uploadFileToStorage = useCallback(
     async fileObj => {
-      console.log('fileObj :>> ', fileObj);
       if (fileObj) {
         const imageName = user.nickName + fileObj.name; // salou7IMG20210520010840.jpg
         const avatarRef = storage().ref(`images/avatar/${imageName}`);

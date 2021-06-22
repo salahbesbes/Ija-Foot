@@ -126,29 +126,6 @@ export const useHomeListner = () => {
     return unsub;
   }, []);
 
-  const ListenOnChatRoomDoc = useCallback(() => {
-    let unsub = () => {};
-    // only if teamid exist
-    if (team.uid) {
-      console.log('ListenOnChatRoomDoc is listning');
-      unsub = db()
-        .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
-        .onSnapshot(snapshot => {
-          // every time the admin changes the details of a team this callback should execute and updates the view
-          console.log('ListenOnChatRoomDoc callback is fired');
-
-          console.log('chatRoom', snapshot.data().admins);
-          teamDispatch(
-            teamActions.setTeam({
-              ...team,
-              admins: snapshot.data().admins,
-            }),
-          );
-        });
-    }
-    return unsub;
-  }, []);
-
   const listenOnMembersCollection = useCallback(() => {
     let unsub = () => {};
     if (team.uid) {
@@ -157,7 +134,7 @@ export const useHomeListner = () => {
       unsub = db()
         .doc(`teams/${team.uid}`)
         .collection('members')
-        .onSnapshot(snapshot => {
+        .onSnapshot(async snapshot => {
           // every time the collection memebers is  updated (add/remove) this callback should excute
           console.log('listenOnMembersCollection  callback is fired');
 
@@ -165,7 +142,11 @@ export const useHomeListner = () => {
             return {...doc.data(), uid: doc.id};
           });
           console.log('membersDb', membersDb.length);
-
+          console.log(
+            'members are ',
+            membersDb.map(el => el.nickName),
+          );
+          console.log('local admins ', team.admins);
           teamDispatch(
             teamActions.setTeam({
               ...team,
@@ -175,7 +156,7 @@ export const useHomeListner = () => {
         });
     }
     return unsub;
-  }, []);
+  }, [teamDispatch]);
 
   useEffect(() => {
     const unsub = ListenOnProfileChanges();
@@ -186,11 +167,6 @@ export const useHomeListner = () => {
     const unsub = ListenOnTeamDoc();
     return () => unsub();
   }, [ListenOnTeamDoc]);
-
-  useEffect(() => {
-    const unsub = ListenOnChatRoomDoc();
-    return () => unsub();
-  }, [ListenOnChatRoomDoc]);
 
   useEffect(() => {
     const unsub = listenOnMembersCollection();

@@ -18,7 +18,6 @@ export const useInvitaion = ({
         if (team.uid) {
           let updatedProfile = {};
 
-          console.log(`matchs/${match.uid}/members/${playerData.uid}`);
           if (match.uid) {
             // if player has match
             updatedProfile = {

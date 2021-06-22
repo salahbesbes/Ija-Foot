@@ -13,6 +13,7 @@ export const useSignOut = () => {
   const [state, dispatch] = authContext; // distructuring
   const signOut = useCallback(async navigation => {
     try {
+      navigation.navigate('SignIn');
       await auth().signOut();
       console.log('User signed out!');
       return;

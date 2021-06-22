@@ -78,7 +78,35 @@ export const useChatRoom = () => {
     [user, team],
   );
 
+  const ListenOnChatRoomDoc = useCallback(() => {
+    let unsub = () => {};
+    // only if teamid exist
+    if (team.uid) {
+      console.log('ListenOnChatRoomDoc is listning');
+      unsub = db()
+        .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
+        .onSnapshot(snapshot => {
+          // every time the admin changes the details of a team this callback should execute and updates the view
+          console.log('ListenOnChatRoomDoc callback is fired');
+
+          console.log('chatRoom', snapshot.data().admins);
+          console.log(
+            'local members are  ',
+            team.members.map(el => el.nickName),
+          );
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              admins: snapshot.data().admins,
+            }),
+          );
+        });
+    }
+    return unsub;
+  }, [teamDispatch]);
+
   return {
+    ListenOnChatRoomDoc,
     ListenOnMessages,
     ...authState,
     ...teamState,

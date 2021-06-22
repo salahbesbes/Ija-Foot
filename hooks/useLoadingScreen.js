@@ -44,7 +44,6 @@ export const useLoadingScreen = navigation => {
           let playerFriends = friendsDocs.docs.map(playerDoc => {
             return {...playerDoc.data(), uid: playerDoc.id};
           });
-          console.log('playerFriends :>> ', playerFriends);
           userDispatch(actionCreators.setFriends(playerFriends));
 
           console.log('team of the player is ', loggedUser.teamId, '\v');

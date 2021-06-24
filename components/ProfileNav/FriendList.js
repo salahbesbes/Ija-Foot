@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {Text} from 'react-native-paper';
 import {
   FlatList,
@@ -54,7 +54,20 @@ const FriendList = ({
   const [authState] = authContext;
   const {user} = authState;
   const listExceptMe = listToRender.filter(el => el.uid !== user.uid);
-  console.log(listExceptMe.length);
+  let FriendListRender = useRef(0);
+  const isInitialMount = useRef(true);
+  useEffect(() => {
+    FriendListRender.current += 1;
+    console.log({FriendListScreenRender: FriendListRender.current});
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+
+      return;
+    }
+    return () => {
+      console.log('friends List has updated');
+    };
+  }, []);
   return (
     <View
       style={{

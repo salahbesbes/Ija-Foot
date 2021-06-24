@@ -39,11 +39,12 @@ export const useFriends = ({userState, userDispatch}) => {
           .collection('friends')
           .doc(playerData.uid)
           .set(other);
-
+        console.log('add friend to db');
         // check if the player already exist
         const playerAlreadyExist = userFriends
           .map(el => el.uid)
           .includes(playerData.uid);
+        console.log('playerAlreadyExist :>> ', playerAlreadyExist);
         !playerAlreadyExist &&
           userDispatch(actionCreators.setFriends([...userFriends, playerData]));
       } catch (error) {

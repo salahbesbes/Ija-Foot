@@ -15,23 +15,20 @@ import {actionCreators} from '../stateManager/actions/auth-A';
 
 const SignIn = ({navigation}) => {
   const {mv, bigTitle, raisedInput, textButton, row} = useTheme();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('salah@gmail.com');
+  const [password, setPassword] = useState('123456');
   const {loading, error, dispatch, signIn} = useSignIn();
 
   return (
     <SafeAreaView>
-
-
       <ScrollView>
-        <View style={{alignItems: 'center', marginTop: 10}}>
+        <View style={[{alignItems: 'center'}, mv]}>
           <Avatar.Image
-            style={{elevation: 20}}
+            style={{elevation: 30}}
             size={200}
             source={require('../assets/images/logo.jpg')}
           />
-          <Headline style={[bigTitle, mv]}>Welcome To IJA-FOOT</Headline>
-
+          <Headline style={[bigTitle]}>Welcome To " Ija-Foot "</Headline>
           <Subheading style={{color: 'grey'}}> SignIn to Continue </Subheading>
           <TextInput
             style={[raisedInput, mv]}
@@ -69,6 +66,7 @@ const SignIn = ({navigation}) => {
             icon="login"
             onPress={async () => {
               await signIn({email, password});
+              navigation.navigate('LoadingScreen');
             }}>
             LogIn
           </Button>

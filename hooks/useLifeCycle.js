@@ -3,7 +3,7 @@ import {useEffect, useRef} from 'react';
 
 export const useComponentDidMount = handler => {
   return useEffect(() => {
-    return handler();
+    handler();
   }, []);
 };
 
@@ -23,5 +23,7 @@ export const useComponentDidUpdate = (handler, deps = []) => {
 };
 
 export const useComponentWillUnmount = handler => {
-  return useEffect(() => handler, []);
+  return useEffect(() => {
+    return () => handler();
+  }, []);
 };

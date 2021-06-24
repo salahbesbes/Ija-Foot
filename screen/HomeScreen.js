@@ -1,4 +1,4 @@
-import React, {useLayoutEffect} from 'react';
+import React, {useContext, useEffect, useLayoutEffect, useRef} from 'react';
 import {Image, StyleSheet, View, Pressable} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {Avatar} from 'react-native-paper';
@@ -8,10 +8,11 @@ import TeamsFeed from './TeamsFeed';
 import FindMatchModal from '../components/FindMatchModal';
 import CreateTeamModal from '../components/team/CreateTeamModal';
 import {useHomeListner} from '../hooks/useHomeListners';
+import {AppStateContext} from '../stateProvider';
 const FeedTab = createMaterialTopTabNavigator();
 
 const HomeScreen = ({navigation}) => {
-  const {match, user, team} = useHomeListner();
+  const {match, user, team, userFriends} = useHomeListner();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -22,19 +23,25 @@ const HomeScreen = ({navigation}) => {
           }>
           <Avatar.Image
             style={{marginRight: 5}}
-            source={{uri: user.avatar}}
+            source={{uri: user?.avatar}}
             size={50}
           />
-          {/* <SignOutButton /> */}
         </Pressable>
       ),
     });
-  }, [user.avatar, navigation]);
-  // console.log('team :>> ', team);
-  // console.log('user :>> ', user);
-  // const {createMatch} = useCreateMatch();
-  console.log('home match.members', match.members.length);
-  console.log(team);
+  }, [user?.avatar, navigation]);
+
+  let homeSRender = useRef(0);
+
+  useEffect(() => {
+    homeSRender.current += 1;
+    console.log({homeScreenRender: homeSRender.current});
+    return () => {
+      homeSRender.current -= 1;
+      console.log({homeScreenRender: homeSRender.current});
+    };
+  }, []);
+
   return (
     <>
       <FeedTab.Navigator>

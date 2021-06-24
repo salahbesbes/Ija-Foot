@@ -1,9 +1,10 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {useChatRoom} from '../../hooks/useChatRoom';
-import {Divider} from 'react-native-paper';
+import {Button, Divider, Text} from 'react-native-paper';
 import FriendList from '../ProfileNav/FriendList';
 import UpdateChatRoom from '../team/UpdateChatRoom';
+import db from '@react-native-firebase/firestore';
 
 export function ChatRoom({navigation}) {
   React.useLayoutEffect(() => {
@@ -13,35 +14,18 @@ export function ChatRoom({navigation}) {
   }, [navigation]);
   const [roomMessages, setRoomMessages] = useState([]);
 
-  const {
-    sendMessage,
-    ListenOnMessages,
-    user,
-    ListenOnChatRoomDoc,
-    ListenOnTeamDoc,
-    listenOnMembersCollection,
-    team,
-  } = useChatRoom(setRoomMessages);
-
-  useEffect(() => {
-    const unsub = ListenOnTeamDoc();
-    return () => unsub();
-  }, [ListenOnTeamDoc]);
-
-  useEffect(() => {
-    const unsub = ListenOnChatRoomDoc();
-    return () => unsub();
-  }, [ListenOnChatRoomDoc]);
-
-  useEffect(() => {
-    const unsub = listenOnMembersCollection();
-    return () => unsub();
-  }, [listenOnMembersCollection]);
+  const {ListenOnChatRoomDoc, sendMessage, ListenOnMessages, user, team} =
+    useChatRoom(setRoomMessages);
 
   useEffect(() => {
     const unsub = ListenOnMessages(setRoomMessages);
     return () => unsub();
   }, [ListenOnMessages]);
+
+  useEffect(() => {
+    const unsub = ListenOnChatRoomDoc();
+    return () => unsub();
+  }, [ListenOnChatRoomDoc]);
 
   const onSend = useCallback(
     (callBackMessages = []) => {
@@ -54,7 +38,51 @@ export function ChatRoom({navigation}) {
   );
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <UpdateChatRoom navigation={navigation} />,
+      headerRight: () => (
+        <>
+          {/* <Button
+            mode="outlined"
+            onPress={async () => {
+              try {
+                // delete player from chatRoom Members collection
+                await db()
+                  .doc(`teams/${team.uid}/members/${user.uid}`)
+                  .delete();
+
+                // if player is admin -> update chatRoom kick Admin
+                const playerIsAdmin = team.admins.includes(user.uid);
+
+                if (playerIsAdmin) {
+                  console.log(
+                    ' the player is a admin we update  memeber and admin list ',
+                  );
+
+                  const updatedAdminsList = team.admins.filter(
+                    id => id !== user.uid,
+                  );
+                  await db()
+                    .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
+                    .update({
+                      admins: updatedAdminsList,
+                    });
+                }
+
+                // update plyer profile to delete chatRoomId
+                await db().doc(`players/${user.uid}`).update({
+                  teamId: null,
+                  chatRoomId: null,
+                  matchId: null,
+                  matchRoomId: null,
+                });
+              } catch (error) {
+                console.log(error);
+              }
+            }}>
+            <Text> kickPlayer </Text>
+          </Button> */}
+          <UpdateChatRoom navigation={navigation} />
+        </>
+      ),
     });
   }, [navigation]);
   return (

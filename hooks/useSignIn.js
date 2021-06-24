@@ -34,6 +34,7 @@ const signInUser = async (dispatch, {email, password}) => {
     return;
   }
   try {
+    console.log('use Sign in');
     let res = await auth().signInWithEmailAndPassword(email, password);
     let user = res.user.toJSON();
     console.log('User signed in!', user?.email || 'user is not json');

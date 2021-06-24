@@ -12,7 +12,7 @@ import {
 export const initialState = {
   loading: false,
   error: false,
-  user: undefined,
+  user: {},
   userFriends: [],
 };
 
@@ -28,9 +28,9 @@ export function authReducer(state, {type, payload}) {
         user: payload,
       };
     case RESET:
-      return {...state, loading: false, error: false, userFriends: []};
+      return {...state, loading: false, error: false};
     case LOGOUT:
-      return {...state, loading: false, error: false, user: undefined};
+      return initialState;
     case FAILURE:
       return {...state, loading: false, error: payload};
     case ADDFRIEND:

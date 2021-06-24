@@ -9,75 +9,69 @@ export const useAdmin = ({teamState, teamDispatch}) => {
   //   teamDispatch(teamActions.setTeam({...team, members}));
   const kickPlayer = useCallback(
     async playerId => {
-      const listOfmembers = team.members.map(el => el.uid);
+      // const listOfmembers = team.members.map(el => el.uid);
 
-      if (listOfmembers.includes(playerId)) {
-        try {
-          // delete player from chatRoom Members collection
-          await db().doc(`teams/${team.uid}/members/${playerId}`).delete();
+      try {
+        // delete player from chatRoom Members collection
+        await db().doc(`teams/${team.uid}/members/${playerId}`).delete();
 
-          // update plyer profile to delete chatRoomId
-          await db().doc(`players/${playerId}`).update({
-            teamId: null,
-            chatRoomId: null,
-            matchId: null,
-            matchRoomId: null,
-          });
+        // update plyer profile to delete chatRoomId
+        await db().doc(`players/${playerId}`).update({
+          teamId: null,
+          chatRoomId: null,
+          matchId: null,
+          matchRoomId: null,
+        });
 
-          // if player is admin -> update chatRoom kick Admin
-          const playerIsAdmin = team.admins.includes(playerId);
+        // if player is admin -> update chatRoom kick Admin
+        const playerIsAdmin = team.admins.includes(playerId);
 
-          if (playerIsAdmin) {
-            console.log(
-              ' the player is a admin we update  memeber and admin list ',
-            );
+        if (playerIsAdmin) {
+          console.log(
+            ' the player is a admin we update  memeber and admin list ',
+          );
 
-            const updatedAdminsList = team.admins.filter(
-              admin => admin !== playerId,
-            );
-            await db()
-              .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
-              .update({
-                admins: updatedAdminsList,
-              });
+          const updatedAdminsList = team.admins.filter(
+            admin => admin !== playerId,
+          );
+          await db()
+            .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
+            .update({
+              admins: updatedAdminsList,
+            });
 
-            const updatedMembersList = team.members.filter(
-              player => player.uid !== playerId,
-            );
+          const updatedMembersList = team.members.filter(
+            player => player.uid !== playerId,
+          );
 
-            teamDispatch(
-              teamActions.setTeam({
-                ...team,
-                members: updatedMembersList,
-                admins: updatedAdminsList,
-              }),
-            );
-            console.log('those players are admins', updatedAdminsList);
-            console.log('after kick new members are', updatedMembersList);
-          } else {
-            console.log(
-              ' the player is a memeber we update only memeber list ',
-            );
-            // update only members
-            const updatedMembersList = team.members.filter(
-              player => player.uid !== playerId,
-            );
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              members: updatedMembersList,
+              admins: updatedAdminsList,
+            }),
+          );
+          // console.log('those players are admins', updatedAdminsList);
+          // console.log('after kick new members are', updatedMembersList);
+        } else {
+          console.log(' the player is a memeber we update only memeber list ');
+          // update only members
+          const updatedMembersList = team.members.filter(
+            player => player.uid !== playerId,
+          );
 
-            teamDispatch(
-              teamActions.setTeam({...team, members: updatedMembersList}),
-            );
-          }
-
-          console.log('plyer ', playerId, ' successfully deleted!');
-        } catch (error) {
-          console.error('Error removing document: ', error.message);
+          teamDispatch(
+            teamActions.setTeam({...team, members: updatedMembersList}),
+          );
         }
-      } else {
-        console.log('player is not in the team cant delete him ');
+
+        console.log('plyer ', playerId, ' successfully deleted!');
+      } catch (error) {
+        console.error('Error removing document: ', error.message);
       }
     },
 
-    [team, teamDispatch],
+    [team],
   );
 
   const getAllMembers = useCallback(async () => {
@@ -93,55 +87,57 @@ export const useAdmin = ({teamState, teamDispatch}) => {
       };
     });
     teamDispatch(teamActions.setTeam({...team, members: teamPlayers}));
-  }, [team, teamDispatch]);
+  }, [team]);
 
   const givePrivilege = useCallback(
     async playerId => {
       // if player in is the team
-      if (team.members.map(el => el.uid).includes(playerId)) {
-        try {
-          // if player is not already admin update chatRoom Admins
-          const playerIsAdmin = team.admins.includes(playerId);
-          if (!playerIsAdmin) {
-            // we add player to list of admin in the charRoom doc
-            await db()
-              .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
-              .update({
-                admins: [...team.admins, playerId],
-              });
-            // todo: need to listen to this change so that in the front end we detect this update
 
-            // update local state
-            teamDispatch(
-              teamActions.setTeam({
-                ...team,
-                admins: [...team.admins, playerId],
-              }),
-            );
-            console.log('we add ', playerId, 'to the admin list');
-          } else {
-            console.log('player is already admin');
-          }
-        } catch (error) {
-          console.log('Error while updating admins list =>> ', error.message);
-        }
-      } else {
-        console.log('player is not in the team cant give him privilege');
-      }
-    },
-    [team, teamDispatch],
-  );
-  const updateDeatails = useCallback(
-    async chatRoomDetails => {
       try {
-        await db().doc(`teams/${team.uid}`).update(chatRoomDetails);
-        teamDispatch(teamActions.setTeam({...team, ...chatRoomDetails}));
+        // if player is not already admin update chatRoom Admins
+        const playerIsAdmin = team.admins.includes(playerId);
+        if (!playerIsAdmin) {
+          // we add player to list of admin in the charRoom doc
+          console.log(
+            'we found ',
+            team.admins,
+            ' before we add ',
+            playerId,
+            ' to list of admin',
+          );
+          await db()
+            .doc(`teams/${team.uid}/chatRoom/${team.chatRoomId}`)
+            .update({
+              admins: [...team.admins, playerId],
+            });
+          // todo: need to listen to this change so that in the front end we detect this update
+
+          // update local state
+          teamDispatch(
+            teamActions.setTeam({
+              ...team,
+              admins: [...team.admins, playerId],
+            }),
+          );
+          console.log('we add ', playerId, 'to the admin list');
+        } else {
+          console.log('player is already admin');
+        }
       } catch (error) {
-        console.log('update teamDoc Details ERROR =>>  ', error.message);
+        console.log('Error while updating admins list =>> ', error.message);
       }
     },
-    [teamDispatch],
+    [team],
   );
+
+  const updateDeatails = useCallback(async chatRoomDetails => {
+    try {
+      await db().doc(`teams/${team.uid}`).update(chatRoomDetails);
+      // teamDispatch(teamActions.setTeam({...team, ...chatRoomDetails}));
+    } catch (error) {
+      console.log('update teamDoc Details ERROR =>>  ', error.message);
+    }
+  }, []);
   return {
     updateDeatails,
     kickPlayer,

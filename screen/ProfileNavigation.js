@@ -80,7 +80,7 @@ const ProfileNavigation = ({navigation, route}) => {
   const {nbColumn} = route.params;
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <SignOutButton />,
+      headerRight: () => <SignOutButton navigation={navigation} />,
     });
   }, [navigation]);
   const {size, horizental} = useTheme();
@@ -88,7 +88,6 @@ const ProfileNavigation = ({navigation, route}) => {
   const {authContext} = useContext(AppStateContext);
   const [userState, userDispatch] = authContext;
   const {userFriends} = useFriends({userState, userDispatch});
-
   return (
     <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>
       <Tab.Screen name="Profile">

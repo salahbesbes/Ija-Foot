@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   Button,
   FlatList,
@@ -66,8 +66,15 @@ const InviteFriends = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const {userFriends, dispatch} = useFriends();
-  console.log(userFriends.length);
-
+  let FriendSRender = useRef(0);
+  useEffect(() => {
+    FriendSRender.current += 1;
+    console.log({friendsScreenRender: FriendSRender.current});
+    return () => {
+      FriendSRender.current -= 1;
+      console.log({friendsScreenRender: FriendSRender.current});
+    };
+  }, []);
   return (
     <View style={modal.container}>
       <Modal

@@ -27,6 +27,8 @@ const GoogleSignUp_In = async dispatch => {
   dispatch(actionCreators.loading());
 
   try {
+    console.log('use Google ');
+
     // Get the users ID token
     const {idToken} = await GoogleSignin.signIn();
 

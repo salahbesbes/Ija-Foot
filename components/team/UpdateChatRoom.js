@@ -41,7 +41,7 @@ const UpdateForm = ({navigation, hideModal}) => {
       setTeamName(team.teamName);
       setStadium(team.stadium);
       setDescription(team.description);
-      setFormDate(team?.date?.toDate()?.toLocaleString());
+      setFormDate(team.date.toDate());
     }
   }, [team]);
   const submitUpdateTeam = () => {
